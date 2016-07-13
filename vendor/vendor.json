@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "1JLUdISU+p/2ahiCaQ5lJX00YNM=",
+			"path": "github.com/urfave/cli",
+			"revision": "3a5216227e14699bf7810b2573db60bf4b3f71b5",
+			"revisionTime": "2016-07-12T17:14:36Z"
+		}
+	],
+	"rootPath": "github.com/trustedanalytics/tapng-cli"
+}

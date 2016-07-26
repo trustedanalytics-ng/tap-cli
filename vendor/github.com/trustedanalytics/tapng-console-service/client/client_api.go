@@ -6,8 +6,8 @@ import (
 
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-console-service/models"
-	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
 	containerBrokerModels "github.com/trustedanalytics/tapng-container-broker/models"
+	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
 )
 
 type TapConsoleServiceApi interface {
@@ -62,7 +62,7 @@ func (c *TapConsoleServiceApiConnector) Deploy(serviceWithTemplate models.Servic
 }
 
 func (c *TapConsoleServiceApiConnector) CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/create_instance/%s", c.Address, serviceId))
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, serviceId))
 	result := &containerBrokerModels.MessageResponse{}
 	err := brokerHttp.AddModel(connector, instance, http.StatusCreated, result)
 	return *result, err

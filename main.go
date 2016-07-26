@@ -17,19 +17,22 @@
 package main
 
 import (
-	"fmt"
 	"os"
-
 	"github.com/urfave/cli"
+	tapngCli "github.com/trustedanalytics/tapng-cli/cli"
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "greet"
-	app.Usage = "fight the loneliness!"
-	app.Action = func(c *cli.Context) error {
-		fmt.Println("Hello friend!")
-		return nil
+	app.Name = "TAPNG CLI"
+	app.Usage = "client for managing TAPNG"
+
+	app.Commands = []cli.Command{
+		tapngCli.LoginCommand(),
+		tapngCli.TargetCommand(),
+		tapngCli.CatalogCommand(),
+		tapngCli.DeployCommand(),
+		tapngCli.CreateServiceCommand(),
 	}
 
 	app.Run(os.Args)

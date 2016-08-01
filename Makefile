@@ -32,9 +32,21 @@ prepare_dirs:
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tapng-cli
 
-build_anywhere: prepare_dirs
+build_anywhere: build_anywhere_linux build_anywhere_win32
+
+build_anywhere_linux: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
 	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
-	rm -Rf application && mkdir application
+	mkdir -p application && rm -f application/tanpng-cli-linux-amd64.elf
 	cp $(GOPATH)/bin/tapng-cli ./application/tapng-cli
+	cp $(GOPATH)/bin/tapng-cli ./application/tapng-cli-linux-amd64.elf
+	cp $(GOPATH)/bin/tapng-cli ./application/tapng-cli
+
+
+build_anywhere_win32: prepare_dirs
+	$(eval GOPATH=$(shell cd ./temp; pwd))
+	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
+	mkdir -p application
+	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -o ./application/tapng-cli-win32.exe -tags netgo $(APP_DIR_LIST)
+

@@ -41,7 +41,7 @@
               "containers": [
                 {
                   "name": "app",
-                  "image": "$gen_image_id",
+                  "image": "127.0.0.1:30000/$gen_image_id",
                   "ports": [
                     {
                       "containerPort": 80,
@@ -50,8 +50,8 @@
                   ],
                   "env": [
                     {
-                      "name": "TEST",
-                      "value": "value"
+                      "name": "VERSION",
+                      "value": "1.0"
                     },
                     {
                       "name": "MANAGED_BY",

@@ -8,12 +8,19 @@ import (
 	"github.com/trustedanalytics/tapng-console-service/models"
 	containerBrokerModels "github.com/trustedanalytics/tapng-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
+	"github.com/trustedanalytics/tapng-go-common/logger"
+	templateRepositoryModels "github.com/trustedanalytics/tapng-template-repository/model"
+	"mime/multipart"
 )
+
+var logger = logger_wrapper.InitLogger("client")
 
 type TapConsoleServiceApi interface {
 	GetCatalog() ([]models.Service, error)
 	Deploy(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
 	CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
+	ListApplications() ([]catalogModels.Application, error)
+	CreateApplication(blob multipart.File, image catalogModels.Image, template templateRepositoryModels.Template) (catalogModels.Application, error)
 }
 
 func NewTapConsoleServiceApiWithBasicAuth(address, username, password string) (*TapConsoleServiceApiConnector, error) {

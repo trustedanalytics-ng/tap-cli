@@ -1,9 +1,9 @@
 package api
 
 import (
+	"errors"
 	"github.com/trustedanalytics/tapng-console-service/client"
 	"os"
-	"errors"
 )
 
 type Config struct {

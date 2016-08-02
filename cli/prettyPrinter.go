@@ -1,17 +1,19 @@
 package cli
 
 import (
-	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
+	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"os"
+	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
+	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
+	"os"
 )
 
 func createAndRenderTable(header []string, rows [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(header)
 
-	for _,row := range rows {
+	for _, row := range rows {
 		table.Append(row)
 	}
 
@@ -20,7 +22,7 @@ func createAndRenderTable(header []string, rows [][]string) {
 
 func printCatalog(catalog []consoleServiceModels.Service) {
 
-	header := []string{"NAME","PLAN","DESCRIPTION"}
+	header := []string{"NAME", "PLAN", "DESCRIPTION"}
 	rows := [][]string{}
 
 	for _, service := range catalog {
@@ -34,10 +36,22 @@ func printCatalog(catalog []consoleServiceModels.Service) {
 
 func printCredentials(creds api.Credentials) {
 
-	header := []string{"API","USERNAME"}
+	header := []string{"API", "USERNAME"}
 	rows := [][]string{}
 
 	rows = append(rows, []string{creds.Address, creds.Username})
+
+	createAndRenderTable(header, rows)
+}
+
+func printApplications(applications []catalogModels.Application) {
+
+	header := []string{"APP_ID", "IMAGE_ID", "TEMPLATE_ID", "REPLICATION"}
+	rows := [][]string{}
+
+	for _, app := range applications {
+		rows = append(rows, []string{app.Id, app.ImageId, app.TemplateId, fmt.Sprintf("%d", app.Replication)})
+	}
 
 	createAndRenderTable(header, rows)
 }

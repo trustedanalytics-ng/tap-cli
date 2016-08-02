@@ -141,10 +141,10 @@
 			"revisionTime": "2016-07-13T13:41:34Z"
 		},
 		{
-			"checksumSHA1": "grMwH3eo18LZqY0q+vCskjcpHoA=",
+			"checksumSHA1": "bJy5X8yxodT3ZyIpUxnsf6Hpx+A=",
 			"path": "github.com/trustedanalytics/tapng-console-service/client",
-			"revision": "599b0f715bd0005f8ca933da7f91b0529d067312",
-			"revisionTime": "2016-07-26T15:20:21Z"
+			"revision": "9c7919da2d06c11e1c301b1eae2f6f03f1e30fee",
+			"revisionTime": "2016-07-29T15:23:57Z"
 		},
 		{
 			"checksumSHA1": "sju3P6S5aE1iXHyoAE4+uhCczCc=",
@@ -159,16 +159,16 @@
 			"revisionTime": "2016-07-21T14:59:01Z"
 		},
 		{
-			"checksumSHA1": "2zx/ZwbLaF9g7sWxMNBhhaT1h5w=",
+			"checksumSHA1": "eXJ69Gqwm3d0ClgHWe2sCqHMlKE=",
 			"path": "github.com/trustedanalytics/tapng-go-common/http",
-			"revision": "1c614034d121f0fba7d083ebdad22fa2ffbad2a1",
-			"revisionTime": "2016-07-21T10:41:36Z"
+			"revision": "7bc354db613b948a8f2c2a9434424f25cd4f7e0a",
+			"revisionTime": "2016-07-29T15:20:02Z"
 		},
 		{
-			"checksumSHA1": "CdQ90HJKR8FgrIZny5R1YVGUOaU=",
+			"checksumSHA1": "Ka/efssR1AekoBuWWQuilDydAvM=",
 			"path": "github.com/trustedanalytics/tapng-go-common/logger",
-			"revision": "d93b911b64909f71e37b0412da1a53b5dd39c20a",
-			"revisionTime": "2016-07-11T09:45:31Z"
+			"revision": "7bc354db613b948a8f2c2a9434424f25cd4f7e0a",
+			"revisionTime": "2016-07-29T15:20:02Z"
 		},
 		{
 			"checksumSHA1": "EpmbYSq5Zrzpkm3K65Rw2qmtP20=",

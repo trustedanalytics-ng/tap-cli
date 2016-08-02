@@ -1,0 +1,134 @@
+{
+  "body": {
+    "componentType": "",
+    "persistentVolumeClaims": null,
+    "deployments": [
+      {
+        "kind": "Deployment",
+        "apiVersion": "extensions/v1beta1",
+        "metadata": {
+          "name": "$idx_and_short_serviceid",
+          "creationTimestamp": null,
+          "labels": {
+            "catalog_plan_id": "$catalog_plan_id",
+            "catalog_service_id": "$catalog_service_id",
+            "idx_and_short_serviceid": "$idx_and_short_serviceid",
+            "managed_by": "TAP",
+            "org": "$org",
+            "service_id": "$service_id",
+            "space": "$space"
+          }
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "service_id": "$service_id"
+            }
+          },
+          "template": {
+            "metadata": {
+              "creationTimestamp": null,
+              "labels": {
+                "idx_and_short_serviceid": "$idx_and_short_serviceid",
+                "managed_by": "TAP",
+                "service_id": "$service_id"
+              }
+            },
+            "spec": {
+              "volumes": null,
+              "containers": [
+                {
+                  "name": "app",
+                  "image": "$gen_image_id",
+                  "ports": [
+                    {
+                      "containerPort": 80,
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "env": [
+                    {
+                      "name": "TEST",
+                      "value": "value"
+                    },
+                    {
+                      "name": "MANAGED_BY",
+                      "value": "TAP"
+                    }
+                  ],
+                  "resources": {},
+                  "imagePullPolicy": "IfNotPresent"
+                }
+              ],
+              "restartPolicy": "Always",
+              "dnsPolicy": "ClusterFirst",
+              "serviceAccountName": ""
+            }
+          },
+          "strategy": {}
+        },
+        "status": {}
+      }
+    ],
+    "services": [
+      {
+        "kind": "Service",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "$idx_and_short_serviceid",
+          "creationTimestamp": null,
+          "labels": {
+            "catalog_plan_id": "$catalog_plan_id",
+            "catalog_service_id": "$catalog_service_id",
+            "idx_and_short_serviceid": "$idx_and_short_serviceid",
+            "managed_by": "TAP",
+            "org": "$org",
+            "service_id": "$service_id",
+            "space": "$space"
+          }
+        },
+        "spec": {
+          "type": "NodePort",
+          "ports": [
+            {
+              "name": "rest",
+              "protocol": "TCP",
+              "port": 80,
+              "targetPort": 0,
+              "nodePort": 0
+            }
+          ],
+          "selector": {
+            "service_id": "$service_id"
+          }
+        },
+        "status": {
+          "loadBalancer": {}
+        }
+      }
+    ],
+    "serviceAccounts": [
+      {
+        "kind": "ServiceAccount",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "$idx_and_short_serviceid",
+          "creationTimestamp": null,
+          "labels": {
+            "catalog_plan_id": "$catalog_plan_id",
+            "catalog_service_id": "$catalog_service_id",
+            "idx_and_short_serviceid": "$idx_and_short_serviceid",
+            "managed_by": "TAP",
+            "org": "$org",
+            "service_id": "$service_id",
+            "space": "$space"
+          }
+        },
+        "secrets": null
+      }
+    ]
+  },
+  "hooks": null
+}

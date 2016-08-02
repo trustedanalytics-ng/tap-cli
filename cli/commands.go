@@ -4,17 +4,17 @@ import (
 	"github.com/urfave/cli"
 )
 
-func validateArgs(c *cli.Context, mustCount int) *cli.ExitError{
+func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
 	if c.NArg() != mustCount {
-		return cli.NewExitError("not enough args: \n" + c.Command.Name + " " + c.Command.ArgsUsage, 1)
+		return cli.NewExitError("not enough args: \n"+c.Command.Name+" "+c.Command.ArgsUsage, 1)
 	}
 	return nil
 }
 
 func LoginCommand() cli.Command {
-	return cli.Command {
-		Name: "login",
-		Usage: "login to TAPNG",
+	return cli.Command{
+		Name:      "login",
+		Usage:     "login to TAPNG",
 		ArgsUsage: "<address> <username> <password>",
 		Action: func(c *cli.Context) error {
 
@@ -29,8 +29,8 @@ func LoginCommand() cli.Command {
 }
 
 func TargetCommand() cli.Command {
-	return cli.Command {
-		Name: "target",
+	return cli.Command{
+		Name:  "target",
 		Usage: "print actual credentials",
 		Action: func(c *cli.Context) error {
 			return Target()
@@ -40,7 +40,7 @@ func TargetCommand() cli.Command {
 
 func CatalogCommand() cli.Command {
 	return cli.Command{
-		Name: "catalog",
+		Name:  "catalog",
 		Usage: "list available services",
 		Action: func(c *cli.Context) error {
 			return Catalog()
@@ -50,9 +50,9 @@ func CatalogCommand() cli.Command {
 
 func DeployCommand() cli.Command {
 	return cli.Command{
-		Name: "deploy",
+		Name:      "deploy",
 		ArgsUsage: "<path to json with service definition>",
-		Usage: "create new service",
+		Usage:     "create new service",
 		Action: func(c *cli.Context) error {
 			err := validateArgs(c, 1)
 			if err != nil {
@@ -66,10 +66,10 @@ func DeployCommand() cli.Command {
 
 func CreateServiceCommand() cli.Command {
 	return cli.Command{
-		Name: "create-service",
+		Name:      "create-service",
 		ArgsUsage: "<service_id>",
-		Aliases: []string{"cs"},
-		Usage: "create instance of service",
+		Aliases:   []string{"cs"},
+		Usage:     "create instance of service",
 		Action: func(c *cli.Context) error {
 
 			err := validateArgs(c, 1)
@@ -78,6 +78,35 @@ func CreateServiceCommand() cli.Command {
 			}
 
 			return CreateInstance(c.Args().First())
+		},
+	}
+}
+
+func ListApplicationsCommand() cli.Command {
+	return cli.Command{
+		Name:      "applications",
+		ArgsUsage: "",
+		Aliases:   []string{"apps"},
+		Usage:     "list applications",
+		Action: func(c *cli.Context) error {
+			return ListApplications()
+		},
+	}
+}
+
+func PushApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "push",
+		ArgsUsage: "<archive_path> <image_json_path> <template_json_path>",
+		Usage:     "create application from archive",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 3)
+			if err != nil {
+				return err
+			}
+
+			return PushApplication(c.Args().First(), c.Args().Get(1), c.Args().Get(2))
 		},
 	}
 }

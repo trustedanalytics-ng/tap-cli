@@ -17,9 +17,9 @@
 package main
 
 import (
-	"os"
-	"github.com/urfave/cli"
 	tapngCli "github.com/trustedanalytics/tapng-cli/cli"
+	"github.com/urfave/cli"
+	"os"
 )
 
 func main() {
@@ -33,6 +33,8 @@ func main() {
 		tapngCli.CatalogCommand(),
 		tapngCli.DeployCommand(),
 		tapngCli.CreateServiceCommand(),
+		tapngCli.PushApplicationCommand(),
+		tapngCli.ListApplicationsCommand(),
 	}
 
 	app.Run(os.Args)

@@ -96,6 +96,18 @@ func PutModel(apiConnector ApiConnector, requestBody interface{}, expectedStatus
 	return nil
 }
 
+func DeleteModel(apiConnector ApiConnector, expectedStatus int) error {
+	status, body, err := RestDELETE(apiConnector.Url, "", apiConnector.BasicAuth, apiConnector.Client)
+	if err != nil {
+		return err
+	}
+
+	if status != expectedStatus {
+		return getWrongStatusError(status, expectedStatus, string(body))
+	}
+	return nil
+}
+
 func getWrongStatusError(status, expectedStatus int, body string) error {
 	return errors.New(fmt.Sprintf("Bad response status: %d, expected status was: % d. Resposne body: %s", status, expectedStatus, body))
 }

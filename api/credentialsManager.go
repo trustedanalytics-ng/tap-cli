@@ -14,12 +14,12 @@ var credsPath string = cliConfigDir + "/credentials.json"
 const PERMISSIONS os.FileMode = 0644
 
 type Credentials struct {
-	Address  string	`json:"address"`
+	Address  string `json:"address"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-func GetCredentials() (Credentials, error){
+func GetCredentials() (Credentials, error) {
 
 	creds := Credentials{}
 

@@ -1,17 +1,18 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"encoding/json"
-	"github.com/trustedanalytics/tapng-console-service/models"
+	"os"
+
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
-	"os"
+	"github.com/trustedanalytics/tapng-console-service/models"
+	templateRepositoryModels "github.com/trustedanalytics/tapng-template-repository/model"
 )
 
-
-func Login(address string, username string, password string) error{
+func Login(address string, username string, password string) error {
 	creds := api.Credentials{}
 	creds.Address = address
 	creds.Username = username
@@ -125,6 +126,71 @@ func CreateInstance(serviceId string) error {
 		fmt.Println(err)
 		return err
 	}
+
+	fmt.Println("OK")
+	return nil
+
+}
+
+func ListApplications() error {
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	applications, err := api.ConnectionConfig.ConsoleServiceApi.ListApplications()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	printApplications(applications)
+	return nil
+}
+
+func PushApplication(blob_path, image_path, template_path string) error {
+
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	blob, err := os.Open(blob_path)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer blob.Close()
+
+	imageBytes, err := ioutil.ReadFile(image_path)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	image := catalogModels.Image{}
+	err = json.Unmarshal(imageBytes, &image)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	templateBytes, err := ioutil.ReadFile(template_path)
+	template := templateRepositoryModels.Template{}
+	err = json.Unmarshal(templateBytes, &template)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	application, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, image, template)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	printApplications([]catalogModels.Application{application})
 
 	fmt.Println("OK")
 	return nil

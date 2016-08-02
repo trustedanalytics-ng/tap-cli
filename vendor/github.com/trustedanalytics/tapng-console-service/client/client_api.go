@@ -21,6 +21,7 @@ type TapConsoleServiceApi interface {
 	CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
 	ListApplications() ([]catalogModels.Application, error)
 	CreateApplication(blob multipart.File, image catalogModels.Image, template templateRepositoryModels.Template) (catalogModels.Application, error)
+	ListServicesInstances() ([]models.ServiceInstance, error)
 }
 
 func NewTapConsoleServiceApiWithBasicAuth(address, username, password string) (*TapConsoleServiceApiConnector, error) {
@@ -72,5 +73,12 @@ func (c *TapConsoleServiceApiConnector) CreateInstance(serviceId string, instanc
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, serviceId))
 	result := &containerBrokerModels.MessageResponse{}
 	err := brokerHttp.AddModel(connector, instance, http.StatusCreated, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) ListServicesInstances() ([]models.ServiceInstance, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances", c.Address))
+	result := &[]models.ServiceInstance{}
+	err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }

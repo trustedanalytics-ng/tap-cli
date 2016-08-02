@@ -110,3 +110,15 @@ func PushApplicationCommand() cli.Command {
 		},
 	}
 }
+
+func ListServicesCommand() cli.Command {
+	return cli.Command{
+		Name:      "services",
+		ArgsUsage: "",
+		Aliases:   []string{"s"},
+		Usage:     "list services",
+		Action: func(c *cli.Context) error {
+			return ListServices()
+		},
+	}
+}

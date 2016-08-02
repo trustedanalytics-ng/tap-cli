@@ -149,6 +149,23 @@ func ListApplications() error {
 	return nil
 }
 
+func ListServices() error {
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	services, err := api.ConnectionConfig.ConsoleServiceApi.ListServicesInstances()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	printServices(services)
+	return nil
+}
+
 func PushApplication(blob_path, image_path, template_path string) error {
 
 	err := api.InitConnection()

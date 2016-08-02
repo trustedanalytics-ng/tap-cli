@@ -35,6 +35,7 @@ func main() {
 		tapngCli.CreateServiceCommand(),
 		tapngCli.PushApplicationCommand(),
 		tapngCli.ListApplicationsCommand(),
+		tapngCli.ListServicesCommand(),
 	}
 
 	app.Run(os.Args)

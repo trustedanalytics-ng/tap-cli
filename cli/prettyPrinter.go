@@ -55,3 +55,16 @@ func printApplications(applications []catalogModels.Application) {
 
 	createAndRenderTable(header, rows)
 }
+
+func printServices(services []consoleServiceModels.ServiceInstance) {
+
+	header := []string{"NAME", "SERVICE", "PLAN", "STATE"}
+	rows := [][]string{}
+
+	for _, service := range services {
+		//TODO: TBI - to be implemented after DPNG-9726
+		rows = append(rows, []string{"TBI", service.ServiceName, service.ServicePlanName, fmt.Sprintf("%s", service.State)})
+	}
+
+	createAndRenderTable(header, rows)
+}

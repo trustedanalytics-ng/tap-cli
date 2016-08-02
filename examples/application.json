@@ -109,24 +109,35 @@
         }
       }
     ],
-    "serviceAccounts": [
+    "ingresses": [
       {
-        "kind": "ServiceAccount",
-        "apiVersion": "v1",
+        "kind": "Ingress",
+        "apiVersion": "extensions/v1beta1",
         "metadata": {
           "name": "$idx_and_short_serviceid",
-          "creationTimestamp": null,
-          "labels": {
-            "catalog_plan_id": "$catalog_plan_id",
-            "catalog_service_id": "$catalog_service_id",
-            "idx_and_short_serviceid": "$idx_and_short_serviceid",
-            "managed_by": "TAP",
-            "org": "$org",
-            "service_id": "$service_id",
-            "space": "$space"
-          }
+          "creationTimestamp": null
         },
-        "secrets": null
+        "spec": {
+          "rules": [
+            {
+              "host": "$idx_and_short_serviceid.$domain_name",
+              "http": {
+                "paths": [
+                  {
+                    "path": "/",
+                    "backend": {
+                      "serviceName": "$idx_and_short_serviceid",
+                      "servicePort": 80
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "status": {
+          "loadBalancer": {}
+        }
       }
     ]
   },

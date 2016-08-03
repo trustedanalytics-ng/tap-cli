@@ -35,6 +35,8 @@ func main() {
 		tapngCli.CatalogCommand(),
 		tapngCli.DeployCommand(),
 		tapngCli.CreateServiceCommand(),
+		tapngCli.BindInstanceCommand(),
+		tapngCli.UnbindInstanceCommand(),
 		tapngCli.PushApplicationCommand(),
 		tapngCli.ListApplicationsCommand(),
 		tapngCli.ListServicesCommand(),

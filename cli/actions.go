@@ -132,6 +132,44 @@ func CreateInstance(serviceId string) error {
 
 }
 
+func BindInstance(srcInstanceId, dstInstanceId string) error {
+
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = api.ConnectionConfig.ConsoleServiceApi.BindInstance(srcInstanceId, dstInstanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("OK")
+	return nil
+
+}
+
+func UnbindInstance(srcInstanceId, dstInstanceId string) error {
+
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = api.ConnectionConfig.ConsoleServiceApi.UnbindInstance(srcInstanceId, dstInstanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("OK")
+	return nil
+
+}
+
 func ListApplications() error {
 	err := api.InitConnection()
 	if err != nil {

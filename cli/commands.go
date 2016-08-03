@@ -82,6 +82,42 @@ func CreateServiceCommand() cli.Command {
 	}
 }
 
+func BindInstanceCommand() cli.Command {
+	return cli.Command{
+		Name:      "bind-instance",
+		ArgsUsage: "<src_instance_id>, <dst_instance_id>",
+		Aliases:   []string{"bind"},
+		Usage:     "bind instance to another",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 2)
+			if err != nil {
+				return err
+			}
+
+			return BindInstance(c.Args().First(), c.Args().Get(1))
+		},
+	}
+}
+
+func UnbindInstanceCommand() cli.Command {
+	return cli.Command{
+		Name:      "unbind-instance",
+		ArgsUsage: "<src_instance_id>, <dst_instance_id>",
+		Aliases:   []string{"unbind"},
+		Usage:     "unbind instance from another",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 2)
+			if err != nil {
+				return err
+			}
+
+			return UnbindInstance(c.Args().First(), c.Args().Get(1))
+		},
+	}
+}
+
 func ListApplicationsCommand() cli.Command {
 	return cli.Command{
 		Name:      "applications",

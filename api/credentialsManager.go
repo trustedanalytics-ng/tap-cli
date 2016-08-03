@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
-
 	"os"
 )
 
@@ -11,7 +10,7 @@ import (
 var cliConfigDir string = os.Getenv("HOME") + "/.tapng-cli"
 var credsPath string = cliConfigDir + "/credentials.json"
 
-const PERMISSIONS os.FileMode = 0644
+const PERMISSIONS os.FileMode = 0744
 
 type Credentials struct {
 	Address  string `json:"address"`

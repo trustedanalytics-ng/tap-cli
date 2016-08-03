@@ -2,11 +2,13 @@ package cli
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/olekukonko/tablewriter"
+
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
 	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
-	"os"
 )
 
 func createAndRenderTable(header []string, rows [][]string) {

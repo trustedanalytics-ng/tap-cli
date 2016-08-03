@@ -17,9 +17,11 @@
 package main
 
 import (
-	tapngCli "github.com/trustedanalytics/tapng-cli/cli"
-	"github.com/urfave/cli"
 	"os"
+
+	"github.com/urfave/cli"
+
+	tapngCli "github.com/trustedanalytics/tapng-cli/cli"
 )
 
 func main() {

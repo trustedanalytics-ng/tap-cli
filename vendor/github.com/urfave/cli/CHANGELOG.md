@@ -3,6 +3,11 @@
 **ATTN**: This project uses [semantic versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Flag type code generation via `go generate`
+- Write to stderr and exit 1 if action returns non-nil error
+- Added support for TOML to the `altsrc` loader
+
 ### Changed
 - Raise minimum tested/supported Go version to 1.2+
 

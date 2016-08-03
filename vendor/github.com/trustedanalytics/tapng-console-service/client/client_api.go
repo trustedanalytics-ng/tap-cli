@@ -22,8 +22,6 @@ type TapConsoleServiceApi interface {
 	ListApplications() ([]catalogModels.Application, error)
 	CreateApplication(blob multipart.File, image catalogModels.Image, template templateRepositoryModels.Template) (catalogModels.Application, error)
 	ListServicesInstances() ([]models.ServiceInstance, error)
-	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
-	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 }
 
 func NewTapConsoleServiceApiWithBasicAuth(address, username, password string) (*TapConsoleServiceApiConnector, error) {
@@ -82,19 +80,5 @@ func (c *TapConsoleServiceApiConnector) ListServicesInstances() ([]models.Servic
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances", c.Address))
 	result := &[]models.ServiceInstance{}
 	err := brokerHttp.GetModel(connector, http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiConnector) BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/bind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
-	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
-	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
 	return *result, err
 }

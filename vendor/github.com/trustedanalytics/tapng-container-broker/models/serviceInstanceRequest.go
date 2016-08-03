@@ -1,9 +1,5 @@
 package models
 
-type CreateInstanceRequest struct {
+type ServiceInstanceRequest struct {
 	IsServiceBroker bool `json:"isServiceBroker"`
-}
-
-type ScaleInstanceRequest struct {
-	Replicas int `json:"replicas"`
 }

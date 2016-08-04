@@ -12,14 +12,18 @@ verify_gopath:
 		exit 1 ;\
 	fi
 
-deps_fetch_newest:
-	$(GOBIN)/govendor remove +all
-	@echo "Update deps used in project to their newest versions"
-	$(GOBIN)/govendor fetch -v +external, +missing
+deps_fetch_specific: bin/govendor
+	@if [ "$(DEP_URL)" = "" ]; then\
+		echo "DEP_URL not set. Run this comand as follow:";\
+		echo " make deps_fetch_specific DEP_URL=github.com/nu7hatch/gouuid";\
+	exit 1 ;\
+	fi
+	@echo "Fetching specific dependency in newest versions"
+	$(GOBIN)/govendor fetch -v $(DEP_URL)
 
-deps_update: verify_gopath
-	$(GOBIN)/govendor remove +all
-	$(GOBIN)/govendor add +external
+deps_update_tapng: verify_gopath
+	$(GOBIN)/govendor update github.com/trustedanalytics/...
+	rm -Rf vendor/github.com/trustedanalytics/tapng-cli
 	@echo "Done"
 
 bin/govendor: verify_gopath
@@ -33,24 +37,30 @@ prepare_dirs:
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tapng-cli
 
-build_anywhere: build_anywhere_linux build_anywhere_win32 build_anywhere_osx
+build_anywhere:
+	$(MAKE) prepare_dirs build_anywhere_linux
+	$(MAKE) prepare_dirs build_anywhere_win32
+	$(MAKE) prepare_dirs build_anywhere_osx
 
 build_anywhere_linux: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
 	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
-	mkdir -p application && rm -f application/tanpng-cli-linux-amd64.elf
+	mkdir -p application && rm -f application/tapng-cli-linux-amd64.elf
 	cp $(GOPATH)/bin/tapng-cli ./application/tap-linux-amd64.elf
 	cp $(GOPATH)/bin/tapng-cli ./application/tap
+	rm -Rf ./temp
 
 build_anywhere_win32: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
 	mkdir -p application
 	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -o ./application/tap.exe -tags netgo $(APP_DIR_LIST)
+	rm -Rf ./temp
 
 build_anywhere_osx: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
 	mkdir -p application
 	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ./application/tap.osx -tags netgo $(APP_DIR_LIST)
+	rm -Rf ./temp

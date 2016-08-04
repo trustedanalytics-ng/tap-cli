@@ -67,14 +67,14 @@ func (c *TapConsoleServiceApiConnector) GetCatalog() ([]models.Service, error) {
 func (c *TapConsoleServiceApiConnector) Deploy(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/deploy", c.Address))
 	result := &catalogModels.Service{}
-	err := brokerHttp.AddModel(connector, serviceWithTemplate, http.StatusCreated, result)
+	err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
 	return *result, err
 }
 
 func (c *TapConsoleServiceApiConnector) CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, serviceId))
 	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, instance, http.StatusCreated, result)
+	err := brokerHttp.PostModel(connector, instance, http.StatusCreated, result)
 	return *result, err
 }
 
@@ -88,13 +88,13 @@ func (c *TapConsoleServiceApiConnector) ListServicesInstances() ([]models.Servic
 func (c *TapConsoleServiceApiConnector) BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/bind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
 	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
+	err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 
 func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
 	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
+	err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
 	return *result, err
 }

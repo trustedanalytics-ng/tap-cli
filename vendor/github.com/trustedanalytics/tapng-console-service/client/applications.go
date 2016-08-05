@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 
+	"errors"
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-console-service/models"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
@@ -51,8 +52,12 @@ func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, m
 		logger.Error("ERROR: Make http request POST", err)
 		return result, err
 	}
-	json.Unmarshal(data, &result)
 
+	if resp.StatusCode != http.StatusCreated {
+		return result, errors.New(string(data))
+	}
+
+	json.Unmarshal(data, &result)
 	return result, nil
 }
 

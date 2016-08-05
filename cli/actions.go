@@ -243,7 +243,7 @@ func PushApplication(blob_path string) error {
 
 	application, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, manifest)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("ERROR: %v", err.Error())
 		return err
 	}
 

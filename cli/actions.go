@@ -224,6 +224,14 @@ func ScaleApplication(instanceId string, replication int) error {
 	return nil
 }
 
+func StartApplication(instanceId string) error {
+	return ScaleApplication(instanceId, 1)
+}
+
+func StopApplication(instanceId string) error {
+	return ScaleApplication(instanceId, 0)
+}
+
 func PushApplication(blob_path string) error {
 
 	err := api.InitConnection()

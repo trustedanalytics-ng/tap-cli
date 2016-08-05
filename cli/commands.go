@@ -183,3 +183,37 @@ func ScaleApplicationCommand() cli.Command {
 		},
 	}
 }
+
+func StartApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "start",
+		ArgsUsage: "<instanceId>",
+		Usage:     "start application with single instance",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return StartApplication(c.Args().First())
+		},
+	}
+}
+
+func StopApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "stop",
+		ArgsUsage: "<instanceId>",
+		Usage:     "stop all application instances",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return StopApplication(c.Args().First())
+		},
+	}
+}

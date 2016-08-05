@@ -40,6 +40,7 @@ func main() {
 		tapngCli.PushApplicationCommand(),
 		tapngCli.ListApplicationsCommand(),
 		tapngCli.ListServicesCommand(),
+		tapngCli.ScaleApplicationCommand(),
 	}
 
 	app.Run(os.Args)

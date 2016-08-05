@@ -207,6 +207,23 @@ func ListServices() error {
 	return nil
 }
 
+func ScaleApplication(instanceId string, replication int) error {
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	message, err := api.ConnectionConfig.ConsoleServiceApi.ScaleInstance(instanceId, replication)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println(message.Message)
+
+	return nil
+}
+
 func PushApplication(blob_path string) error {
 
 	err := api.InitConnection()

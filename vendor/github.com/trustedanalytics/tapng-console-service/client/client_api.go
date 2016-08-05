@@ -23,6 +23,7 @@ type TapConsoleServiceApi interface {
 	ListServicesInstances() ([]models.ServiceInstance, error)
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
+	ScaleInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
 }
 
 func NewTapConsoleServiceApiWithBasicAuth(address, username, password string) (*TapConsoleServiceApiConnector, error) {
@@ -95,5 +96,15 @@ func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanc
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
 	result := &containerBrokerModels.MessageResponse{}
 	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) ScaleInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s/scale", c.Address, instanceId))
+	body := containerBrokerModels.ScaleInstanceRequest{
+		Replicas: replication,
+	}
+	result := &containerBrokerModels.MessageResponse{}
+	err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
 	return *result, err
 }

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/urfave/cli"
+	"strconv"
 )
 
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
@@ -156,6 +157,29 @@ func ListServicesCommand() cli.Command {
 		Usage:     "list services",
 		Action: func(c *cli.Context) error {
 			return ListServices()
+		},
+	}
+}
+
+func ScaleApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "scale",
+		ArgsUsage: "<instanceId> <instances>",
+		Aliases:   []string{"sc"},
+		Usage:     "scale application",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 2)
+			if err != nil {
+				return err
+			}
+
+			i, errr := strconv.Atoi(c.Args().Get(1))
+			if errr != nil {
+				return cli.NewExitError(errr.Error(), -1)
+			}
+
+			return ScaleApplication(c.Args().First(), i)
 		},
 	}
 }

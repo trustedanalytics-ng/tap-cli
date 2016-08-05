@@ -68,17 +68,17 @@ func CreateOfferingCommand() cli.Command {
 func CreateServiceCommand() cli.Command {
 	return cli.Command{
 		Name:      "create-service",
-		ArgsUsage: "<service_id>",
+		ArgsUsage: "<service_id> <plan_id> <custom_name>",
 		Aliases:   []string{"cs"},
 		Usage:     "create instance of service",
 		Action: func(c *cli.Context) error {
 
-			err := validateArgs(c, 1)
+			err := validateArgs(c, 3)
 			if err != nil {
 				return err
 			}
 
-			return CreateInstance(c.Args().First())
+			return CreateInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
 		},
 	}
 }

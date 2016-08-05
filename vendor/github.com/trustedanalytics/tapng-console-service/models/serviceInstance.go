@@ -6,6 +6,6 @@ import (
 
 type ServiceInstance struct {
 	catalogModels.Instance
-	ServiceName     string `json:"name"`
+	ServiceName     string `json:"serviceName"`
 	ServicePlanName string `json:"planName"`
 }

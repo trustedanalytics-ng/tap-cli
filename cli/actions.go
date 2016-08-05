@@ -110,7 +110,7 @@ func CreateOffer(jsonFilename string) error {
 	return nil
 }
 
-func CreateInstance(serviceId string) error {
+func CreateInstance(serviceId, planId, customName string) error {
 
 	err := api.InitConnection()
 	if err != nil {
@@ -120,6 +120,9 @@ func CreateInstance(serviceId string) error {
 
 	instanceBody := models.Instance{}
 	instanceBody.Type = catalogModels.InstanceTypeService
+	planMeta := catalogModels.Metadata{Id:"plan", Value:planId,}
+	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
+	instanceBody.Name = customName
 
 	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateInstance(serviceId, instanceBody)
 	if err != nil {

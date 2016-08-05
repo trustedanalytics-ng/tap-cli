@@ -134,16 +134,16 @@ func ListApplicationsCommand() cli.Command {
 func PushApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "push",
-		ArgsUsage: "<archive_path> <image_json_path> <template_json_path>",
-		Usage:     "create application from archive",
+		ArgsUsage: "<archive_path>",
+		Usage:     "create application from archive, manifest should be in current working directory",
 		Action: func(c *cli.Context) error {
 
-			err := validateArgs(c, 3)
+			err := validateArgs(c, 1)
 			if err != nil {
 				return err
 			}
 
-			return PushApplication(c.Args().First(), c.Args().Get(1), c.Args().Get(2))
+			return PushApplication(c.Args().First())
 		},
 	}
 }

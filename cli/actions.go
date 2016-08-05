@@ -9,7 +9,7 @@ import (
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
 	"github.com/trustedanalytics/tapng-console-service/models"
-	templateRepositoryModels "github.com/trustedanalytics/tapng-template-repository/model"
+	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
 )
 
 func Login(address string, username string, password string) error {
@@ -207,7 +207,7 @@ func ListServices() error {
 	return nil
 }
 
-func PushApplication(blob_path, image_path, template_path string) error {
+func PushApplication(blob_path string) error {
 
 	err := api.InitConnection()
 	if err != nil {
@@ -222,27 +222,26 @@ func PushApplication(blob_path, image_path, template_path string) error {
 	}
 	defer blob.Close()
 
-	imageBytes, err := ioutil.ReadFile(image_path)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	image := catalogModels.Image{}
-	err = json.Unmarshal(imageBytes, &image)
+	pwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	templateBytes, err := ioutil.ReadFile(template_path)
-	template := templateRepositoryModels.Template{}
-	err = json.Unmarshal(templateBytes, &template)
+	manifestBytes, err := ioutil.ReadFile(fmt.Sprintf("%v/manifest.json", pwd))
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	application, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, image, template)
+	manifest := consoleServiceModels.Manifest{}
+	err = json.Unmarshal(manifestBytes, &manifest)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	application, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, manifest)
 	if err != nil {
 		fmt.Println(err)
 		return err

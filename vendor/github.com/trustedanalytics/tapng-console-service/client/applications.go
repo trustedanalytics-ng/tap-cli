@@ -12,8 +12,8 @@ import (
 	"net/http"
 
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
+	"github.com/trustedanalytics/tapng-console-service/models"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
-	templateRepositoryModels "github.com/trustedanalytics/tapng-template-repository/model"
 	"io/ioutil"
 )
 
@@ -24,13 +24,12 @@ func (c *TapConsoleServiceApiConnector) ListApplications() ([]catalogModels.Appl
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, image catalogModels.Image,
-	template templateRepositoryModels.Template) (catalogModels.Application, error) {
+func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {
 
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
 	result := catalogModels.Application{}
 
-	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, image, template)
+	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
 	if err != nil {
 		logger.Error("ERROR: Preparing application creation form failed", err)
 		return result, err
@@ -57,8 +56,7 @@ func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, i
 	return result, nil
 }
 
-func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob multipart.File, image catalogModels.Image,
-	template templateRepositoryModels.Template) (string, *bytes.Buffer, error) {
+func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob multipart.File, manifest models.Manifest) (string, *bytes.Buffer, error) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 
@@ -66,11 +64,7 @@ func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob mult
 	if err != nil {
 		return "", bodyBuf, err
 	}
-	c.createImageMetaFormFile(image, bodyWriter)
-	if err != nil {
-		return "", bodyBuf, err
-	}
-	c.createTemplateMetaFormFile(template, bodyWriter)
+	c.createManifestFormFile(manifest, bodyWriter)
 	if err != nil {
 		return "", bodyBuf, err
 	}
@@ -95,46 +89,24 @@ func (c *TapConsoleServiceApiConnector) createBlobFormFile(blob multipart.File, 
 	return nil
 }
 
-func (c *TapConsoleServiceApiConnector) createImageMetaFormFile(image catalogModels.Image,
+func (c *TapConsoleServiceApiConnector) createManifestFormFile(manifest models.Manifest,
 	bodyWriter *multipart.Writer) error {
 
-	imageMetaWriter, err := bodyWriter.CreateFormFile("image", "image.json")
+	manifestWriter, err := bodyWriter.CreateFormFile("manifest", "manifest.json")
 	if err != nil {
-		logger.Error("Error creating image file field")
+		logger.Error("Error creating manifest file field")
 		return err
 	}
-	imageBytes, err := json.Marshal(image)
+	manifestBytes, err := json.Marshal(manifest)
 	if err != nil {
-		logger.Error("Error marshalling image.json")
+		logger.Error("Error marshalling manifest.json")
 		return err
 	}
-	size, err := imageMetaWriter.Write(imageBytes)
+	size, err := manifestWriter.Write(manifestBytes)
 	if err != nil {
-		logger.Error("Error writing image metadata to buffer")
+		logger.Error("Error writing manifest to buffer")
 		return err
 	}
-	logger.Infof("Written %v bytes of image to buffer", size)
-	return nil
-}
-
-func (c *TapConsoleServiceApiConnector) createTemplateMetaFormFile(template templateRepositoryModels.Template,
-	bodyWriter *multipart.Writer) error {
-
-	templateWriter, err := bodyWriter.CreateFormFile("template", "template.json")
-	if err != nil {
-		logger.Error("Error creating image file field")
-		return err
-	}
-	templateBytes, err := json.Marshal(template)
-	if err != nil {
-		logger.Error("Error marshalling template.json")
-		return err
-	}
-	size, err := templateWriter.Write(templateBytes)
-	if err != nil {
-		logger.Error("Error writing template metadata to buffer")
-		return err
-	}
-	logger.Infof("Written %v bytes of template to buffer", size)
+	logger.Infof("Written %v bytes of manifest to buffer", size)
 	return nil
 }

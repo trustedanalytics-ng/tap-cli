@@ -33,7 +33,7 @@ func main() {
 		tapngCli.LoginCommand(),
 		tapngCli.TargetCommand(),
 		tapngCli.CatalogCommand(),
-		tapngCli.DeployCommand(),
+		tapngCli.CreateOfferingCommand(),
 		tapngCli.CreateServiceCommand(),
 		tapngCli.BindInstanceCommand(),
 		tapngCli.UnbindInstanceCommand(),

@@ -17,7 +17,7 @@ var logger = logger_wrapper.InitLogger("client")
 
 type TapConsoleServiceApi interface {
 	GetCatalog() ([]models.Service, error)
-	Deploy(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
+	CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
 	CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
 	ListApplications() ([]catalogModels.Application, error)
 	CreateApplication(blob multipart.File, image catalogModels.Image, template templateRepositoryModels.Template) (catalogModels.Application, error)
@@ -64,8 +64,8 @@ func (c *TapConsoleServiceApiConnector) GetCatalog() ([]models.Service, error) {
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) Deploy(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/deploy", c.Address))
+func (c *TapConsoleServiceApiConnector) CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/offering", c.Address))
 	result := &catalogModels.Service{}
 	err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
 	return *result, err

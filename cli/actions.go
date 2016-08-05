@@ -78,7 +78,7 @@ func Target() error {
 	return nil
 }
 
-func Deploy(jsonFilename string) error {
+func CreateOffer(jsonFilename string) error {
 
 	err := api.InitConnection()
 	if err != nil {
@@ -100,7 +100,7 @@ func Deploy(jsonFilename string) error {
 		return err
 	}
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.Deploy(serviceWithTemplate)
+	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateOffer(serviceWithTemplate)
 	if err != nil {
 		fmt.Println(err)
 		return err

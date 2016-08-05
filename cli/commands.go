@@ -48,18 +48,19 @@ func CatalogCommand() cli.Command {
 	}
 }
 
-func DeployCommand() cli.Command {
+func CreateOfferingCommand() cli.Command {
 	return cli.Command{
-		Name:      "deploy",
+		Name:      "create-offering",
+		Aliases:   []string{"co"},
 		ArgsUsage: "<path to json with service definition>",
-		Usage:     "create new service",
+		Usage:     "create new offering",
 		Action: func(c *cli.Context) error {
 			err := validateArgs(c, 1)
 			if err != nil {
 				return err
 			}
 
-			return Deploy(c.Args().First())
+			return CreateOffer(c.Args().First())
 		},
 	}
 }

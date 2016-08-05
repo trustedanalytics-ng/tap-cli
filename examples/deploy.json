@@ -200,7 +200,7 @@
     "hooks": null
   },
   "service": {
-    "name": "logstash service",
+    "name": "logstash",
     "description": "it's finally logstash!",
     "metadata": [],
     "bindable": true,

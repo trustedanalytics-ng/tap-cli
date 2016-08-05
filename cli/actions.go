@@ -241,13 +241,13 @@ func PushApplication(blob_path string) error {
 		return err
 	}
 
-	application, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, manifest)
+	appInstance, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, manifest)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
 	}
 
-	printApplications([]catalogModels.Application{application})
+	printAppInstance(appInstance, manifest.Instances)
 
 	fmt.Println("OK")
 	return nil

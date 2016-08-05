@@ -58,6 +58,16 @@ func printApplications(applications []catalogModels.Application) {
 	createAndRenderTable(header, rows)
 }
 
+func printAppInstance(instance catalogModels.Instance, replication int) {
+
+	header := []string{"INSTANCE_NAME", "INSTANCE_ID", "REPLICATION"}
+	rows := [][]string{
+		[]string{instance.Name, instance.Id, fmt.Sprintf("%d", replication)},
+	}
+
+	createAndRenderTable(header, rows)
+}
+
 func printServices(services []consoleServiceModels.ServiceInstance) {
 
 	header := []string{"NAME", "SERVICE", "PLAN", "STATE"}

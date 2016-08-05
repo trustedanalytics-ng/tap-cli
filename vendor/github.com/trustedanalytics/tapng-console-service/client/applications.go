@@ -25,10 +25,10 @@ func (c *TapConsoleServiceApiConnector) ListApplications() ([]catalogModels.Appl
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {
+func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, manifest models.Manifest) (catalogModels.Instance, error) {
 
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
-	result := catalogModels.Application{}
+	result := catalogModels.Instance{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
 	if err != nil {

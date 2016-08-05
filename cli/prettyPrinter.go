@@ -64,7 +64,6 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 	rows := [][]string{}
 
 	for _, service := range services {
-		//TODO: TBI - to be implemented after DPNG-9726
 		rows = append(rows, []string{service.Name, service.ServiceName, service.ServicePlanName, fmt.Sprintf("%s", service.State)})
 	}
 

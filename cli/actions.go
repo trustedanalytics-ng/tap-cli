@@ -110,9 +110,15 @@ func CreateOffer(jsonFilename string) error {
 	return nil
 }
 
-func CreateInstance(serviceId, planId, customName string) error {
+func CreateInstance(serviceName, planName, customName string) error {
 
 	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	serviceId, planId, err := convert(serviceName, planName)
 	if err != nil {
 		fmt.Println(err)
 		return err

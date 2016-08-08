@@ -1,7 +1,11 @@
 package models
 
+import (
+	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
+)
+
 type Manifest struct {
-	Name      string `json:"name"`
-	ImageType string `json:"type"`
-	Instances int    `json:"instances"`
+	Name      string                  `json:"name"`
+	ImageType catalogModels.ImageType `json:"type"`
+	Instances int                     `json:"instances"`
 }

@@ -45,10 +45,10 @@ build_anywhere:
 build_anywhere_linux: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-cli/... | grep -v /vendor/))
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -tags netgo $(APP_DIR_LIST)
 	mkdir -p application && rm -f application/tapng-cli-linux-amd64.elf
-	cp $(GOPATH)/bin/tapng-cli ./application/tap-linux-amd64.elf
-	cp $(GOPATH)/bin/tapng-cli ./application/tap
+	cp ./tapng-cli ./application/tap-linux-amd64.elf
+	cp ./tapng-cli ./application/tap
 	rm -Rf ./temp
 
 build_anywhere_win32: prepare_dirs

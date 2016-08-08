@@ -5,7 +5,6 @@ import (
 	"github.com/trustedanalytics/tapng-cli/api"
 )
 
-
 func convert(serviceName, planName string) (string, string, error) {
 
 	catalog, err := api.ConnectionConfig.ConsoleServiceApi.GetCatalog()
@@ -27,6 +26,5 @@ func convert(serviceName, planName string) (string, string, error) {
 	}
 
 	return "", "", errors.New("cannot find service: '" + serviceName + "'")
-
 
 }

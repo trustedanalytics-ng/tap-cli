@@ -37,7 +37,7 @@ type KubernetesBlueprint struct {
 	Id                    int
 	SecretsJson           []string
 	DeploymentJson        []string
-	Ingresses             []string
+	IngressJson           []string
 	ServiceJson           []string
 	ServiceAcccountJson   []string
 	PersistentVolumeClaim []string

@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -67,14 +68,14 @@ func (c *TapConsoleServiceApiConnector) GetCatalog() ([]models.Service, error) {
 func (c *TapConsoleServiceApiConnector) CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/offering", c.Address))
 	result := &catalogModels.Service{}
-	err := brokerHttp.AddModel(connector, serviceWithTemplate, http.StatusCreated, result)
+	err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
 	return *result, err
 }
 
 func (c *TapConsoleServiceApiConnector) CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, serviceId))
 	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, instance, http.StatusCreated, result)
+	err := brokerHttp.PostModel(connector, instance, http.StatusCreated, result)
 	return *result, err
 }
 
@@ -82,20 +83,6 @@ func (c *TapConsoleServiceApiConnector) ListServicesInstances() ([]models.Servic
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances", c.Address))
 	result := &[]models.ServiceInstance{}
 	err := brokerHttp.GetModel(connector, http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiConnector) BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/bind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
-	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
-	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.AddModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 
@@ -107,4 +94,27 @@ func (c *TapConsoleServiceApiConnector) ScaleInstance(instanceId string, replica
 	result := &containerBrokerModels.MessageResponse{}
 	err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
 	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/bind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) GetConsoleServiceHealth() error {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/healthz", c.Address))
+	status, _, err := brokerHttp.RestGET(connector.Url, connector.BasicAuth, connector.Client)
+	if status != http.StatusOK {
+		err = errors.New("Invalid health status: " + string(status))
+	}
+	return err
 }

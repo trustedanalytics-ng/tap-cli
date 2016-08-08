@@ -120,7 +120,7 @@ func CreateInstance(serviceId, planId, customName string) error {
 
 	instanceBody := models.Instance{}
 	instanceBody.Type = catalogModels.InstanceTypeService
-	planMeta := catalogModels.Metadata{Id:"plan", Value:planId,}
+	planMeta := catalogModels.Metadata{Id: "plan", Value: planId}
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
 
@@ -271,6 +271,10 @@ func PushApplication(blob_path string) error {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
 	}
+
+	printAppInstance(appInstance, 1)
+
+	ScaleApplication(appInstance.Id, manifest.Instances)
 
 	printAppInstance(appInstance, manifest.Instances)
 

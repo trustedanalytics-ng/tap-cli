@@ -141,6 +141,30 @@ func CreateInstance(serviceName, planName, customName string) error {
 
 }
 
+func DeleteInstance(serviceName string) error {
+
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(serviceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = api.ConnectionConfig.ConsoleServiceApi.DeleteInstance(instanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("OK")
+	return nil
+}
+
 func BindInstance(srcInstanceId, dstInstanceId string) error {
 
 	err := api.InitConnection()

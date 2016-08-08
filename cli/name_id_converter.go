@@ -26,5 +26,21 @@ func convert(serviceName, planName string) (string, string, error) {
 	}
 
 	return "", "", errors.New("cannot find service: '" + serviceName + "'")
+}
 
+func convertInstance(instanceName string) (string, error) {
+
+	servicesInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServicesInstances()
+	if err != nil {
+		return "", err
+	}
+
+	for _, instance := range servicesInstances {
+
+		if instance.Name == instanceName {
+			return instance.Id, nil
+		}
+	}
+
+	return "", errors.New("cannot find instance with name: " + instanceName)
 }

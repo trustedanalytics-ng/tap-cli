@@ -26,8 +26,8 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "TAPNG CLI"
-	app.Usage = "client for managing TAPNG"
+	app.Name = "TAP CLI"
+	app.Usage = "client for managing TAP"
 
 	app.Commands = []cli.Command{
 		tapngCli.LoginCommand(),
@@ -35,6 +35,7 @@ func main() {
 		tapngCli.CatalogCommand(),
 		tapngCli.CreateOfferingCommand(),
 		tapngCli.CreateServiceCommand(),
+		tapngCli.DeleteServiceCommand(),
 		tapngCli.BindInstanceCommand(),
 		tapngCli.UnbindInstanceCommand(),
 		tapngCli.PushApplicationCommand(),

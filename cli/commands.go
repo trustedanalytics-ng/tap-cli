@@ -84,6 +84,23 @@ func CreateServiceCommand() cli.Command {
 	}
 }
 
+func DeleteServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "delete-service",
+		ArgsUsage: "<service_custom_name>",
+		Aliases:   []string{"ds"},
+		Usage:     "delete instance of service",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+			return DeleteInstance(c.Args().Get(0))
+		},
+	}
+}
+
 func BindInstanceCommand() cli.Command {
 	return cli.Command{
 		Name:      "bind-instance",

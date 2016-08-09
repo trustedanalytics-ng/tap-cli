@@ -304,11 +304,33 @@ func PushApplication(blob_path string) error {
 
 	printAppInstance(appInstance, 1)
 
-	ScaleApplication(appInstance.Id, manifest.Instances)
-
-	printAppInstance(appInstance, manifest.Instances)
+	if manifest.Instances != 1 {
+		ScaleApplication(appInstance.Id, manifest.Instances)
+		printAppInstance(appInstance, manifest.Instances)
+	}
 
 	fmt.Println("OK")
 	return nil
+}
 
+func GetInstanceLogs(instanceId string) error {
+
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	logs, err := api.ConnectionConfig.ConsoleServiceApi.GetInstanceLogs(instanceId)
+	if err != nil {
+		fmt.Printf("ERROR: %v", err.Error())
+		return err
+	}
+
+	for container, log := range logs {
+		fmt.Printf("%s:\n\n%s\n", container, log)
+	}
+
+	fmt.Println("OK")
+	return nil
 }

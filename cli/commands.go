@@ -234,3 +234,21 @@ func StopApplicationCommand() cli.Command {
 		},
 	}
 }
+
+func GetInstanceLogsCommand() cli.Command {
+	return cli.Command{
+		Name:      "logs",
+		ArgsUsage: "<instanceId>",
+		Aliases:   []string{"log"},
+		Usage:     "get logs for all containers in instance",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return GetInstanceLogs(c.Args().First())
+		},
+	}
+}

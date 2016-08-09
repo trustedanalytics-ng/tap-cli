@@ -26,6 +26,7 @@ type TapConsoleServiceApi interface {
 	ListApplications() ([]catalogModels.Application, error)
 	ListServicesInstances() ([]models.ServiceInstance, error)
 	ScaleInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
+	GetInstanceLogs(instanceId string) (map[string]string, error)
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 }
 
@@ -127,4 +128,9 @@ func (c *TapConsoleServiceApiConnector) UnbindInstance(srcInstanceId, dstInstanc
 	return *result, err
 }
 
-
+func (c *TapConsoleServiceApiConnector) GetInstanceLogs(instanceId string) (map[string]string, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s/logs", c.Address, instanceId))
+	result := make(map[string]string)
+	err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	return result, err
+}

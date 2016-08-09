@@ -141,10 +141,10 @@
 			"revisionTime": "2016-08-08T10:40:53Z"
 		},
 		{
-			"checksumSHA1": "/sED9fBgLfeEWDtZtREZFm0QwfE=",
+			"checksumSHA1": "MBvE1GakmUXNZ74g8AcfYm9Ar+0=",
 			"path": "github.com/trustedanalytics/tapng-console-service/client",
-			"revision": "30277938f020530173295ed161791ed490f888ba",
-			"revisionTime": "2016-08-05T14:24:53Z"
+			"revision": "30c5159b1c7b154fa0431c2d34a968441e3b1264",
+			"revisionTime": "2016-08-08T14:34:26Z"
 		},
 		{
 			"checksumSHA1": "TBB/NKxbIUIGUkRN/YKjw7zuobc=",

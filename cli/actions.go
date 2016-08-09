@@ -334,3 +334,20 @@ func GetInstanceLogs(instanceId string) error {
 	fmt.Println("OK")
 	return nil
 }
+
+func DeleteApplication(instanceId string) error {
+	err := api.InitConnection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = api.ConnectionConfig.ConsoleServiceApi.DeleteApplication(instanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("OK")
+	return nil
+}

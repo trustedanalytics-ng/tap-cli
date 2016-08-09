@@ -235,6 +235,24 @@ func StopApplicationCommand() cli.Command {
 	}
 }
 
+func DeleteApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "delete",
+		ArgsUsage: "<instanceId>",
+		Aliases:   []string{"d"},
+		Usage:     "delete instance",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return DeleteApplication(c.Args().First())
+		},
+	}
+}
+
 func GetInstanceLogsCommand() cli.Command {
 	return cli.Command{
 		Name:      "logs",

@@ -115,3 +115,9 @@ func (c *TapConsoleServiceApiConnector) createManifestFormFile(manifest models.M
 	logger.Infof("Written %v bytes of manifest to buffer", size)
 	return nil
 }
+
+func (c *TapConsoleServiceApiConnector) DeleteApplication(instanceId string) error {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+	err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+	return err
+}

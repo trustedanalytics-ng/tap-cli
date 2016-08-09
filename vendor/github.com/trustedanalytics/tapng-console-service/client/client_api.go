@@ -18,10 +18,11 @@ var logger = logger_wrapper.InitLogger("client")
 type TapConsoleServiceApi interface {
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 	CreateApplication(blob multipart.File, manifest models.Manifest) (catalogModels.Instance, error)
-	CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
-	CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
-	DeleteInstance(instanceId string) error
+	DeleteApplication(instanceId string) error
 	GetCatalog() ([]models.Service, error)
+	CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
+	CreateInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
+	DeleteInstance(instanceId string) error
 	GetConsoleServiceHealth() error
 	ListApplications() ([]catalogModels.Application, error)
 	ListServicesInstances() ([]models.ServiceInstance, error)
@@ -82,12 +83,6 @@ func (c *TapConsoleServiceApiConnector) CreateOffer(serviceWithTemplate models.S
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) DeleteInstance(instanceId string) error {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, instanceId))
-	err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
-	return err
-}
-
 func (c *TapConsoleServiceApiConnector) GetCatalog() ([]models.Service, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/catalog", c.Address))
 	result := &[]models.Service{}
@@ -133,4 +128,9 @@ func (c *TapConsoleServiceApiConnector) GetInstanceLogs(instanceId string) (map[
 	result := make(map[string]string)
 	err := brokerHttp.GetModel(connector, http.StatusOK, &result)
 	return result, err
+}
+
+func (c *TapConsoleServiceApiConnector) DeleteInstance(instanceId string) error {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/instances/%s", c.Address, instanceId))
+	return brokerHttp.DeleteModel(connector, http.StatusNoContent)
 }

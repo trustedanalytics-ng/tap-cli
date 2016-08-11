@@ -12,23 +12,16 @@ import (
 	"net/http"
 
 	"errors"
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-console-service/models"
+	containerBrokerModels "github.com/trustedanalytics/tapng-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
 	"io/ioutil"
 )
 
-func (c *TapConsoleServiceApiConnector) ListApplications() ([]catalogModels.Application, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
-	result := &[]catalogModels.Application{}
-	err := brokerHttp.GetModel(connector, http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, manifest models.Manifest) (catalogModels.Instance, error) {
+func (c *TapConsoleServiceApiConnector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error) {
 
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
-	result := catalogModels.Instance{}
+	result := models.ApplicationInstance{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
 	if err != nil {
@@ -59,6 +52,29 @@ func (c *TapConsoleServiceApiConnector) CreateApplication(blob multipart.File, m
 
 	json.Unmarshal(data, &result)
 	return result, nil
+}
+
+func (c *TapConsoleServiceApiConnector) DeleteApplicationInstance(instanceId string) error {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+	err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+	return err
+}
+
+func (c *TapConsoleServiceApiConnector) ListApplicationInstances() ([]models.ApplicationInstance, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
+	result := &[]models.ApplicationInstance{}
+	err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiConnector) ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s/scale", c.Address, instanceId))
+	body := containerBrokerModels.ScaleInstanceRequest{
+		Replicas: replication,
+	}
+	result := &containerBrokerModels.MessageResponse{}
+	err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	return *result, err
 }
 
 func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob multipart.File, manifest models.Manifest) (string, *bytes.Buffer, error) {

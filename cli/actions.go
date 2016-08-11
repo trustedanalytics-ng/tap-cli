@@ -110,7 +110,7 @@ func CreateOffer(jsonFilename string) error {
 	return nil
 }
 
-func CreateInstance(serviceName, planName, customName string) error {
+func CreateServiceInstance(serviceName, planName, customName string) error {
 
 	err := api.InitConnection()
 	if err != nil {
@@ -130,7 +130,7 @@ func CreateInstance(serviceName, planName, customName string) error {
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateInstance(serviceId, instanceBody)
+	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateServiceInstance(serviceId, instanceBody)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -155,7 +155,7 @@ func DeleteInstance(serviceName string) error {
 		return err
 	}
 
-	err = api.ConnectionConfig.ConsoleServiceApi.DeleteInstance(instanceId)
+	err = api.ConnectionConfig.ConsoleServiceApi.DeleteServiceInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -210,13 +210,13 @@ func ListApplications() error {
 		return err
 	}
 
-	applications, err := api.ConnectionConfig.ConsoleServiceApi.ListApplications()
+	applicationInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListApplicationInstances()
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	printApplications(applications)
+	printApplicationInstances(applicationInstances)
 	return nil
 }
 
@@ -227,7 +227,7 @@ func ListServices() error {
 		return err
 	}
 
-	services, err := api.ConnectionConfig.ConsoleServiceApi.ListServicesInstances()
+	services, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -244,7 +244,7 @@ func ScaleApplication(instanceId string, replication int) error {
 		return err
 	}
 
-	message, err := api.ConnectionConfig.ConsoleServiceApi.ScaleInstance(instanceId, replication)
+	message, err := api.ConnectionConfig.ConsoleServiceApi.ScaleApplicationInstance(instanceId, replication)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -296,17 +296,17 @@ func PushApplication(blob_path string) error {
 		return err
 	}
 
-	appInstance, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplication(blob, manifest)
+	appInstance, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplicationInstance(blob, manifest)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
 	}
 
-	printAppInstance(appInstance, 1)
+	printApplicationInstances([]models.ApplicationInstance{appInstance})
 
 	if manifest.Instances != 1 {
 		ScaleApplication(appInstance.Id, manifest.Instances)
-		printAppInstance(appInstance, manifest.Instances)
+		printApplicationInstances([]models.ApplicationInstance{appInstance})
 	}
 
 	fmt.Println("OK")
@@ -342,7 +342,7 @@ func DeleteApplication(instanceId string) error {
 		return err
 	}
 
-	err = api.ConnectionConfig.ConsoleServiceApi.DeleteApplication(instanceId)
+	err = api.ConnectionConfig.ConsoleServiceApi.DeleteApplicationInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err

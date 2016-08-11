@@ -79,7 +79,7 @@ func CreateServiceCommand() cli.Command {
 				return err
 			}
 
-			return CreateInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
+			return CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
 		},
 	}
 }

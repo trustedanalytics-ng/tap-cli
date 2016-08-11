@@ -30,7 +30,7 @@ func convert(serviceName, planName string) (string, string, error) {
 
 func convertInstance(instanceName string) (string, error) {
 
-	servicesInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServicesInstances()
+	servicesInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
 	if err != nil {
 		return "", err
 	}

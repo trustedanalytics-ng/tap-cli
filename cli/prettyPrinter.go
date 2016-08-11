@@ -3,10 +3,10 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
 	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
 )
@@ -46,23 +46,13 @@ func printCredentials(creds api.Credentials) {
 	createAndRenderTable(header, rows)
 }
 
-func printApplications(applications []catalogModels.Application) {
+func printApplicationInstances(applications []consoleServiceModels.ApplicationInstance) {
 
-	header := []string{"APP_ID", "IMAGE_ID", "TEMPLATE_ID", "REPLICATION"}
+	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION"}
 	rows := [][]string{}
 
 	for _, app := range applications {
-		rows = append(rows, []string{app.Id, app.ImageId, app.TemplateId, fmt.Sprintf("%d", app.Replication)})
-	}
-
-	createAndRenderTable(header, rows)
-}
-
-func printAppInstance(instance catalogModels.Instance, replication int) {
-
-	header := []string{"INSTANCE_NAME", "INSTANCE_ID", "REPLICATION"}
-	rows := [][]string{
-		[]string{instance.Name, instance.Id, fmt.Sprintf("%d", replication)},
+		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State), strconv.Itoa(app.Replication)})
 	}
 
 	createAndRenderTable(header, rows)

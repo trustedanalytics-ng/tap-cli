@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/urfave/cli"
+	"os"
 	"strconv"
 )
 
@@ -152,13 +154,20 @@ func ListApplicationsCommand() cli.Command {
 func PushApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "push",
-		ArgsUsage: "<archive_path>",
-		Usage:     "create application from archive, manifest should be in current working directory",
+		ArgsUsage: "(archive_path)",
+		Usage: "create application from archive provided or from compressed current directory by default,\n" +
+			"\tmanifest should be in current working directory",
 		Action: func(c *cli.Context) error {
+
+			if _, err := os.Stat("manifest.json"); os.IsNotExist(err) {
+				fmt.Println("manifest.json does dot exist")
+				fmt.Println("Create one with metadata about your application.")
+				return err
+			}
 
 			err := validateArgs(c, 1)
 			if err != nil {
-				return err
+				return CompressCwdAndPushAsApplication()
 			}
 
 			return PushApplication(c.Args().First())

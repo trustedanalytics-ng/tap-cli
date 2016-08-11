@@ -313,6 +313,26 @@ func PushApplication(blob_path string) error {
 	return nil
 }
 
+func CompressCwdAndPushAsApplication() error {
+	folder, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	archivePath, err := createApplicationArchive(folder)
+	if err != nil {
+		return err
+	}
+	err = PushApplication(archivePath)
+	err2 := os.Remove(archivePath)
+	if err != nil {
+		return err
+	}
+	if err2 != nil {
+		return err2
+	}
+	return nil
+}
+
 func GetInstanceLogs(instanceId string) error {
 
 	err := api.InitConnection()

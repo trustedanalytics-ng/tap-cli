@@ -1,0 +1,284 @@
+{
+  "template": {
+    "body": {
+      "componentType": "ServiceBroker",
+      "persistentVolumeClaims": null,
+      "deployments": [
+        {
+          "kind": "Deployment",
+          "apiVersion": "extensions/v1beta1",
+          "metadata": {
+            "name": "$idx_and_short_serviceid",
+            "creationTimestamp": null,
+            "labels": {
+              "catalog_plan_id": "$catalog_plan_id",
+              "catalog_service_id": "$catalog_service_id",
+              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "managed_by": "TAP",
+              "org": "$org",
+              "service_id": "$service_id",
+              "space": "$space"
+            }
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "idx_and_short_serviceid": "$idx_and_short_serviceid",
+                "service_id": "$service_id"
+              }
+            },
+            "template": {
+              "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                  "idx_and_short_serviceid": "$idx_and_short_serviceid",
+                  "managed_by": "TAP",
+                  "service_id": "$service_id"
+                }
+              },
+              "spec": {
+                "volumes": null,
+                "containers": [
+                  {
+                    "name": "fake-broker",
+                    "image": "127.0.0.1:30000/fake-broker",
+                    "ports": [
+                      {
+                        "containerPort": 80,
+                        "protocol": "TCP"
+                      }
+                    ],
+                    "env": [
+                      {
+                        "name": "USERNAME",
+                        "valueFrom": {
+                          "secretKeyRef": {
+                            "Name": "$short_serviceid-broker-credentials",
+                            "key": "username"
+                          }
+                        }
+                      },
+                      {
+                        "name": "PASSWORD",
+                        "valueFrom": {
+                          "secretKeyRef": {
+                            "Name": "$short_serviceid-broker-credentials",
+                            "key": "password"
+                          }
+                        }
+                      },
+                      {
+                        "name": "MANAGED_BY",
+                        "value": "TAP"
+                      }
+                    ],
+                    "resources": {},
+                    "imagePullPolicy": "IfNotPresent"
+                  }
+                ],
+                "restartPolicy": "Always",
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": ""
+              }
+            },
+            "strategy": {}
+          },
+          "status": {}
+        }
+      ],
+      "services": [
+        {
+          "kind": "Service",
+          "apiVersion": "v1",
+          "metadata": {
+            "name": "$idx_and_short_serviceid",
+            "creationTimestamp": null,
+            "labels": {
+              "catalog_plan_id": "$catalog_plan_id",
+              "catalog_service_id": "$catalog_service_id",
+              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "managed_by": "TAP",
+              "org": "$org",
+              "service_id": "$service_id",
+              "space": "$space"
+            }
+          },
+          "spec": {
+            "type": "NodePort",
+            "ports": [
+              {
+                "name": "broker",
+                "protocol": "TCP",
+                "port": 80,
+                "targetPort": 0,
+                "nodePort": 0
+              }
+            ],
+            "selector": {
+              "service_id": "$service_id"
+            }
+          },
+          "status": {
+            "loadBalancer": {}
+          }
+        }
+      ],
+      "serviceAccounts": [
+        {
+          "kind": "ServiceAccount",
+          "apiVersion": "v1",
+          "metadata": {
+            "name": "$idx_and_short_serviceid",
+            "creationTimestamp": null,
+            "labels": {
+              "catalog_plan_id": "$catalog_plan_id",
+              "catalog_service_id": "$catalog_service_id",
+              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "managed_by": "TAP",
+              "org": "$org",
+              "service_id": "$service_id",
+              "space": "$space"
+            }
+          },
+          "secrets": null
+        }
+      ],
+      "secrets": [
+        {
+          "kind": "Secret",
+          "apiVersion": "v1",
+          "metadata": {
+            "name": "$short_serviceid-broker-credentials",
+            "creationTimestamp": null,
+            "labels": {
+              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "managed_by": "TAP",
+              "service_id": "$service_id"
+            }
+          },
+          "data": {
+            "password": "JHJhbmRvbTI=",
+            "username": "JHJhbmRvbTE="
+          }
+        }
+      ]
+    },
+    "hooks": {
+      "provision": {
+        "kind": "Job",
+        "apiVersion": "batch/v1",
+        "metadata": {
+          "name": "fakebroker-provision",
+          "creationTimestamp": null,
+          "labels": {
+            "managed_by": "TAP",
+            "service_id": "fakebroker"
+          },
+          "annotations": {
+            "createConfigMap": "true"
+          }
+        },
+        "spec": {
+          "template": {
+            "metadata": {
+              "creationTimestamp": null,
+              "labels": {
+                "managed_by": "TAP",
+                "service_id": "fakebroker"
+              }
+            },
+            "spec": {
+              "volumes": null,
+              "containers": [
+                {
+                  "name": "pi",
+                  "image": "tutum/curl:latest",
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "args": [
+                    "-c",
+                    "curl -X PUT {$BROKER_HOST}/v2/service_instances/$idx_and_short_serviceid --user ${BROKER_USERNAME}:${BROKER_PASSWORD}"
+                  ],
+                  "resources": {},
+                  "imagePullPolicy": "IfNotPresent"
+                }
+              ],
+              "restartPolicy": "Never",
+              "dnsPolicy": "ClusterFirst",
+              "serviceAccountName": ""
+            }
+          }
+        }
+      },
+      "catalog": {
+        "kind": "Job",
+        "apiVersion": "batch/v1",
+        "metadata": {
+          "name": "pi-1",
+          "creationTimestamp": null,
+          "labels": {
+            "managed_by": "TAP",
+            "service_id": "fakebroker"
+          },
+          "annotations": {
+            "createConfigMap": "true"
+          }
+        },
+        "spec": {
+          "template": {
+            "metadata": {
+              "creationTimestamp": null,
+              "labels": {
+                "managed_by": "TAP",
+                "service_id": "fakebroker"
+              }
+            },
+            "spec": {
+              "volumes": null,
+              "containers": [
+                {
+                  "name": "pi",
+                  "image": "tutum/curl:latest",
+                  "env":[
+                    {
+                      "name": "BROKER_USERNAME",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "Name": "$short_serviceid-broker-credentials",
+                          "key": "username"
+                        }
+                      }
+                    },
+                    {
+                      "name": "BROKER_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "Name": "$short_serviceid-broker-credentials",
+                          "key": "password"
+                        }
+                      }
+                    }
+                  ],
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "args": [
+                    "-c",
+                    "curl {$BROKER_HOST}/v2/catalog --user ${BROKER_USERNAME}:${BROKER_PASSWORD}"
+                  ],
+                  "resources": {},
+                  "imagePullPolicy": "IfNotPresent"
+                }
+              ],
+              "restartPolicy": "Never",
+              "dnsPolicy": "ClusterFirst",
+              "serviceAccountName": ""
+            }
+          }
+        }
+      }
+    }
+  }
+}

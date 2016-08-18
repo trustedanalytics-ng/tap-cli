@@ -42,7 +42,7 @@
                 "containers": [
                   {
                     "name": "k-etcd",
-                    "image": "drnic\/etcd",
+                    "image": "127.0.0.1:30000/coreos/etcd:v2.3.6",
                     "ports": [
                       {
                         "containerPort": 4001,

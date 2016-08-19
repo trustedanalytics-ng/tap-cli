@@ -32,25 +32,28 @@ func Login(address string, username string, password string) error {
 	creds := api.Credentials{}
 	creds.Address = address
 	creds.Username = username
-	creds.Password = password
-
-	err := api.SetCredentials(creds)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
 
 	fmt.Println("Authenticating...")
 
-	err = api.InitConnection()
+	err := api.InitBasicAuthConnection(address, username, password)
 	if err != nil {
 		fmt.Println("error creating connection:", err)
 		return err
 	}
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.GetCatalog()
+	loginResp, err := api.ConnectionConfig.ConsoleServiceLoginApi.Login()
 	if err != nil {
 		fmt.Println("Error connecting: ", err)
+		return err
+	}
+
+	creds.Token = loginResp.AccessToken
+	creds.TokenType = loginResp.TokenType
+	creds.ExpiresIn = loginResp.ExpiresIn
+
+	err = api.SetCredentials(creds)
+	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
@@ -60,7 +63,7 @@ func Login(address string, username string, password string) error {
 }
 
 func Catalog() error {
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -96,7 +99,7 @@ func Target() error {
 
 func CreateOffer(jsonFilename string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -128,7 +131,7 @@ func CreateOffer(jsonFilename string) error {
 
 func CreateServiceInstance(serviceName, planName, customName string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -159,7 +162,7 @@ func CreateServiceInstance(serviceName, planName, customName string) error {
 
 func DeleteInstance(serviceName string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -183,7 +186,7 @@ func DeleteInstance(serviceName string) error {
 
 func BindInstance(srcInstanceId, dstInstanceId string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -202,7 +205,7 @@ func BindInstance(srcInstanceId, dstInstanceId string) error {
 
 func UnbindInstance(srcInstanceId, dstInstanceId string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -220,7 +223,7 @@ func UnbindInstance(srcInstanceId, dstInstanceId string) error {
 }
 
 func ListApplications() error {
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -237,7 +240,7 @@ func ListApplications() error {
 }
 
 func ListServices() error {
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -254,7 +257,7 @@ func ListServices() error {
 }
 
 func ScaleApplication(instanceId string, replication int) error {
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -280,7 +283,7 @@ func StopApplication(instanceId string) error {
 
 func PushApplication(blob_path string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -351,7 +354,7 @@ func CompressCwdAndPushAsApplication() error {
 
 func GetInstanceLogs(instanceId string) error {
 
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -372,7 +375,7 @@ func GetInstanceLogs(instanceId string) error {
 }
 
 func DeleteApplication(instanceId string) error {
-	err := api.InitConnection()
+	err := api.InitOAuth2Connection()
 	if err != nil {
 		fmt.Println(err)
 		return err

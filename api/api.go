@@ -24,12 +24,13 @@ import (
 )
 
 type Config struct {
-	ConsoleServiceApi client.TapConsoleServiceApi
+	ConsoleServiceApi      client.TapConsoleServiceApi
+	ConsoleServiceLoginApi client.TapConsoleServiceLoginApi
 }
 
 var ConnectionConfig *Config
 
-func InitConnection() error {
+func InitOAuth2Connection() error {
 
 	creds, err := GetCredentials()
 	if err != nil {
@@ -39,10 +40,10 @@ func InitConnection() error {
 		return err
 	}
 
-	apiConnector, err := client.NewTapConsoleServiceApiWithBasicAuth(
+	apiConnector, err := client.NewTapConsoleServiceApiWithOAuth2(
 		"http://"+creds.Address,
-		creds.Username,
-		creds.Password,
+		creds.TokenType,
+		creds.Token,
 	)
 	if err != nil {
 		return err
@@ -50,6 +51,23 @@ func InitConnection() error {
 
 	ConnectionConfig = &Config{}
 	ConnectionConfig.ConsoleServiceApi = apiConnector
+
+	return nil
+}
+
+func InitBasicAuthConnection(address, username, password string) error {
+
+	apiConnector, err := client.NewTapConsoleServiceLoginApiWithBasicAuth(
+		"http://"+address,
+		username,
+		password,
+	)
+	if err != nil {
+		return err
+	}
+
+	ConnectionConfig = &Config{}
+	ConnectionConfig.ConsoleServiceLoginApi = apiConnector
 
 	return nil
 }

@@ -18,9 +18,9 @@ import (
 	"io/ioutil"
 )
 
-func (c *TapConsoleServiceApiConnector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error) {
+func (c *TapConsoleServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error) {
 
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications", c.Address))
 	result := models.ApplicationInstance{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
@@ -30,7 +30,7 @@ func (c *TapConsoleServiceApiConnector) CreateApplicationInstance(blob multipart
 	}
 
 	req, _ := http.NewRequest("POST", connector.Url, bodyBuf)
-	brokerHttp.AddBasicAuth(req, connector.BasicAuth)
+	req.Header.Add("Authorization", brokerHttp.GetOAuth2Header(connector.OAuth2))
 	brokerHttp.SetContentType(req, contentType)
 
 	logger.Infof("Doing: POST %v", connector.Url)
@@ -54,30 +54,30 @@ func (c *TapConsoleServiceApiConnector) CreateApplicationInstance(blob multipart
 	return result, nil
 }
 
-func (c *TapConsoleServiceApiConnector) DeleteApplicationInstance(instanceId string) error {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
-	err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+func (c *TapConsoleServiceApiOAuth2Connector) DeleteApplicationInstance(instanceId string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
 
-func (c *TapConsoleServiceApiConnector) ListApplicationInstances() ([]models.ApplicationInstance, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications", c.Address))
+func (c *TapConsoleServiceApiOAuth2Connector) ListApplicationInstances() ([]models.ApplicationInstance, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications", c.Address))
 	result := &[]models.ApplicationInstance{}
-	err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s/scale", c.Address, instanceId))
+func (c *TapConsoleServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s/scale", c.Address, instanceId))
 	body := containerBrokerModels.ScaleInstanceRequest{
 		Replicas: replication,
 	}
 	result := &containerBrokerModels.MessageResponse{}
-	err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob multipart.File, manifest models.Manifest) (string, *bytes.Buffer, error) {
+func (c *TapConsoleServiceApiOAuth2Connector) prepareApplicationCreationForm(blob multipart.File, manifest models.Manifest) (string, *bytes.Buffer, error) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 
@@ -95,7 +95,7 @@ func (c *TapConsoleServiceApiConnector) prepareApplicationCreationForm(blob mult
 	return contentType, bodyBuf, nil
 }
 
-func (c *TapConsoleServiceApiConnector) createBlobFormFile(blob multipart.File, bodyWriter *multipart.Writer) error {
+func (c *TapConsoleServiceApiOAuth2Connector) createBlobFormFile(blob multipart.File, bodyWriter *multipart.Writer) error {
 	blobWriter, err := bodyWriter.CreateFormFile("blob", "blob.tar.gz")
 	if err != nil {
 		logger.Error("Error creating blob file field")
@@ -110,7 +110,7 @@ func (c *TapConsoleServiceApiConnector) createBlobFormFile(blob multipart.File, 
 	return nil
 }
 
-func (c *TapConsoleServiceApiConnector) createManifestFormFile(manifest models.Manifest,
+func (c *TapConsoleServiceApiOAuth2Connector) createManifestFormFile(manifest models.Manifest,
 	bodyWriter *multipart.Writer) error {
 
 	manifestWriter, err := bodyWriter.CreateFormFile("manifest", "manifest.json")
@@ -132,8 +132,8 @@ func (c *TapConsoleServiceApiConnector) createManifestFormFile(manifest models.M
 	return nil
 }
 
-func (c *TapConsoleServiceApiConnector) DeleteApplication(instanceId string) error {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
-	err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+func (c *TapConsoleServiceApiOAuth2Connector) DeleteApplication(instanceId string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
 	return err
 }

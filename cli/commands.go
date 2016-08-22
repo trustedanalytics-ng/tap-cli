@@ -122,7 +122,7 @@ func DeleteServiceCommand() cli.Command {
 func BindInstanceCommand() cli.Command {
 	return cli.Command{
 		Name:      "bind-instance",
-		ArgsUsage: "<src_instance_id>, <dst_instance_id>",
+		ArgsUsage: "<src_instance_name>, <dst_instance_name>",
 		Aliases:   []string{"bind"},
 		Usage:     "bind instance to another",
 		Action: func(c *cli.Context) error {
@@ -140,7 +140,7 @@ func BindInstanceCommand() cli.Command {
 func UnbindInstanceCommand() cli.Command {
 	return cli.Command{
 		Name:      "unbind-instance",
-		ArgsUsage: "<src_instance_id>, <dst_instance_id>",
+		ArgsUsage: "<src_instance_name>, <dst_instance_name>",
 		Aliases:   []string{"unbind"},
 		Usage:     "unbind instance from another",
 		Action: func(c *cli.Context) error {

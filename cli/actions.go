@@ -168,7 +168,7 @@ func DeleteInstance(serviceName string) error {
 		return err
 	}
 
-	instanceId, err := convertInstance(serviceName)
+	instanceId, err := convertInstance(catalogModels.InstanceTypeService, serviceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -184,9 +184,21 @@ func DeleteInstance(serviceName string) error {
 	return nil
 }
 
-func BindInstance(srcInstanceId, dstInstanceId string) error {
+func BindInstance(srcInstanceName, dstInstanceName string) error {
 
 	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	srcInstanceId, err := convertInstance(InstanceTypeBoth, srcInstanceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	dstInstanceId, err := convertInstance(InstanceTypeBoth, dstInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -256,8 +268,14 @@ func ListServices() error {
 	return nil
 }
 
-func ScaleApplication(instanceId string, replication int) error {
+func ScaleApplication(applicationName string, replication int) error {
 	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -352,9 +370,20 @@ func CompressCwdAndPushAsApplication() error {
 	return nil
 }
 
-func GetInstanceLogs(instanceId string) error {
+func GetInstanceLogs(instanceName string) error {
 
 	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(InstanceTypeBoth, instanceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -374,8 +403,14 @@ func GetInstanceLogs(instanceId string) error {
 	return nil
 }
 
-func DeleteApplication(instanceId string) error {
+func DeleteApplication(applicationName string) error {
 	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		fmt.Println(err)
 		return err

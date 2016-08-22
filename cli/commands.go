@@ -206,7 +206,7 @@ func ListServicesCommand() cli.Command {
 func ScaleApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "scale",
-		ArgsUsage: "<instanceId> <instances>",
+		ArgsUsage: "<applicationName> <instances>",
 		Aliases:   []string{"sc"},
 		Usage:     "scale application",
 		Action: func(c *cli.Context) error {
@@ -229,7 +229,7 @@ func ScaleApplicationCommand() cli.Command {
 func StartApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "start",
-		ArgsUsage: "<instanceId>",
+		ArgsUsage: "<applicationName>",
 		Usage:     "start application with single instance",
 		Action: func(c *cli.Context) error {
 
@@ -246,7 +246,7 @@ func StartApplicationCommand() cli.Command {
 func StopApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "stop",
-		ArgsUsage: "<instanceId>",
+		ArgsUsage: "<applicationName>",
 		Usage:     "stop all application instances",
 		Action: func(c *cli.Context) error {
 
@@ -263,7 +263,7 @@ func StopApplicationCommand() cli.Command {
 func DeleteApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "delete",
-		ArgsUsage: "<instanceId>",
+		ArgsUsage: "<applicationName>",
 		Aliases:   []string{"d"},
 		Usage:     "delete instance",
 		Action: func(c *cli.Context) error {
@@ -281,7 +281,7 @@ func DeleteApplicationCommand() cli.Command {
 func GetInstanceLogsCommand() cli.Command {
 	return cli.Command{
 		Name:      "logs",
-		ArgsUsage: "<instanceId>",
+		ArgsUsage: "<instanceName>",
 		Aliases:   []string{"log"},
 		Usage:     "get logs for all containers in instance",
 		Action: func(c *cli.Context) error {

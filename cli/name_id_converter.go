@@ -18,6 +18,7 @@ package cli
 
 import (
 	"errors"
+	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
 	"github.com/trustedanalytics/tapng-cli/api"
 )
 
@@ -44,17 +45,30 @@ func convert(serviceName, planName string) (string, string, error) {
 	return "", "", errors.New("cannot find service: '" + serviceName + "'")
 }
 
-func convertInstance(instanceName string) (string, error) {
+const (
+	InstanceTypeBoth catalogModels.InstanceType = "BOTH"
+)
 
-	servicesInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
-	if err != nil {
-		return "", err
+func convertInstance(instanceType catalogModels.InstanceType, instanceName string) (string, error) {
+
+	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeService {
+		serviceInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
+		if err == nil {
+			for _, instance := range serviceInstances {
+				if instance.Name == instanceName {
+					return instance.Id, nil
+				}
+			}
+		}
 	}
-
-	for _, instance := range servicesInstances {
-
-		if instance.Name == instanceName {
-			return instance.Id, nil
+	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeApplication {
+		applicationInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListApplicationInstances()
+		if err == nil {
+			for _, instance := range applicationInstances {
+				if instance.Name == instanceName {
+					return instance.Id, nil
+				}
+			}
 		}
 	}
 

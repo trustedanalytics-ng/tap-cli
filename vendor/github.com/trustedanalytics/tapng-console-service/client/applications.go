@@ -12,10 +12,11 @@ import (
 	"net/http"
 
 	"errors"
+	"io/ioutil"
+
 	"github.com/trustedanalytics/tapng-console-service/models"
 	containerBrokerModels "github.com/trustedanalytics/tapng-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
-	"io/ioutil"
 )
 
 func (c *TapConsoleServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error) {

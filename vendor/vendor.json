@@ -141,22 +141,22 @@
 			"revisionTime": "2016-08-23T09:30:28Z"
 		},
 		{
-			"checksumSHA1": "qm8ZDiEv+EsyperoLGwDS+vFqnI=",
+			"checksumSHA1": "MDxWbj78bMHE+FWlJxvejJ/Jzq0=",
 			"path": "github.com/trustedanalytics/tapng-console-service/client",
-			"revision": "7186c471560154903051f8ea11962682f9ed793f",
-			"revisionTime": "2016-08-24T13:04:07Z"
+			"revision": "dcf63d8402b47347a5371855581de46172871299",
+			"revisionTime": "2016-08-24T12:16:04Z"
 		},
 		{
 			"checksumSHA1": "+fkT2j2ft3M5GUDuLQVjKke43q4=",
 			"path": "github.com/trustedanalytics/tapng-console-service/models",
-			"revision": "7186c471560154903051f8ea11962682f9ed793f",
-			"revisionTime": "2016-08-24T13:04:07Z"
+			"revision": "dcf63d8402b47347a5371855581de46172871299",
+			"revisionTime": "2016-08-24T12:16:04Z"
 		},
 		{
-			"checksumSHA1": "jUfjJ9eWGAxy6oBtLbEysZGjVGI=",
+			"checksumSHA1": "PDTB2z9X9izrLoNsvAonmvyG+fI=",
 			"path": "github.com/trustedanalytics/tapng-console-service/uaa-connector",
-			"revision": "7186c471560154903051f8ea11962682f9ed793f",
-			"revisionTime": "2016-08-24T13:04:07Z"
+			"revision": "dcf63d8402b47347a5371855581de46172871299",
+			"revisionTime": "2016-08-24T12:16:04Z"
 		},
 		{
 			"checksumSHA1": "tSe/c0YpGcShPTe9mL4mKolLzQY=",

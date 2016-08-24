@@ -18,9 +18,10 @@ package cli
 
 import (
 	"fmt"
-	"github.com/urfave/cli"
 	"os"
 	"strconv"
+
+	"github.com/urfave/cli"
 )
 
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
@@ -33,7 +34,7 @@ func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
 func LoginCommand() cli.Command {
 	return cli.Command{
 		Name:      "login",
-		Usage:     "login to TAPNG",
+		Usage:     "login to TAP",
 		ArgsUsage: "<address> <username> <password>",
 		Action: func(c *cli.Context) error {
 
@@ -60,7 +61,7 @@ func TargetCommand() cli.Command {
 func CatalogCommand() cli.Command {
 	return cli.Command{
 		Name:  "catalog",
-		Usage: "list available services",
+		Usage: "list available offerings",
 		Action: func(c *cli.Context) error {
 			return Catalog()
 		},
@@ -213,7 +214,7 @@ func ListServicesCommand() cli.Command {
 		Name:      "services",
 		ArgsUsage: "",
 		Aliases:   []string{"s"},
-		Usage:     "list services",
+		Usage:     "list all service instances",
 		Action: func(c *cli.Context) error {
 			return ListServices()
 		},

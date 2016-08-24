@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 
@@ -44,7 +45,11 @@ func printCatalog(catalog []consoleServiceModels.Service) {
 	rows := [][]string{}
 
 	for _, service := range catalog {
-		line := []string{service.Entity.Label, service.Entity.ServicePlans[0].Entity.Name, service.Entity.Description}
+		planNames := []string{}
+		for _, planName := range service.Entity.ServicePlans {
+			planNames = append(planNames, planName.Entity.Name)
+		}
+		line := []string{service.Entity.Label, strings.Join(planNames, ", "), service.Entity.Description}
 		rows = append(rows, line)
 	}
 

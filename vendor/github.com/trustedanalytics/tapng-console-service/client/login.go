@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"errors"
+
 	uaa "github.com/trustedanalytics/tapng-console-service/uaa-connector"
 	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
 )
 
 type TapConsoleServiceLoginApi interface {
-	Login() (uaa.LoginResponse, error)
+	Login() (uaa.LoginResponse, int, error)
 	GetConsoleServiceHealth() error
 }
 
@@ -45,11 +46,11 @@ func (c *TapConsoleServiceApiBasicAuthConnector) getApiBasicAuthConnector(url st
 	}
 }
 
-func (c *TapConsoleServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, error) {
+func (c *TapConsoleServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {
 	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v1/login", c.Address))
 	result := &uaa.LoginResponse{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
-	return *result, err
+	status, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, status, err
 }
 
 func (c *TapConsoleServiceApiBasicAuthConnector) GetConsoleServiceHealth() error {

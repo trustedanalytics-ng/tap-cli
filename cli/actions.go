@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 
 	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
@@ -41,8 +42,11 @@ func Login(address string, username string, password string) error {
 		return err
 	}
 
-	loginResp, err := api.ConnectionConfig.ConsoleServiceLoginApi.Login()
-	if err != nil {
+	loginResp, status, err := api.ConnectionConfig.ConsoleServiceLoginApi.Login()
+	if status == http.StatusUnauthorized {
+		fmt.Println("Authentication failed")
+		return err
+	} else if err != nil {
 		fmt.Println("Error connecting: ", err)
 		return err
 	}
@@ -57,7 +61,7 @@ func Login(address string, username string, password string) error {
 		return err
 	}
 
-	fmt.Println("OK")
+	fmt.Println("Authentication succeeded")
 
 	return nil
 }

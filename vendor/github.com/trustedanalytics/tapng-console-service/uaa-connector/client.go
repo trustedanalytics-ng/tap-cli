@@ -56,7 +56,7 @@ type TapJWTToken struct {
 }
 
 type UaaApi interface {
-	Login(username, password string) (*LoginResponse, error)
+	Login(username, password string) (*LoginResponse, int, error)
 	ValidateOauth2Token(token string) (*TapJWTToken, error)
 }
 
@@ -74,7 +74,7 @@ func NewUaaBasicAuth(clientId, clientSecret string) (*UaaConnector, error) {
 	return &UaaConnector{clientId, clientSecret, client}, nil
 }
 
-func (u *UaaConnector) Login(username, password string) (*LoginResponse, error) {
+func (u *UaaConnector) Login(username, password string) (*LoginResponse, int, error) {
 	loginResp := LoginResponse{}
 
 	url := os.Getenv("SSO_TOKEN_URI")
@@ -84,18 +84,17 @@ func (u *UaaConnector) Login(username, password string) (*LoginResponse, error) 
 	auth := brokerHttp.BasicAuth{u.ClientId, u.ClientSecret}
 	status, resp, err := brokerHttp.RestUrlEncodedPOST(url, reqBody, brokerHttp.GetBasicAuthHeader(&auth), u.Client)
 	if err != nil {
-		return nil, err
-	}
-	if status != http.StatusOK {
-		return nil, errors.New("Bad response status: " + strconv.Itoa(status))
+		return nil, status, err
+	} else if status != http.StatusOK {
+		return nil, status, errors.New("Bad response status: " + strconv.Itoa(status))
 	}
 
 	err = json.Unmarshal(resp, &loginResp)
 	if err != nil {
-		return nil, err
+		return nil, http.StatusInternalServerError, err
 	}
 
-	return &loginResp, nil
+	return &loginResp, http.StatusOK, nil
 }
 
 func (u *UaaConnector) ValidateOauth2Token(token string) (*TapJWTToken, error) {

@@ -28,6 +28,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "TAP CLI"
 	app.Usage = "client for managing TAP"
+	app.Version = "0.8" //todo: should probably change before release
 
 	app.Commands = []cli.Command{
 		tapngCli.LoginCommand(),

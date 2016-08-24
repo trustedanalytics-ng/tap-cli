@@ -155,6 +155,23 @@ func UnbindInstanceCommand() cli.Command {
 	}
 }
 
+func ListInstanceBindingsCommand() cli.Command {
+	return cli.Command{
+		Name:      "bindings",
+		ArgsUsage: "<instanceName>",
+		Usage:     "list bindings",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return GetInstanceBindings(c.Args().First())
+		},
+	}
+}
+
 func ListApplicationsCommand() cli.Command {
 	return cli.Command{
 		Name:      "applications",

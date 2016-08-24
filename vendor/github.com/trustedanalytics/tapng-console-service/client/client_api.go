@@ -15,6 +15,7 @@ import (
 var logger = logger_wrapper.InitLogger("client")
 
 type TapConsoleServiceApi interface {
+	GetInstanceBindings(instanceId string) (models.InstanceBindings, error)
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 
@@ -26,6 +27,7 @@ type TapConsoleServiceApi interface {
 	DeleteApplicationInstance(instanceId string) error
 
 	GetCatalog() ([]models.Service, error)
+	GetApplicationInstance(instanceId string) (models.ApplicationInstance, error)
 	GetInstanceLogs(instanceId string) (map[string]string, error)
 
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
@@ -106,6 +108,13 @@ func (c *TapConsoleServiceApiOAuth2Connector) ScaleServiceInstance(instanceId st
 	}
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) GetInstanceBindings(instanceId string) (models.InstanceBindings, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/bindings/%s", c.Address, instanceId))
+	result := &models.InstanceBindings{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 

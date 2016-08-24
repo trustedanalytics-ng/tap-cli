@@ -184,6 +184,35 @@ func DeleteInstance(serviceName string) error {
 	return nil
 }
 
+func GetInstanceBindings(instanceName string) error {
+
+	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(InstanceTypeBoth, instanceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	bindings, err := api.ConnectionConfig.ConsoleServiceApi.GetInstanceBindings(instanceId)
+	if err != nil {
+		fmt.Printf("ERROR: %v", err.Error())
+		return err
+	}
+
+	printInstancesBindings(bindings)
+	return nil
+}
+
 func BindInstance(srcInstanceName, dstInstanceName string) error {
 
 	err := api.InitOAuth2Connection()

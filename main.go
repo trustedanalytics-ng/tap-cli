@@ -36,6 +36,7 @@ func main() {
 		tapngCli.CreateOfferingCommand(),
 		tapngCli.CreateServiceCommand(),
 		tapngCli.DeleteServiceCommand(),
+		tapngCli.ListInstanceBindingsCommand(),
 		tapngCli.BindInstanceCommand(),
 		tapngCli.UnbindInstanceCommand(),
 		tapngCli.PushApplicationCommand(),

@@ -1,6 +1,6 @@
 {
   "body": {
-    "componentType": "",
+    "componentType": "instance",
     "persistentVolumeClaims": null,
     "deployments": [
       {

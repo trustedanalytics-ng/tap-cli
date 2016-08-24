@@ -137,3 +137,10 @@ func (c *TapConsoleServiceApiOAuth2Connector) DeleteApplication(instanceId strin
 	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
+
+func (c *TapConsoleServiceApiOAuth2Connector) GetApplicationInstance(instanceId string) (models.ApplicationInstance, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+	result := &models.ApplicationInstance{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
+}

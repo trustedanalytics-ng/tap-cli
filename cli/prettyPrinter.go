@@ -90,3 +90,15 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 
 	createAndRenderTable(header, rows)
 }
+
+func printInstancesBindings(bindings consoleServiceModels.InstanceBindings) {
+
+	header := []string{"BINDING NAME", "BINDING ID"}
+	rows := [][]string{}
+
+	for _, resource := range bindings.Resources {
+		rows = append(rows, []string{resource.ServiceInstanceName, resource.ServiceInstanceGuid})
+	}
+
+	createAndRenderTable(header, rows)
+}

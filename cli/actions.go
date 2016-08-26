@@ -284,6 +284,30 @@ func ListApplications() error {
 	return nil
 }
 
+func GetApplication(applicationName string) error {
+	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	applicationInstance, err := api.ConnectionConfig.ConsoleServiceApi.GetApplicationInstance(instanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	printApplicationInstances([]models.ApplicationInstance{applicationInstance})
+	fmt.Println("OK")
+	return nil
+}
+
 func ListServices() error {
 	err := api.InitOAuth2Connection()
 	if err != nil {
@@ -458,3 +482,4 @@ func DeleteApplication(applicationName string) error {
 	fmt.Println("OK")
 	return nil
 }
+

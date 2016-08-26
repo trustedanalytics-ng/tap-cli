@@ -48,6 +48,7 @@ func main() {
 		tapngCli.StopApplicationCommand(),
 		tapngCli.GetInstanceLogsCommand(),
 		tapngCli.DeleteApplicationCommand(),
+		tapngCli.GetApplicationsCommand(),
 	}
 
 	app.Run(os.Args)

@@ -69,11 +69,12 @@ func printCredentials(creds api.Credentials) {
 
 func printApplicationInstances(applications []consoleServiceModels.ApplicationInstance) {
 
-	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION"}
+	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS"}
 	rows := [][]string{}
 
 	for _, app := range applications {
-		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State), strconv.Itoa(app.Replication)})
+		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State),
+			strconv.Itoa(app.Replication), app.Memory, app.DiskQuota, strings.Join(app.Urls, ",")})
 	}
 
 	createAndRenderTable(header, rows)

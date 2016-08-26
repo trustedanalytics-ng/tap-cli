@@ -313,3 +313,21 @@ func GetInstanceLogsCommand() cli.Command {
 		},
 	}
 }
+
+func GetApplicationsCommand() cli.Command {
+	return cli.Command{
+		Name:      "application",
+		ArgsUsage: "<applicationName>",
+		Aliases:   []string{"a"},
+		Usage:     "application instance",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return GetApplication(c.Args().First())
+		},
+	}
+}

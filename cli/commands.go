@@ -283,7 +283,7 @@ func DeleteApplicationCommand() cli.Command {
 		Name:      "delete",
 		ArgsUsage: "<applicationName>",
 		Aliases:   []string{"d"},
-		Usage:     "delete instance",
+		Usage:     "delete application",
 		Action: func(c *cli.Context) error {
 
 			err := validateArgs(c, 1)

@@ -45,7 +45,7 @@ COMMANDS:
      start                    start application with single instance
      stop                     stop all application instances
      logs, log                get logs for all containers in instance
-     delete, d                delete instance
+     delete, d                delete application
      help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:

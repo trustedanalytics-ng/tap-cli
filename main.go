@@ -42,13 +42,13 @@ func main() {
 		tapngCli.UnbindInstanceCommand(),
 		tapngCli.PushApplicationCommand(),
 		tapngCli.ListApplicationsCommand(),
+		tapngCli.GetApplicationsCommand(),
 		tapngCli.ListServicesCommand(),
 		tapngCli.ScaleApplicationCommand(),
 		tapngCli.StartApplicationCommand(),
 		tapngCli.StopApplicationCommand(),
 		tapngCli.GetInstanceLogsCommand(),
 		tapngCli.DeleteApplicationCommand(),
-		tapngCli.GetApplicationsCommand(),
 	}
 
 	app.Run(os.Args)

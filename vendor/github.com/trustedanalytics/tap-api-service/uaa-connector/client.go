@@ -24,7 +24,7 @@ import (
 	"os"
 	"strconv"
 
-	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
+	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
 )
 
 type LoginResponse struct {

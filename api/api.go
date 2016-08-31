@@ -20,7 +20,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/trustedanalytics/tapng-console-service/client"
+	"github.com/trustedanalytics/tap-api-service/client"
 )
 
 type Config struct {

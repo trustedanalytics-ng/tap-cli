@@ -1,4 +1,4 @@
-# tapng-cli
+# tap-cli
 
 ## Requirements
 
@@ -30,7 +30,7 @@ VERSION:
    0.0.0
 
 COMMANDS:
-     login                    login to TAPNG
+     login                    login to TAP
      target                   print actual credentials
      catalog                  list available services
      create-offering, co      create new offering
@@ -61,7 +61,7 @@ GLOBAL OPTIONS:
 ```
 $ kubectl get svc
 NAME                  CLUSTER-IP   EXTERNAL-IP   PORT(S)                              AGE
-console-service       10.0.0.243   <nodes>       80/TCP                               1h
+api-service       10.0.0.243   <nodes>       80/TCP                               1h
 container-broker      10.0.0.87    <nodes>       80/TCP                               1h
 kubernetes            10.0.0.1     <none>        443/TCP                              1h
 

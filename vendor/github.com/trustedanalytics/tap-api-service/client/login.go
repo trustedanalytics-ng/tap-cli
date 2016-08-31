@@ -6,8 +6,8 @@ import (
 
 	"errors"
 
-	uaa "github.com/trustedanalytics/tapng-console-service/uaa-connector"
-	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
+	uaa "github.com/trustedanalytics/tap-api-service/uaa-connector"
+	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
 )
 
 type TapConsoleServiceLoginApi interface {

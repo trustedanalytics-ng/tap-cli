@@ -23,10 +23,10 @@ import (
 	"net/http"
 	"os"
 
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
-	"github.com/trustedanalytics/tapng-cli/api"
-	"github.com/trustedanalytics/tapng-console-service/models"
-	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics/tap-api-service/models"
+	consoleServiceModels "github.com/trustedanalytics/tap-api-service/models"
 )
 
 func Login(address string, username string, password string) error {

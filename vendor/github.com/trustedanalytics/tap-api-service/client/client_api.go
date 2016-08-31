@@ -5,11 +5,11 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
-	"github.com/trustedanalytics/tapng-console-service/models"
-	containerBrokerModels "github.com/trustedanalytics/tapng-container-broker/models"
-	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
-	"github.com/trustedanalytics/tapng-go-common/logger"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	"github.com/trustedanalytics/tap-api-service/models"
+	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
+	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	"github.com/trustedanalytics/tap-go-common/logger"
 )
 
 var logger = logger_wrapper.InitLogger("client")

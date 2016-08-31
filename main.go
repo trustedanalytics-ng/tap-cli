@@ -21,7 +21,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	tapngCli "github.com/trustedanalytics/tapng-cli/cli"
+	tapCli "github.com/trustedanalytics/tap-cli/cli"
 )
 
 func main() {
@@ -31,25 +31,25 @@ func main() {
 	app.Version = "0.8" //todo: should probably change before release
 
 	app.Commands = []cli.Command{
-		tapngCli.LoginCommand(),
-		tapngCli.TargetCommand(),
-		tapngCli.CatalogCommand(),
-		tapngCli.CreateOfferingCommand(),
-		tapngCli.CreateServiceCommand(),
-		tapngCli.DeleteServiceCommand(),
-		tapngCli.ListInstanceBindingsCommand(),
-		tapngCli.BindInstanceCommand(),
-		tapngCli.UnbindInstanceCommand(),
-		tapngCli.PushApplicationCommand(),
-		tapngCli.ListApplicationsCommand(),
-		tapngCli.GetApplicationsCommand(),
-		tapngCli.ListServicesCommand(),
-		tapngCli.GetServiceCommand(),
-		tapngCli.ScaleApplicationCommand(),
-		tapngCli.StartApplicationCommand(),
-		tapngCli.StopApplicationCommand(),
-		tapngCli.GetInstanceLogsCommand(),
-		tapngCli.DeleteApplicationCommand(),
+		tapCli.LoginCommand(),
+		tapCli.TargetCommand(),
+		tapCli.CatalogCommand(),
+		tapCli.CreateOfferingCommand(),
+		tapCli.CreateServiceCommand(),
+		tapCli.DeleteServiceCommand(),
+		tapCli.ListInstanceBindingsCommand(),
+		tapCli.BindInstanceCommand(),
+		tapCli.UnbindInstanceCommand(),
+		tapCli.PushApplicationCommand(),
+		tapCli.ListApplicationsCommand(),
+		tapCli.GetApplicationsCommand(),
+		tapCli.ListServicesCommand(),
+		tapCli.GetServiceCommand(),
+		tapCli.ScaleApplicationCommand(),
+		tapCli.StartApplicationCommand(),
+		tapCli.StopApplicationCommand(),
+		tapCli.GetInstanceLogsCommand(),
+		tapCli.DeleteApplicationCommand(),
 	}
 
 	app.Run(os.Args)

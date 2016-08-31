@@ -18,8 +18,8 @@ package cli
 
 import (
 	"errors"
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
-	"github.com/trustedanalytics/tapng-cli/api"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 func convert(serviceName, planName string) (string, string, error) {

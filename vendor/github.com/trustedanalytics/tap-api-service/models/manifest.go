@@ -1,7 +1,7 @@
 package models
 
 import (
-	catalogModels "github.com/trustedanalytics/tapng-catalog/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
 
 type Manifest struct {

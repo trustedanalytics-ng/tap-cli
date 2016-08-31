@@ -26,8 +26,8 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 
-	"github.com/trustedanalytics/tapng-cli/api"
-	consoleServiceModels "github.com/trustedanalytics/tapng-console-service/models"
+	"github.com/trustedanalytics/tap-cli/api"
+	consoleServiceModels "github.com/trustedanalytics/tap-api-service/models"
 )
 
 func createAndRenderTable(header []string, rows [][]string) {

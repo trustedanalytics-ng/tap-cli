@@ -23,7 +23,7 @@ import (
 )
 
 //TODO: make credsPath read optionally from environment or options
-var cliConfigDir string = os.Getenv("HOME") + "/.tapng-cli"
+var cliConfigDir string = os.Getenv("HOME") + "/.tap-cli"
 var credsPath string = cliConfigDir + "/credentials.json"
 
 const PERMISSIONS os.FileMode = 0744

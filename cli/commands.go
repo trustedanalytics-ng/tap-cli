@@ -213,7 +213,7 @@ func ListServicesCommand() cli.Command {
 	return cli.Command{
 		Name:      "services",
 		ArgsUsage: "",
-		Aliases:   []string{"s"},
+		Aliases:   []string{"svcs"},
 		Usage:     "list all service instances",
 		Action: func(c *cli.Context) error {
 			return ListServices()
@@ -319,7 +319,7 @@ func GetApplicationsCommand() cli.Command {
 		Name:      "application",
 		ArgsUsage: "<applicationName>",
 		Aliases:   []string{"a"},
-		Usage:     "application instance",
+		Usage:     "application instance details",
 		Action: func(c *cli.Context) error {
 
 			err := validateArgs(c, 1)
@@ -328,6 +328,24 @@ func GetApplicationsCommand() cli.Command {
 			}
 
 			return GetApplication(c.Args().First())
+		},
+	}
+}
+
+func GetServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "service",
+		ArgsUsage: "<serviceName>",
+		Aliases:   []string{"s"},
+		Usage:     "service instance details",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return GetService(c.Args().First())
 		},
 	}
 }

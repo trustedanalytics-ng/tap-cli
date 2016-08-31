@@ -21,6 +21,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"encoding/json"
 
 	"github.com/olekukonko/tablewriter"
 
@@ -90,6 +91,11 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 	}
 
 	createAndRenderTable(header, rows)
+}
+
+func printInstanceDetails(instance interface{}) {
+	prettyJSON, _ := json.MarshalIndent(instance, "", "    ")
+	fmt.Print(string(prettyJSON))
 }
 
 func printInstancesBindings(bindings consoleServiceModels.InstanceBindings) {

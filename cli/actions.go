@@ -303,7 +303,30 @@ func GetApplication(applicationName string) error {
 		return err
 	}
 
-	printApplicationInstances([]models.ApplicationInstance{applicationInstance})
+	printInstanceDetails(applicationInstance)
+	fmt.Println("OK")
+	return nil
+}
+
+func GetService(serviceName string) error {
+	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	instanceId, err := convertInstance(catalogModels.InstanceTypeService, serviceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	serviceInstance, err := api.ConnectionConfig.ConsoleServiceApi.GetServiceInstance(instanceId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	printInstanceDetails(serviceInstance)
 	fmt.Println("OK")
 	return nil
 }

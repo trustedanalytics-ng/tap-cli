@@ -40,8 +40,9 @@ COMMANDS:
      unbind-instance, unbind  unbind instance from another
      push                     create application from archive, manifest should be in current working directory
      applications, apps       list applications
-     application, a           application instance
-     services, s              list services
+     application, a           application instance details
+     services, svcs           list services
+     service, s               service instance details
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances

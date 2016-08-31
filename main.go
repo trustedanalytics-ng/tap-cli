@@ -44,6 +44,7 @@ func main() {
 		tapngCli.ListApplicationsCommand(),
 		tapngCli.GetApplicationsCommand(),
 		tapngCli.ListServicesCommand(),
+		tapngCli.GetServiceCommand(),
 		tapngCli.ScaleApplicationCommand(),
 		tapngCli.StartApplicationCommand(),
 		tapngCli.StopApplicationCommand(),

@@ -28,6 +28,7 @@ type TapConsoleServiceApi interface {
 
 	GetCatalog() ([]models.Service, error)
 	GetApplicationInstance(instanceId string) (models.ApplicationInstance, error)
+	GetServiceInstance(instanceId string) (models.ServiceInstance, error)
 	GetInstanceLogs(instanceId string) (map[string]string, error)
 
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
@@ -97,6 +98,13 @@ func (c *TapConsoleServiceApiOAuth2Connector) GetInstanceLogs(instanceId string)
 func (c *TapConsoleServiceApiOAuth2Connector) ListServiceInstances() ([]models.ServiceInstance, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services", c.Address))
 	result := &[]models.ServiceInstance{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) GetServiceInstance(instanceId string) (models.ServiceInstance, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, instanceId))
+	result := &models.ServiceInstance{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }

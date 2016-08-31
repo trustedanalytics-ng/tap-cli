@@ -1,7 +1,8 @@
 package models
 
 type CreateInstanceRequest struct {
-	Image string `json:"image"`
+	Image      string `json:"image"`
+	TemplateId string `json:"template_id"`
 }
 
 type ScaleInstanceRequest struct {

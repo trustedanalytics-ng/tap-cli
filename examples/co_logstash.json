@@ -199,7 +199,7 @@
     },
     "hooks": null
   },
-  "service": {
+  "services": [{
     "name": "logstash",
     "description": "it's finally logstash!",
     "metadata": [],
@@ -217,5 +217,5 @@
         "cost": "free"
       }
     ]
-  }
+  }]
 }

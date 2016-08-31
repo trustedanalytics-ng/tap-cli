@@ -155,7 +155,7 @@
     },
     "hooks": null
   },
-  "service": {
+  "services": [{
     "name": "etcd",
     "description": "Etcd key-value storage",
     "metadata": [],
@@ -173,5 +173,5 @@
         "cost": "free"
       }
     ]
-  }
+  }]
 }

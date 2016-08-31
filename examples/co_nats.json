@@ -188,7 +188,7 @@
     },
     "hooks": null
   },
-  "service": {
+  "services": [{
     "name": "nats",
     "description": "NATS is a lightweight cloud messaging system",
     "metadata": [],
@@ -206,5 +206,5 @@
         "cost": "free"
       }
     ]
-  }
+  }]
 }

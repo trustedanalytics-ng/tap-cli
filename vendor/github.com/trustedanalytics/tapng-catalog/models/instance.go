@@ -36,7 +36,8 @@ const (
 )
 
 type InstanceBindings struct {
-	Id string `json:"id"`
+	Id   string            `json:"id"`
+	Data map[string]string `json:"data"`
 }
 
 type Metadata struct {

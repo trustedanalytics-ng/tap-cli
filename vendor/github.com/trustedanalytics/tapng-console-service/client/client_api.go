@@ -20,7 +20,7 @@ type TapConsoleServiceApi interface {
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 
 	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error)
-	CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error)
+	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
 	CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
 
 	DeleteServiceInstance(instanceId string) error
@@ -68,9 +68,9 @@ func (c *TapConsoleServiceApiOAuth2Connector) CreateServiceInstance(serviceId st
 	return *result, err
 }
 
-func (c *TapConsoleServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate models.ServiceDeploy) (catalogModels.Service, error) {
+func (c *TapConsoleServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offering", c.Address))
-	result := &catalogModels.Service{}
+	result := &[]catalogModels.Service{}
 	_, err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
 	return *result, err
 }

@@ -21,6 +21,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"encoding/json"
 
 	"github.com/olekukonko/tablewriter"
@@ -70,12 +71,14 @@ func printCredentials(creds api.Credentials) {
 
 func printApplicationInstances(applications []consoleServiceModels.ApplicationInstance) {
 
-	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS"}
+	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE"}
 	rows := [][]string{}
 
 	for _, app := range applications {
 		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State),
-			strconv.Itoa(app.Replication), app.Memory, app.DiskQuota, strings.Join(app.Urls, ",")})
+			strconv.Itoa(app.Replication), app.Memory, app.DiskQuota, strings.Join(app.Urls, ","),
+			app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).String(),
+			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).String()})
 	}
 
 	createAndRenderTable(header, rows)
@@ -83,11 +86,13 @@ func printApplicationInstances(applications []consoleServiceModels.ApplicationIn
 
 func printServices(services []consoleServiceModels.ServiceInstance) {
 
-	header := []string{"NAME", "SERVICE", "PLAN", "STATE"}
+	header := []string{"NAME", "SERVICE", "PLAN", "STATE", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE"}
 	rows := [][]string{}
 
 	for _, service := range services {
-		rows = append(rows, []string{service.Name, service.ServiceName, service.ServicePlanName, fmt.Sprintf("%s", service.State)})
+		rows = append(rows, []string{service.Name, service.ServiceName, service.ServicePlanName, fmt.Sprintf("%s", service.State),
+			service.AuditTrail.CreatedBy, time.Unix(service.AuditTrail.CreatedOn, 0).String(),
+			service.AuditTrail.LastUpdateBy, time.Unix(service.AuditTrail.LastUpdatedOn, 0).String()})
 	}
 
 	createAndRenderTable(header, rows)

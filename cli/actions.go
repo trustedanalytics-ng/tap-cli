@@ -66,6 +66,42 @@ func Login(address string, username string, password string) error {
 	return nil
 }
 
+func InviteUser(email string) error {
+	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = api.ConnectionConfig.ConsoleServiceApi.InviteUser(email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Printf("User %s successfully invited\n", email)
+
+	return nil
+}
+
+func DeleteUser(email string) error {
+	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = api.ConnectionConfig.ConsoleServiceApi.DeleteUser(email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Printf("User %s successfully removed\n", email)
+
+	return nil
+}
+
 func Catalog() error {
 	err := api.InitOAuth2Connection()
 	if err != nil {

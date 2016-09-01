@@ -22,7 +22,6 @@ func GetModel(apiConnector ApiConnector, expectedStatus int, result interface{})
 
 func PatchModel(apiConnector ApiConnector, requestBody interface{}, expectedStatus int, result interface{}) (int, error) {
 	return callModelTemplateWithBody(RestPATCH, apiConnector, requestBody, expectedStatus, result)
-
 }
 
 func PostModel(apiConnector ApiConnector, requestBody interface{}, expectedStatus int, result interface{}) (int, error) {
@@ -35,6 +34,10 @@ func PutModel(apiConnector ApiConnector, requestBody interface{}, expectedStatus
 
 func DeleteModel(apiConnector ApiConnector, expectedStatus int) (int, error) {
 	return callModelTemplateWithBody(RestDELETE, apiConnector, "", expectedStatus, "")
+}
+
+func DeleteModelWithBody(apiConnector ApiConnector, requestBody interface{}, expectedStatus int) (int, error) {
+	return callModelTemplateWithBody(RestDELETE, apiConnector, requestBody, expectedStatus, "")
 }
 
 func callModelTemplateWithBody(callFunc CallFunc, apiConnector ApiConnector, requestBody interface{}, expectedStatus int, result interface{}) (status int, err error) {

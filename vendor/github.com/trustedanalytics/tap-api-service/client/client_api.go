@@ -7,6 +7,7 @@ import (
 
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-api-service/models"
+	userManagement "github.com/trustedanalytics/tap-api-service/user-management-connector"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
 	"github.com/trustedanalytics/tap-go-common/logger"
@@ -36,6 +37,9 @@ type TapConsoleServiceApi interface {
 
 	ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
 	ScaleServiceInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
+
+	InviteUser(email string) (userManagement.InvitationResponse, error)
+	DeleteUser(email string) error
 }
 
 func NewTapConsoleServiceApiWithOAuth2(address, tokenType, token string) (*TapConsoleServiceApiOAuth2Connector, error) {
@@ -138,4 +142,23 @@ func (c *TapConsoleServiceApiOAuth2Connector) UnbindInstance(srcInstanceId, dstI
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
 	return *result, err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) InviteUser(email string) (userManagement.InvitationResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users", c.Address))
+	body := userManagement.InvitationRequest{
+		Email: email,
+	}
+	result := &userManagement.InvitationResponse{}
+	_, err := brokerHttp.PostModel(connector, body, http.StatusCreated, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) DeleteUser(email string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users", c.Address))
+	body := userManagement.InvitationRequest{
+		Email: email,
+	}
+	_, err := brokerHttp.DeleteModelWithBody(connector, body, http.StatusNoContent)
+	return err
 }

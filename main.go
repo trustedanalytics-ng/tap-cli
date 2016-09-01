@@ -50,6 +50,8 @@ func main() {
 		tapCli.StopApplicationCommand(),
 		tapCli.GetInstanceLogsCommand(),
 		tapCli.DeleteApplicationCommand(),
+		tapCli.InviteUserCommand(),
+		tapCli.DeleteUserCommand(),
 	}
 
 	app.Run(os.Args)

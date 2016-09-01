@@ -31,6 +31,41 @@ func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
 	return nil
 }
 
+func InviteUserCommand() cli.Command {
+	return cli.Command{
+		Name:      "invite",
+		Usage:     "invite new user to TAP or resend invitation",
+		ArgsUsage: "<email>",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return InviteUser(c.Args().First())
+		},
+	}
+}
+
+func DeleteUserCommand() cli.Command {
+	return cli.Command{
+		Name:      "delete-user",
+		Usage:     "delete user from TAP",
+		Aliases:   []string{"du"},
+		ArgsUsage: "<email>",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return DeleteUser(c.Args().First())
+		},
+	}
+}
+
 func LoginCommand() cli.Command {
 	return cli.Command{
 		Name:      "login",

@@ -16,21 +16,10 @@
 
 package models
 
-type CreateInstanceRequest struct {
-	InstanceId string `json:"instance_id"`
-	Image      string `json:"image"`
-	TemplateId string `json:"template_id"`
-}
-
-type ScaleInstanceRequest struct {
-	Replicas int `json:"replicas"`
-}
-
-type DeleteRequest struct {
-	Id string `json:"id"`
-}
-
-type BindRequest struct {
-	SrcId string `json:"src_id"`
-	DstId string `json:"dst_id"`
-}
+const (
+	CONTAINER_BROKER_QUEUE_NAME         = "tap-container-broker"
+	CONTAINER_BROKER_CREATE_ROUTING_KEY = "create"
+	CONTAINER_BROKER_DELETE_ROUTING_KEY = "delete"
+	CONTAINER_BROKER_BIND_ROUTING_KEY   = "bind"
+	CONTAINER_BROKER_UNBIND_ROUTING_KEY = "unbind"
+)

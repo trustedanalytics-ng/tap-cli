@@ -5,9 +5,9 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-api-service/models"
 	userManagement "github.com/trustedanalytics/tap-api-service/user-management-connector"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
 	"github.com/trustedanalytics/tap-go-common/logger"

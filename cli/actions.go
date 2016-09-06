@@ -23,10 +23,10 @@ import (
 	"net/http"
 	"os"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/trustedanalytics/tap-api-service/models"
 	consoleServiceModels "github.com/trustedanalytics/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 func Login(address string, username string, password string) error {
@@ -185,7 +185,7 @@ func CreateServiceInstance(serviceName, planName, customName string) error {
 
 	instanceBody := models.Instance{}
 	instanceBody.Type = catalogModels.InstanceTypeService
-	planMeta := catalogModels.Metadata{Id: "plan", Value: planId}
+	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planId}
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
 
@@ -541,4 +541,3 @@ func DeleteApplication(applicationName string) error {
 	fmt.Println("OK")
 	return nil
 }
-

@@ -17,17 +17,17 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"encoding/json"
 
 	"github.com/olekukonko/tablewriter"
 
-	"github.com/trustedanalytics/tap-cli/api"
 	consoleServiceModels "github.com/trustedanalytics/tap-api-service/models"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 func createAndRenderTable(header []string, rows [][]string) {

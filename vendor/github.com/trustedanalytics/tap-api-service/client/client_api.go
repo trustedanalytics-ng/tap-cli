@@ -16,6 +16,9 @@ import (
 var logger = logger_wrapper.InitLogger("client")
 
 type TapConsoleServiceApi interface {
+	GetPlatformContext() (models.PlatformContext, error)
+	GetPlatformVersions() (models.Versions, error)
+
 	GetInstanceBindings(instanceId string) (models.InstanceBindings, error)
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
@@ -68,7 +71,7 @@ func (c *TapConsoleServiceApiOAuth2Connector) getApiOAuth2Connector(url string) 
 func (c *TapConsoleServiceApiOAuth2Connector) CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, serviceId))
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PostModel(connector, instance, http.StatusCreated, result)
+	_, err := brokerHttp.PostModel(connector, instance, http.StatusAccepted, result)
 	return *result, err
 }
 
@@ -81,8 +84,22 @@ func (c *TapConsoleServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate mo
 
 func (c *TapConsoleServiceApiOAuth2Connector) DeleteServiceInstance(instanceId string) error {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, instanceId))
-	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+	_, err := brokerHttp.DeleteModel(connector, http.StatusAccepted)
 	return err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) GetPlatformContext() (models.PlatformContext, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/platform_context", c.Address))
+	result := &models.PlatformContext{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapConsoleServiceApiOAuth2Connector) GetPlatformVersions() (models.Versions, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/versions", c.Address))
+	result := &models.Versions{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
 }
 
 func (c *TapConsoleServiceApiOAuth2Connector) GetCatalog() ([]models.Service, error) {

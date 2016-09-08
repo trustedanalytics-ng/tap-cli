@@ -47,8 +47,8 @@ func (c *TapConsoleServiceApiOAuth2Connector) CreateApplicationInstance(blob mul
 		return result, err
 	}
 
-	if resp.StatusCode != http.StatusCreated {
-		return result, errors.New(string(data))
+	if resp.StatusCode != http.StatusAccepted {
+		return result, errors.New("Wrong response code! - data:" + string(data))
 	}
 
 	json.Unmarshal(data, &result)

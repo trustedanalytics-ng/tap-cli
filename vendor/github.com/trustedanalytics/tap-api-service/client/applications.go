@@ -15,14 +15,14 @@ import (
 	"io/ioutil"
 
 	"github.com/trustedanalytics/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
 )
 
-func (c *TapConsoleServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error) {
-
+func (c *TapConsoleServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications", c.Address))
-	result := models.ApplicationInstance{}
+	result := catalogModels.Application{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
 	if err != nil {

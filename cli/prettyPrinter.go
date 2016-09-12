@@ -27,6 +27,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 
 	consoleServiceModels "github.com/trustedanalytics/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
@@ -78,6 +79,20 @@ func printApplicationInstances(applications []consoleServiceModels.ApplicationIn
 		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State),
 			strconv.Itoa(app.Replication), app.Memory, app.DiskQuota, strings.Join(app.Urls, ","),
 			app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).String(),
+			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).String()})
+	}
+
+	createAndRenderTable(header, rows)
+}
+
+func printApplication(applications []catalogModels.Application) {
+
+	header := []string{"NAME", "IMAGE ID", "DESCRIPTION", "REPLICATION", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE"}
+	rows := [][]string{}
+
+	for _, app := range applications {
+		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageId), fmt.Sprintf("%s", app.Description),
+			strconv.Itoa(app.Replication), app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).String(),
 			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).String()})
 	}
 

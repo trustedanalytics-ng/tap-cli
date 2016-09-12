@@ -23,7 +23,7 @@ type TapConsoleServiceApi interface {
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
 
-	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models.ApplicationInstance, error)
+	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error)
 	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
 	CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
 

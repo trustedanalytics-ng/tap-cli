@@ -19,7 +19,7 @@ There is no requirements for binary app.
 
 ## Usage
 ```
-$ ./application/tap
+./tap
 NAME:
    TAP CLI - client for managing TAP
 
@@ -27,27 +27,31 @@ USAGE:
    tap [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.0
+   0.8.0
 
 COMMANDS:
      login                    login to TAP
      target                   print actual credentials
-     catalog                  list available services
+     catalog                  list available offerings
      create-offering, co      create new offering
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
+     bindings                 list bindings
      bind-instance, bind      bind instance to another
      unbind-instance, unbind  unbind instance from another
-     push                     create application from archive, manifest should be in current working directory
+     push                     create application from archive provided or from compressed current directory by default,
+                              manifest should be in current working directory
      applications, apps       list applications
      application, a           application instance details
-     services, svcs           list services
+     services, svcs           list all service instances
      service, s               service instance details
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances
      logs, log                get logs for all containers in instance
      delete, d                delete application
+     invite                   invite new user to TAP or resend invitation
+     delete-user, du          delete user from TAP
      help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -59,21 +63,14 @@ GLOBAL OPTIONS:
 
 ### Authentication flow
 ```
-$ kubectl get svc
-NAME                  CLUSTER-IP   EXTERNAL-IP   PORT(S)                              AGE
-api-service       10.0.0.243   <nodes>       80/TCP                               1h
-container-broker      10.0.0.87    <nodes>       80/TCP                               1h
-kubernetes            10.0.0.1     <none>        443/TCP                              1h
-
-$ ./application/tap login 10.0.0.243 admin password
+./tap login api.exampledomain.com admin password
 Authenticating...
-OK
+Authentication succeeded
 
-$ ./application/tap target
-+------------+----------+
-|    API     | USERNAME |
-+------------+----------+
-| 10.0.0.243 | admin    |
-+------------+----------+
-
+./tap target
++-------------------------+----------+
+|           API           | USERNAME |
++-------------------------+----------+
+| api.exampledomain.com   | admin    |
++-------------------------+----------+
 ```

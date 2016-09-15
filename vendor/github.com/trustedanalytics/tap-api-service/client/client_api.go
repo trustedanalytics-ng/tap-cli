@@ -16,8 +16,7 @@ import (
 var logger = logger_wrapper.InitLogger("client")
 
 type TapConsoleServiceApi interface {
-	GetPlatformContext() (models.PlatformContext, error)
-	GetPlatformVersions() (models.Versions, error)
+	GetPlatformInfo() (models.PlatformInfo, error)
 
 	GetInstanceBindings(instanceId string) (models.InstanceBindings, error)
 	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
@@ -88,16 +87,9 @@ func (c *TapConsoleServiceApiOAuth2Connector) DeleteServiceInstance(instanceId s
 	return err
 }
 
-func (c *TapConsoleServiceApiOAuth2Connector) GetPlatformContext() (models.PlatformContext, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/platform_context", c.Address))
-	result := &models.PlatformContext{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
-	return *result, err
-}
-
-func (c *TapConsoleServiceApiOAuth2Connector) GetPlatformVersions() (models.Versions, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/versions", c.Address))
-	result := &models.Versions{}
+func (c *TapConsoleServiceApiOAuth2Connector) GetPlatformInfo() (models.PlatformInfo, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/platform_info", c.Address))
+	result := &models.PlatformInfo{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }

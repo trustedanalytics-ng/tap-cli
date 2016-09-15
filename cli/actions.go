@@ -284,9 +284,21 @@ func BindInstance(srcInstanceName, dstInstanceName string) error {
 
 }
 
-func UnbindInstance(srcInstanceId, dstInstanceId string) error {
+func UnbindInstance(srcInstanceName, dstInstanceName string) error {
 
 	err := api.InitOAuth2Connection()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	srcInstanceId, err := convertInstance(InstanceTypeBoth, srcInstanceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	dstInstanceId, err := convertInstance(InstanceTypeBoth, dstInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err

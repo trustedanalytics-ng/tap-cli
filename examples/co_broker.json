@@ -1,6 +1,6 @@
 {
   "broker_name": "example-broker",
-  "template" : {
+  "template": {
     "body": {
       "componentType": "broker",
       "persistentVolumeClaims": null,
@@ -9,15 +9,13 @@
           "kind": "Deployment",
           "apiVersion": "extensions/v1beta1",
           "metadata": {
-            "name": "$short_serviceid",
+            "name": "$short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "short_serviceid": "$short_serviceid",
+              "short_instance_id": "$short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -26,17 +24,17 @@
             "selector": {
               "matchLabels": {
                 "managed_by": "TAP",
-                "short_serviceid": "$short_serviceid",
-                "service_id": "$service_id"
+                "short_instance_id": "$short_instance_id",
+                "instance_id": "$instance_id"
               }
             },
             "template": {
               "metadata": {
                 "creationTimestamp": null,
                 "labels": {
-                  "short_serviceid": "$short_serviceid",
+                  "short_instance_id": "$short_instance_id",
                   "managed_by": "TAP",
-                  "service_id": "$service_id"
+                  "instance_id": "$instance_id"
                 }
               },
               "spec": {
@@ -44,7 +42,7 @@
                 "containers": [
                   {
                     "name": "fake-broker",
-                    "image": "tapimages.us.enableiot.com:8080/fake-broker",
+                    "image": "127.0.0.1:30000/fake-broker",
                     "ports": [
                       {
                         "containerPort": 80,
@@ -60,7 +58,7 @@
                         "name": "USERNAME",
                         "valueFrom": {
                           "secretKeyRef": {
-                            "Name": "$short_serviceid-broker-credentials",
+                            "Name": "$short_instance_id-broker-credentials",
                             "key": "username"
                           }
                         }
@@ -69,7 +67,7 @@
                         "name": "PASSWORD",
                         "valueFrom": {
                           "secretKeyRef": {
-                            "Name": "$short_serviceid-broker-credentials",
+                            "Name": "$short_instance_id-broker-credentials",
                             "key": "password"
                           }
                         }
@@ -98,15 +96,13 @@
           "kind": "Service",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$short_serviceid",
+            "name": "$short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "short_serviceid": "$short_serviceid",
+              "short_instance_id": "$short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -122,7 +118,7 @@
               }
             ],
             "selector": {
-              "service_id": "$service_id"
+              "instance_id": "$instance_id"
             }
           },
           "status": {
@@ -135,15 +131,13 @@
           "kind": "ServiceAccount",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$short_serviceid",
+            "name": "$short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "short_serviceid": "$short_serviceid",
+              "short_instance_id": "$short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -155,12 +149,12 @@
           "kind": "Secret",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$short_serviceid-broker-credentials",
+            "name": "$short_instance_id-broker-credentials",
             "creationTimestamp": null,
             "labels": {
-              "short_serviceid": "$short_serviceid",
+              "short_instance_id": "$short_instance_id",
               "managed_by": "TAP",
-              "service_id": "$service_id"
+              "instance_id": "$instance_id"
             }
           },
           "data": {
@@ -175,20 +169,40 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_serviceid-provision-$random_dns1",
+          "name": "$short_instance_id-provision-$random_dns",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
-            "service_id": "$service_id"
+            "instance_id": "$instance_id"
           }
         },
         "spec": {
           "volumes": null,
           "containers": [
             {
-              "name": "$short_serviceid-provision",
-              "image": "tutum/curl:latest",
+              "name": "$short_instance_id-provision",
+              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
               "env": [
+                {
+                  "name": "ACTION",
+                  "value": "CREATE"
+                },
+                {
+                  "name": "BROKER_SERVICE_NAME",
+                  "value": "$broker_short_instance_id"
+                },
+                {
+                  "name": "BODY",
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"org\", \"space_guid\":\"space\"}"
+                },
+                {
+                  "name": "EXPECTED_CODE",
+                  "value": "201"
+                },
+                {
+                  "name": "URL",
+                  "value": "/v2/service_instances/$instance_id"
+                },
                 {
                   "name": "BROKER_USERNAME",
                   "valueFrom": {
@@ -207,13 +221,6 @@
                     }
                   }
                 }
-              ],
-              "command": [
-                "/bin/bash"
-              ],
-              "args": [
-                "-c",
-                "host=$broker_short_instance_id_SERVICE_HOST && host=${host^^} && port=$broker_short_instance_id_SERVICE_PORT && port=${port^^} && curl -s -X PUT ${!host}:${!port}/v2/service_instances/$source_offering_id --user ${BROKER_USERNAME}:${BROKER_PASSWORD}"
               ],
               "resources": {},
               "imagePullPolicy": "IfNotPresent"
@@ -228,20 +235,40 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_serviceid-bind-$random_dns1",
+          "name": "$short_instance_id-bind-$random_dns",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
-            "service_id": "$service_id"
+            "instance_id": "$instance_id"
           }
         },
         "spec": {
           "volumes": null,
           "containers": [
             {
-              "name": "$short_serviceid-provision",
-              "image": "tutum/curl:latest",
+              "name": "$short_instance_id-bind",
+              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
               "env": [
+                {
+                  "name": "ACTION",
+                  "value": "BIND"
+                },
+                {
+                  "name": "BROKER_SERVICE_NAME",
+                  "value": "$broker_short_instance_id"
+                },
+                {
+                  "name": "BODY",
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"$binded_instance_id\"}"
+                },
+                {
+                  "name": "EXPECTED_CODE",
+                  "value": "201"
+                },
+                {
+                  "name": "URL",
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$binded_instance_id"
+                },
                 {
                   "name": "BROKER_USERNAME",
                   "valueFrom": {
@@ -260,13 +287,6 @@
                     }
                   }
                 }
-              ],
-              "command": [
-                "/bin/bash"
-              ],
-              "args": [
-                "-c",
-                "host=$broker_short_instance_id_SERVICE_HOST && host=${host^^} && port=$broker_short_instance_id_SERVICE_PORT && port=${port^^} && curl -s -X PUT ${!host}:${!port}/v2/service_instances/$service_id/service_bindings/unusedBindId --user ${BROKER_USERNAME}:${BROKER_PASSWORD}"
               ],
               "resources": {},
               "imagePullPolicy": "IfNotPresent"
@@ -281,20 +301,36 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_serviceid-unbind-$random_dns1",
+          "name": "$short_instance_id-unbind-$random_dns",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
-            "service_id": "$service_id"
+            "instance_id": "$instance_id"
           }
         },
         "spec": {
           "volumes": null,
           "containers": [
             {
-              "name": "$short_serviceid-provision",
-              "image": "tutum/curl:latest",
+              "name": "$short_instance_id-unbind",
+              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
               "env": [
+                {
+                  "name": "ACTION",
+                  "value": "UNBIND"
+                },
+                {
+                  "name": "BROKER_SERVICE_NAME",
+                  "value": "$broker_short_instance_id"
+                },
+                {
+                  "name": "EXPECTED_CODE",
+                  "value": "200"
+                },
+                {
+                  "name": "URL",
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$binded_instance_id?service_id=$offering_id&plan_id=$plan_id"
+                },
                 {
                   "name": "BROKER_USERNAME",
                   "valueFrom": {
@@ -314,12 +350,67 @@
                   }
                 }
               ],
-              "command": [
-                "/bin/bash"
-              ],
-              "args": [
-                "-c",
-                "host=$broker_short_instance_id_SERVICE_HOST && host=${host^^} && port=$broker_short_instance_id_SERVICE_PORT && port=${port^^} && curl -s -X DELETE ${!host}:${!port}/v2/service_instances/$service_id/service_bindings/unusedBindId --user ${BROKER_USERNAME}:${BROKER_PASSWORD}"
+              "resources": {},
+              "imagePullPolicy": "IfNotPresent"
+            }
+          ],
+          "restartPolicy": "Never",
+          "dnsPolicy": "ClusterFirst",
+          "serviceAccountName": ""
+        }
+      },
+      "deprovision": {
+        "kind": "Pod",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "$short_instance_id-deprovision-$random_dns",
+          "creationTimestamp": null,
+          "labels": {
+            "managed_by": "TAP",
+            "instance_id": "$instance_id"
+          }
+        },
+        "spec": {
+          "volumes": null,
+          "containers": [
+            {
+              "name": "$short_instance_id-deprovision",
+              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
+              "env": [
+                {
+                  "name": "ACTION",
+                  "value": "DELETE"
+                },
+                {
+                  "name": "BROKER_SERVICE_NAME",
+                  "value": "$broker_short_instance_id"
+                },
+                {
+                  "name": "EXPECTED_CODE",
+                  "value": "202"
+                },
+                {
+                  "name": "URL",
+                  "value": "/v2/service_instances/$instance_id?service_id=$offering_id&plan_id=$plan_id"
+                },
+                {
+                  "name": "BROKER_USERNAME",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "Name": "$broker_short_instance_id-broker-credentials",
+                      "key": "username"
+                    }
+                  }
+                },
+                {
+                  "name": "BROKER_PASSWORD",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "Name": "$broker_short_instance_id-broker-credentials",
+                      "key": "password"
+                    }
+                  }
+                }
               ],
               "resources": {},
               "imagePullPolicy": "IfNotPresent"
@@ -334,16 +425,33 @@
   },
   "services": [
     {
-      "id": "5309f7ba-16a7-11e6-8fcf-00155d3d8807",
       "name": "example-broker-offering",
       "description": "Example service for service broker",
-      "metadata": [],
+      "metadata": [
+        {
+          "key": "source_offering_id",
+          "value": "5309f7ba-16a7-11e6-8fcf-00155d3d8807"
+        },
+        {
+          "key": "source_plan_id-free",
+          "value": "5309f7ba-16a7-11e6-8fcf-00155d3d8803"
+        },
+        {
+          "key": "source_plan_id-paid",
+          "value": "5309f7ba-16a7-11e6-8fcf-00155d3d8806"
+        }
+      ],
       "bindable": true,
       "tags": [],
       "plans": [
         {
           "name": "free",
           "description": "free",
+          "cost": "free"
+        },
+        {
+          "name": "paid",
+          "description": "paid",
           "cost": "free"
         }
       ]

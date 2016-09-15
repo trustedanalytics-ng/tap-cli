@@ -15,13 +15,15 @@
  */
 package models
 
-type PlatformContext struct {
+type PlatformInfo struct {
 	ApiEndpoint      string        `json:"api_endpoint"`
 	CliVersion       string        `json:"cli_version"`
 	CliUrl           string        `json:"cli_url"`
 	PlatformVersion  string        `json:"platform_version"`
 	CoreOrganization string        `json:"core_organization"`
 	ExternalTools    ExternalTools `json:"external_tools"`
+	CdhVersion       string        `json:"cdh_version"`
+	K8sVersion       string        `json:"k8s_version"`
 }
 
 type ExternalTools struct {
@@ -32,10 +34,4 @@ type PlatformTool struct {
 	Name      string `json:"name"`
 	Url       string `json:"url"`
 	Available bool   `json:"available"`
-}
-
-type Versions struct {
-	TapVersion string `json:"tap"`
-	Cdh        string `json:"cdh"`
-	K8s        string `json:"k8s"`
 }

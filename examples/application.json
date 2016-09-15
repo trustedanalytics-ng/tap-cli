@@ -7,15 +7,13 @@
         "kind": "Deployment",
         "apiVersion": "extensions/v1beta1",
         "metadata": {
-          "name": "$idx_and_short_serviceid",
+          "name": "$idx_and_short_instance_id",
           "creationTimestamp": null,
           "labels": {
-            "catalog_plan_id": "$catalog_plan_id",
-            "catalog_service_id": "$catalog_service_id",
-            "idx_and_short_serviceid": "$idx_and_short_serviceid",
+            "idx_and_short_instance_id": "$idx_and_short_instance_id",
             "managed_by": "TAP",
             "org": "$org",
-            "service_id": "$service_id",
+            "instance_id": "$instance_id",
             "space": "$space"
           }
         },
@@ -23,17 +21,17 @@
           "replicas": 1,
           "selector": {
             "matchLabels": {
-              "idx_and_short_serviceid": "$idx_and_short_serviceid",
-              "service_id": "$service_id"
+              "idx_and_short_instance_id": "$idx_and_short_instance_id",
+              "instance_id": "$instance_id"
             }
           },
           "template": {
             "metadata": {
               "creationTimestamp": null,
               "labels": {
-                "idx_and_short_serviceid": "$idx_and_short_serviceid",
+                "idx_and_short_instance_id": "$idx_and_short_instance_id",
                 "managed_by": "TAP",
-                "service_id": "$service_id"
+                "instance_id": "$instance_id"
               }
             },
             "spec": {
@@ -77,15 +75,13 @@
         "kind": "Service",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$idx_and_short_serviceid",
+          "name": "$idx_and_short_instance_id",
           "creationTimestamp": null,
           "labels": {
-            "catalog_plan_id": "$catalog_plan_id",
-            "catalog_service_id": "$catalog_service_id",
-            "idx_and_short_serviceid": "$idx_and_short_serviceid",
+            "idx_and_short_instance_id": "$idx_and_short_instance_id",
             "managed_by": "TAP",
             "org": "$org",
-            "service_id": "$service_id",
+            "instance_id": "$instance_id",
             "space": "$space"
           }
         },
@@ -101,7 +97,7 @@
             }
           ],
           "selector": {
-            "service_id": "$service_id"
+            "instance_id": "$instance_id"
           }
         },
         "status": {
@@ -114,19 +110,19 @@
         "kind": "Ingress",
         "apiVersion": "extensions/v1beta1",
         "metadata": {
-          "name": "$idx_and_short_serviceid",
+          "name": "$idx_and_short_instance_id",
           "creationTimestamp": null
         },
         "spec": {
           "rules": [
             {
-              "host": "$idx_and_short_serviceid.$domain_name",
+              "host": "$idx_and_short_instance_id.$domain_name",
               "http": {
                 "paths": [
                   {
                     "path": "/",
                     "backend": {
-                      "serviceName": "$idx_and_short_serviceid",
+                      "serviceName": "$idx_and_short_instance_id",
                       "servicePort": 80
                     }
                   }

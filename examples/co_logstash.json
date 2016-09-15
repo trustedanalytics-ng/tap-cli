@@ -8,15 +8,15 @@
           "kind": "Deployment",
           "apiVersion": "extensions/v1beta1",
           "metadata": {
-            "name": "$idx_and_short_serviceid",
+            "name": "$idx_and_short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "plan_id": "$plan_id",
+              "offering_id": "$offering_id",
+              "idx_and_short_instance_id": "$idx_and_short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -24,17 +24,17 @@
             "replicas": 1,
             "selector": {
               "matchLabels": {
-                "idx_and_short_serviceid": "$idx_and_short_serviceid",
-                "service_id": "$service_id"
+                "idx_and_short_instance_id": "$idx_and_short_instance_id",
+                "instance_id": "$instance_id"
               }
             },
             "template": {
               "metadata": {
                 "creationTimestamp": null,
                 "labels": {
-                  "idx_and_short_serviceid": "$idx_and_short_serviceid",
+                  "idx_and_short_instance_id": "$idx_and_short_instance_id",
                   "managed_by": "TAP",
-                  "service_id": "$service_id"
+                  "instance_id": "$instance_id"
                 }
               },
               "spec": {
@@ -66,7 +66,7 @@
                         "name": "RABBITMQ_USERNAME",
                         "valueFrom": {
                           "secretKeyRef": {
-                            "Name": "$short_serviceid-logstash-credentials",
+                            "Name": "$short_instance_id-logstash-credentials",
                             "key": "rabbitmq-username"
                           }
                         }
@@ -75,7 +75,7 @@
                         "name": "RABBITMQ_PASSWORD",
                         "valueFrom": {
                           "secretKeyRef": {
-                            "Name": "$short_serviceid-logstash-credentials",
+                            "Name": "$short_instance_id-logstash-credentials",
                             "key": "rabbitmq-password"
                           }
                         }
@@ -104,15 +104,15 @@
           "kind": "Service",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$idx_and_short_serviceid",
+            "name": "$idx_and_short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "plan_id": "$plan_id",
+              "offering_id": "$offering_id",
+              "idx_and_short_instance_id": "$idx_and_short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -149,7 +149,7 @@
               }
             ],
             "selector": {
-              "service_id": "$service_id"
+              "instance_id": "$instance_id"
             }
           },
           "status": {
@@ -162,15 +162,15 @@
           "kind": "ServiceAccount",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$idx_and_short_serviceid",
+            "name": "$idx_and_short_instance_id",
             "creationTimestamp": null,
             "labels": {
-              "catalog_plan_id": "$catalog_plan_id",
-              "catalog_service_id": "$catalog_service_id",
-              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "plan_id": "$plan_id",
+              "offering_id": "$offering_id",
+              "idx_and_short_instance_id": "$idx_and_short_instance_id",
               "managed_by": "TAP",
               "org": "$org",
-              "service_id": "$service_id",
+              "instance_id": "$instance_id",
               "space": "$space"
             }
           },
@@ -182,12 +182,12 @@
           "kind": "Secret",
           "apiVersion": "v1",
           "metadata": {
-            "name": "$short_serviceid-logstash-credentials",
+            "name": "$short_instance_id-logstash-credentials",
             "creationTimestamp": null,
             "labels": {
-              "idx_and_short_serviceid": "$idx_and_short_serviceid",
+              "idx_and_short_instance_id": "$idx_and_short_instance_id",
               "managed_by": "TAP",
-              "service_id": "$service_id"
+              "instance_id": "$instance_id"
             }
           },
           "data": {

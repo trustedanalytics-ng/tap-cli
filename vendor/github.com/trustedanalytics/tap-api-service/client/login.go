@@ -22,7 +22,7 @@ type TapConsoleServiceApiBasicAuthConnector struct {
 	Client   *http.Client
 }
 
-func NewTapConsoleServiceLoginApiWithBasicAuth(address, username, password string) (*TapConsoleServiceApiBasicAuthConnector, error) {
+func NewTapConsoleServiceLoginApiWithBasicAuth(address, username, password string) (TapConsoleServiceLoginApi, error) {
 	client, _, err := brokerHttp.GetHttpClient()
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func NewTapConsoleServiceLoginApiWithBasicAuth(address, username, password strin
 	return &TapConsoleServiceApiBasicAuthConnector{address, username, password, client}, nil
 }
 
-func NewTapConsoleServiceLoginApiWithSSLAndBasicAuth(address, username, password, certPemFile, keyPemFile, caPemFile string) (*TapConsoleServiceApiBasicAuthConnector, error) {
+func NewTapConsoleServiceLoginApiWithSSLAndBasicAuth(address, username, password, certPemFile, keyPemFile, caPemFile string) (TapConsoleServiceLoginApi, error) {
 	client, _, err := brokerHttp.GetHttpClientWithCertAndCaFromFile(certPemFile, keyPemFile, caPemFile)
 	if err != nil {
 		return nil, err

@@ -3,3 +3,5 @@ application
 temp
 *.iml
 tap-cli
+*mock.go
+*mock_test.go

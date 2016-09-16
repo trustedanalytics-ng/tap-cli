@@ -29,25 +29,23 @@ import (
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
-func Login(address string, username string, password string) error {
+type ActionsConfig struct {
+	api.Config
+}
+
+func (a *ActionsConfig) Login(address string, username string, password string) error {
 	creds := api.Credentials{}
 	creds.Address = address
 	creds.Username = username
 
 	fmt.Println("Authenticating...")
 
-	err := api.InitBasicAuthConnection(address, username, password)
-	if err != nil {
-		fmt.Println("error creating connection:", err)
-		return err
-	}
-
-	loginResp, status, err := api.ConnectionConfig.ConsoleServiceLoginApi.Login()
+	loginResp, status, err := a.ApiServiceLogin.Login()
 	if status == http.StatusUnauthorized {
 		fmt.Println("Authentication failed")
 		return err
 	} else if err != nil {
-		fmt.Println("Error connecting: ", err)
+		fmt.Println("Error connecting:", err)
 		return err
 	}
 
@@ -55,7 +53,7 @@ func Login(address string, username string, password string) error {
 	creds.TokenType = loginResp.TokenType
 	creds.ExpiresIn = loginResp.ExpiresIn
 
-	err = api.SetCredentials(creds)
+	err = a.SetCredentials(creds)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -66,14 +64,9 @@ func Login(address string, username string, password string) error {
 	return nil
 }
 
-func InviteUser(email string) error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) InviteUser(email string) error {
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.InviteUser(email)
+	_, err := a.ApiService.InviteUser(email)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -84,14 +77,9 @@ func InviteUser(email string) error {
 	return nil
 }
 
-func DeleteUser(email string) error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) DeleteUser(email string) error {
 
-	err = api.ConnectionConfig.ConsoleServiceApi.DeleteUser(email)
+	err := a.ApiService.DeleteUser(email)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -102,14 +90,9 @@ func DeleteUser(email string) error {
 	return nil
 }
 
-func Catalog() error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) Catalog() error {
 
-	servicesList, err := api.ConnectionConfig.ConsoleServiceApi.GetCatalog()
+	servicesList, err := a.ApiService.GetCatalog()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -121,8 +104,8 @@ func Catalog() error {
 
 }
 
-func Target() error {
-	creds, err := api.GetCredentials()
+func (a *ActionsConfig) Target() error {
+	creds, err := a.GetCredentials()
 	if err != nil {
 		if os.IsNotExist(err) {
 			fmt.Println("Please login first!")
@@ -137,13 +120,7 @@ func Target() error {
 	return nil
 }
 
-func CreateOffer(jsonFilename string) error {
-
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 
 	b, err := ioutil.ReadFile(jsonFilename)
 	if err != nil {
@@ -159,7 +136,7 @@ func CreateOffer(jsonFilename string) error {
 		return err
 	}
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateOffer(serviceWithTemplate)
+	_, err = a.ApiService.CreateOffer(serviceWithTemplate)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -169,15 +146,9 @@ func CreateOffer(jsonFilename string) error {
 	return nil
 }
 
-func CreateServiceInstance(serviceName, planName, customName string) error {
+func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string) error {
 
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	serviceId, planId, err := convert(serviceName, planName)
+	serviceId, planId, err := convert(a, serviceName, planName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -189,7 +160,7 @@ func CreateServiceInstance(serviceName, planName, customName string) error {
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
 
-	_, err = api.ConnectionConfig.ConsoleServiceApi.CreateServiceInstance(serviceId, instanceBody)
+	_, err = a.ApiService.CreateServiceInstance(serviceId, instanceBody)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -200,21 +171,15 @@ func CreateServiceInstance(serviceName, planName, customName string) error {
 
 }
 
-func DeleteInstance(serviceName string) error {
+func (a *ActionsConfig) DeleteInstance(serviceName string) error {
 
-	err := api.InitOAuth2Connection()
+	instanceId, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	instanceId, err := convertInstance(catalogModels.InstanceTypeService, serviceName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	err = api.ConnectionConfig.ConsoleServiceApi.DeleteServiceInstance(instanceId)
+	err = a.ApiService.DeleteServiceInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -224,15 +189,9 @@ func DeleteInstance(serviceName string) error {
 	return nil
 }
 
-func GetInstanceBindings(instanceName string) error {
+func (a *ActionsConfig) GetInstanceBindings(instanceName string) error {
 
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	instanceId, err := convertInstance(InstanceTypeBoth, instanceName)
+	instanceId, err := convertInstance(a, InstanceTypeBoth, instanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -243,7 +202,7 @@ func GetInstanceBindings(instanceName string) error {
 		return err
 	}
 
-	bindings, err := api.ConnectionConfig.ConsoleServiceApi.GetInstanceBindings(instanceId)
+	bindings, err := a.ApiService.GetInstanceBindings(instanceId)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
@@ -253,27 +212,21 @@ func GetInstanceBindings(instanceName string) error {
 	return nil
 }
 
-func BindInstance(srcInstanceName, dstInstanceName string) error {
+func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) error {
 
-	err := api.InitOAuth2Connection()
+	srcInstanceId, err := convertInstance(a, InstanceTypeBoth, srcInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	srcInstanceId, err := convertInstance(InstanceTypeBoth, srcInstanceName)
+	dstInstanceId, err := convertInstance(a, InstanceTypeBoth, dstInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	dstInstanceId, err := convertInstance(InstanceTypeBoth, dstInstanceName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	_, err = api.ConnectionConfig.ConsoleServiceApi.BindInstance(srcInstanceId, dstInstanceId)
+	_, err = a.ApiService.BindInstance(srcInstanceId, dstInstanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -284,27 +237,21 @@ func BindInstance(srcInstanceName, dstInstanceName string) error {
 
 }
 
-func UnbindInstance(srcInstanceName, dstInstanceName string) error {
+func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) error {
 
-	err := api.InitOAuth2Connection()
+	srcInstanceId, err := convertInstance(a,InstanceTypeBoth, srcInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	srcInstanceId, err := convertInstance(InstanceTypeBoth, srcInstanceName)
+	dstInstanceId, err := convertInstance(a,InstanceTypeBoth, dstInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	dstInstanceId, err := convertInstance(InstanceTypeBoth, dstInstanceName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	_, err = api.ConnectionConfig.ConsoleServiceApi.UnbindInstance(srcInstanceId, dstInstanceId)
+	_, err = a.ApiService.UnbindInstance(srcInstanceId, dstInstanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -315,14 +262,9 @@ func UnbindInstance(srcInstanceName, dstInstanceName string) error {
 
 }
 
-func ListApplications() error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) ListApplications() error {
 
-	applicationInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListApplicationInstances()
+	applicationInstances, err := a.ApiService.ListApplicationInstances()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -332,20 +274,15 @@ func ListApplications() error {
 	return nil
 }
 
-func GetApplication(applicationName string) error {
-	err := api.InitOAuth2Connection()
+func (a *ActionsConfig) GetApplication(applicationName string) error {
+
+	instanceId, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	applicationInstance, err := api.ConnectionConfig.ConsoleServiceApi.GetApplicationInstance(instanceId)
+	applicationInstance, err := a.ApiService.GetApplicationInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -356,19 +293,14 @@ func GetApplication(applicationName string) error {
 	return nil
 }
 
-func GetService(serviceName string) error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) GetService(serviceName string) error {
 
-	instanceId, err := convertInstance(catalogModels.InstanceTypeService, serviceName)
+	instanceId, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	serviceInstance, err := api.ConnectionConfig.ConsoleServiceApi.GetServiceInstance(instanceId)
+	serviceInstance, err := a.ApiService.GetServiceInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -379,14 +311,9 @@ func GetService(serviceName string) error {
 	return nil
 }
 
-func ListServices() error {
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) ListServices() error {
 
-	services, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
+	services, err := a.ApiService.ListServiceInstances()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -396,20 +323,15 @@ func ListServices() error {
 	return nil
 }
 
-func ScaleApplication(applicationName string, replication int) error {
-	err := api.InitOAuth2Connection()
+func (a *ActionsConfig) ScaleApplication(applicationName string, replication int) error {
+
+	instanceId, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	message, err := api.ConnectionConfig.ConsoleServiceApi.ScaleApplicationInstance(instanceId, replication)
+	message, err := a.ApiService.ScaleApplicationInstance(instanceId, replication)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -419,21 +341,15 @@ func ScaleApplication(applicationName string, replication int) error {
 	return nil
 }
 
-func StartApplication(instanceId string) error {
-	return ScaleApplication(instanceId, 1)
+func (a *ActionsConfig) StartApplication(instanceId string) error {
+	return a.ScaleApplication(instanceId, 1)
 }
 
-func StopApplication(instanceId string) error {
-	return ScaleApplication(instanceId, 0)
+func (a *ActionsConfig) StopApplication(instanceId string) error {
+	return a.ScaleApplication(instanceId, 0)
 }
 
-func PushApplication(blob_path string) error {
-
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
+func (a *ActionsConfig) PushApplication(blob_path string) error {
 
 	blob, err := os.Open(blob_path)
 	if err != nil {
@@ -461,7 +377,7 @@ func PushApplication(blob_path string) error {
 		return err
 	}
 
-	app, err := api.ConnectionConfig.ConsoleServiceApi.CreateApplicationInstance(blob, manifest)
+	app, err := a.ApiService.CreateApplicationInstance(blob, manifest)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
@@ -470,7 +386,7 @@ func PushApplication(blob_path string) error {
 	printApplication([]catalogModels.Application{app})
 
 	if manifest.Instances != 1 {
-		ScaleApplication(app.Id, manifest.Instances)
+		a.ScaleApplication(app.Id, manifest.Instances)
 		printApplication([]catalogModels.Application{app})
 	}
 
@@ -478,7 +394,7 @@ func PushApplication(blob_path string) error {
 	return nil
 }
 
-func CompressCwdAndPushAsApplication() error {
+func (a *ActionsConfig) CompressCwdAndPushAsApplication() error {
 	folder, err := os.Getwd()
 	if err != nil {
 		return err
@@ -487,7 +403,7 @@ func CompressCwdAndPushAsApplication() error {
 	if err != nil {
 		return err
 	}
-	err = PushApplication(archivePath)
+	err = a.PushApplication(archivePath)
 	err2 := os.Remove(archivePath)
 	if err != nil {
 		return err
@@ -498,15 +414,9 @@ func CompressCwdAndPushAsApplication() error {
 	return nil
 }
 
-func GetInstanceLogs(instanceName string) error {
+func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 
-	err := api.InitOAuth2Connection()
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	instanceId, err := convertInstance(InstanceTypeBoth, instanceName)
+	instanceId, err := convertInstance(a, InstanceTypeBoth, instanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -517,7 +427,7 @@ func GetInstanceLogs(instanceName string) error {
 		return err
 	}
 
-	logs, err := api.ConnectionConfig.ConsoleServiceApi.GetInstanceLogs(instanceId)
+	logs, err := a.ApiService.GetInstanceLogs(instanceId)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
 		return err
@@ -531,20 +441,15 @@ func GetInstanceLogs(instanceName string) error {
 	return nil
 }
 
-func DeleteApplication(applicationName string) error {
-	err := api.InitOAuth2Connection()
+func (a *ActionsConfig) DeleteApplication(applicationName string) error {
+
+	instanceId, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	instanceId, err := convertInstance(catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	err = api.ConnectionConfig.ConsoleServiceApi.DeleteApplicationInstance(instanceId)
+	err = a.ApiService.DeleteApplicationInstance(instanceId)
 	if err != nil {
 		fmt.Println(err)
 		return err

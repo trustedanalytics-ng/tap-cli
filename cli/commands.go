@@ -22,6 +22,8 @@ import (
 	"strconv"
 
 	"github.com/urfave/cli"
+	"github.com/trustedanalytics/tap-api-service/client"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
@@ -43,7 +45,7 @@ func InviteUserCommand() cli.Command {
 				return err
 			}
 
-			return InviteUser(c.Args().First())
+			return NewOAuth2Service().InviteUser(c.Args().First())
 		},
 	}
 }
@@ -61,7 +63,7 @@ func DeleteUserCommand() cli.Command {
 				return err
 			}
 
-			return DeleteUser(c.Args().First())
+			return NewOAuth2Service().DeleteUser(c.Args().First())
 		},
 	}
 }
@@ -78,7 +80,7 @@ func LoginCommand() cli.Command {
 				return err
 			}
 
-			return Login(c.Args().First(), c.Args().Get(1), c.Args().Get(2))
+			return NewBasicAuthService(c).Login(c.Args().First(), c.Args().Get(1), c.Args().Get(2))
 		},
 	}
 }
@@ -88,7 +90,7 @@ func TargetCommand() cli.Command {
 		Name:  "target",
 		Usage: "print actual credentials",
 		Action: func(c *cli.Context) error {
-			return Target()
+			return NewOAuth2Service().Target()
 		},
 	}
 }
@@ -98,7 +100,7 @@ func CatalogCommand() cli.Command {
 		Name:  "catalog",
 		Usage: "list available offerings",
 		Action: func(c *cli.Context) error {
-			return Catalog()
+			return NewOAuth2Service().Catalog()
 		},
 	}
 }
@@ -115,7 +117,7 @@ func CreateOfferingCommand() cli.Command {
 				return err
 			}
 
-			return CreateOffer(c.Args().First())
+			return NewOAuth2Service().CreateOffer(c.Args().First())
 		},
 	}
 }
@@ -133,7 +135,7 @@ func CreateServiceCommand() cli.Command {
 				return err
 			}
 
-			return CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
+			return NewOAuth2Service().CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
 		},
 	}
 }
@@ -150,7 +152,7 @@ func DeleteServiceCommand() cli.Command {
 			if err != nil {
 				return err
 			}
-			return DeleteInstance(c.Args().Get(0))
+			return NewOAuth2Service().DeleteInstance(c.Args().Get(0))
 		},
 	}
 }
@@ -168,7 +170,7 @@ func BindInstanceCommand() cli.Command {
 				return err
 			}
 
-			return BindInstance(c.Args().First(), c.Args().Get(1))
+			return NewOAuth2Service().BindInstance(c.Args().First(), c.Args().Get(1))
 		},
 	}
 }
@@ -186,7 +188,7 @@ func UnbindInstanceCommand() cli.Command {
 				return err
 			}
 
-			return UnbindInstance(c.Args().First(), c.Args().Get(1))
+			return NewOAuth2Service().UnbindInstance(c.Args().First(), c.Args().Get(1))
 		},
 	}
 }
@@ -203,7 +205,7 @@ func ListInstanceBindingsCommand() cli.Command {
 				return err
 			}
 
-			return GetInstanceBindings(c.Args().First())
+			return NewOAuth2Service().GetInstanceBindings(c.Args().First())
 		},
 	}
 }
@@ -215,7 +217,7 @@ func ListApplicationsCommand() cli.Command {
 		Aliases:   []string{"apps"},
 		Usage:     "list applications",
 		Action: func(c *cli.Context) error {
-			return ListApplications()
+			return NewOAuth2Service().ListApplications()
 		},
 	}
 }
@@ -236,10 +238,10 @@ func PushApplicationCommand() cli.Command {
 
 			err := validateArgs(c, 1)
 			if err != nil {
-				return CompressCwdAndPushAsApplication()
+				return NewOAuth2Service().CompressCwdAndPushAsApplication()
 			}
 
-			return PushApplication(c.Args().First())
+			return NewOAuth2Service().PushApplication(c.Args().First())
 		},
 	}
 }
@@ -251,7 +253,7 @@ func ListServicesCommand() cli.Command {
 		Aliases:   []string{"svcs"},
 		Usage:     "list all service instances",
 		Action: func(c *cli.Context) error {
-			return ListServices()
+			return NewOAuth2Service().ListServices()
 		},
 	}
 }
@@ -274,7 +276,7 @@ func ScaleApplicationCommand() cli.Command {
 				return cli.NewExitError(errr.Error(), -1)
 			}
 
-			return ScaleApplication(c.Args().First(), i)
+			return NewOAuth2Service().ScaleApplication(c.Args().First(), i)
 		},
 	}
 }
@@ -291,7 +293,7 @@ func StartApplicationCommand() cli.Command {
 				return err
 			}
 
-			return StartApplication(c.Args().First())
+			return NewOAuth2Service().StartApplication(c.Args().First())
 		},
 	}
 }
@@ -308,7 +310,7 @@ func StopApplicationCommand() cli.Command {
 				return err
 			}
 
-			return StopApplication(c.Args().First())
+			return NewOAuth2Service().StopApplication(c.Args().First())
 		},
 	}
 }
@@ -326,7 +328,7 @@ func DeleteApplicationCommand() cli.Command {
 				return err
 			}
 
-			return DeleteApplication(c.Args().First())
+			return NewOAuth2Service().DeleteApplication(c.Args().First())
 		},
 	}
 }
@@ -344,7 +346,7 @@ func GetInstanceLogsCommand() cli.Command {
 				return err
 			}
 
-			return GetInstanceLogs(c.Args().First())
+			return NewOAuth2Service().GetInstanceLogs(c.Args().First())
 		},
 	}
 }
@@ -362,10 +364,12 @@ func GetApplicationsCommand() cli.Command {
 				return err
 			}
 
-			return GetApplication(c.Args().First())
+			return NewOAuth2Service().GetApplication(c.Args().First())
 		},
 	}
 }
+
+
 
 func GetServiceCommand() cli.Command {
 	return cli.Command{
@@ -380,7 +384,35 @@ func GetServiceCommand() cli.Command {
 				return err
 			}
 
-			return GetService(c.Args().First())
+			return NewOAuth2Service().GetService(c.Args().First())
 		},
 	}
+}
+
+func NewBasicAuthService(c *cli.Context) *ActionsConfig {
+	apiConnector, err := client.NewTapConsoleServiceLoginApiWithBasicAuth("http://"+c.Args().First(),c.Args().Get(1),c.Args().Get(2))
+	if err != nil {
+		panic(err)
+	}
+	return &ActionsConfig{api.Config{nil,apiConnector}}
+}
+
+func NewOAuth2Service() *ActionsConfig {
+	a := &ActionsConfig{api.Config{}}
+
+	creds, err := a.GetCredentials()
+	if err != nil {
+		if os.IsNotExist(err) {
+			panic("Please login first!")
+		}
+		panic(err.Error())
+	}
+
+	apiConnector, err := client.NewTapConsoleServiceApiWithOAuth2("http://"+creds.Address,creds.TokenType,creds.Token)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	a.ApiService = apiConnector
+	return a
 }

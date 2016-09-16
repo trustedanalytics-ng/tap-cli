@@ -29,15 +29,22 @@ deps_update_tap: verify_gopath
 bin/govendor: verify_gopath
 	go get -v -u github.com/kardianos/govendor
 
-tests: verify_gopath
-	go test --cover $(APP_DIR_LIST)
+install_mockgen:
+	scripts/install_mockgen.sh
+
+mock_update: install_mockgen
+	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client_api.go -package=api -destination=api/api_service_client_mock.go
+	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/login.go -package=api -destination=api/api_service_login_mock.go
+
+tests: verify_gopath mock_update
+	go test -v --cover $(APP_DIR_LIST)
 
 prepare_dirs:
 	mkdir -p ./temp/src/github.com/trustedanalytics/tap-cli
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tap-cli
 
-build_anywhere:
+build_anywhere: tests
 	$(MAKE) prepare_dirs build_anywhere_linux
 	$(MAKE) prepare_dirs build_anywhere_win32
 	$(MAKE) prepare_dirs build_anywhere_osx

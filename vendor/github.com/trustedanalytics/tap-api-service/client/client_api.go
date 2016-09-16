@@ -44,7 +44,7 @@ type TapConsoleServiceApi interface {
 	DeleteUser(email string) error
 }
 
-func NewTapConsoleServiceApiWithOAuth2(address, tokenType, token string) (*TapConsoleServiceApiOAuth2Connector, error) {
+func NewTapConsoleServiceApiWithOAuth2(address, tokenType, token string) (TapConsoleServiceApi, error) {
 	client, _, err := brokerHttp.GetHttpClient()
 	if err != nil {
 		return nil, err

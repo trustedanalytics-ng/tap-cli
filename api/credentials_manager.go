@@ -24,7 +24,7 @@ import (
 
 //TODO: make credsPath read optionally from environment or options
 var cliConfigDir string = os.Getenv("HOME") + "/.tap-cli"
-var credsPath string = cliConfigDir + "/credentials.json"
+var CredsPath string = cliConfigDir + "/credentials.json"
 
 const PERMISSIONS os.FileMode = 0744
 
@@ -36,11 +36,11 @@ type Credentials struct {
 	ExpiresIn int    `json:"expires"`
 }
 
-func GetCredentials() (Credentials, error) {
+func (c *Config) GetCredentials() (Credentials, error) {
 
 	creds := Credentials{}
 
-	b, err := ioutil.ReadFile(credsPath)
+	b, err := ioutil.ReadFile(CredsPath)
 	if err != nil {
 		return creds, err
 	}
@@ -53,7 +53,7 @@ func GetCredentials() (Credentials, error) {
 	return creds, nil
 }
 
-func SetCredentials(creds Credentials) error {
+func (c *Config) SetCredentials(creds Credentials) error {
 
 	jsonBytes, err := json.Marshal(creds)
 	if err != nil {
@@ -65,6 +65,6 @@ func SetCredentials(creds Credentials) error {
 		return err
 	}
 
-	err = ioutil.WriteFile(credsPath, jsonBytes, PERMISSIONS)
+	err = ioutil.WriteFile(CredsPath, jsonBytes, PERMISSIONS)
 	return err
 }

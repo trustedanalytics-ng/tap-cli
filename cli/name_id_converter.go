@@ -19,12 +19,11 @@ package cli
 import (
 	"errors"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
 )
 
-func convert(serviceName, planName string) (string, string, error) {
+func convert(a *ActionsConfig, serviceName, planName string) (string, string, error) {
 
-	catalog, err := api.ConnectionConfig.ConsoleServiceApi.GetCatalog()
+	catalog, err := a.ApiService.GetCatalog()
 	if err != nil {
 		return "", "", err
 	}
@@ -49,10 +48,10 @@ const (
 	InstanceTypeBoth catalogModels.InstanceType = "BOTH"
 )
 
-func convertInstance(instanceType catalogModels.InstanceType, instanceName string) (string, error) {
+func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, instanceName string) (string, error) {
 
 	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeService {
-		serviceInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListServiceInstances()
+		serviceInstances, err := a.ApiService.ListServiceInstances()
 		if err == nil {
 			for _, instance := range serviceInstances {
 				if instance.Name == instanceName {
@@ -62,7 +61,7 @@ func convertInstance(instanceType catalogModels.InstanceType, instanceName strin
 		}
 	}
 	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeApplication {
-		applicationInstances, err := api.ConnectionConfig.ConsoleServiceApi.ListApplicationInstances()
+		applicationInstances, err := a.ApiService.ListApplicationInstances()
 		if err == nil {
 			for _, instance := range applicationInstances {
 				if instance.Name == instanceName {

@@ -17,57 +17,10 @@
 package api
 
 import (
-	"errors"
-	"os"
-
 	"github.com/trustedanalytics/tap-api-service/client"
 )
 
 type Config struct {
-	ConsoleServiceApi      client.TapConsoleServiceApi
-	ConsoleServiceLoginApi client.TapConsoleServiceLoginApi
-}
-
-var ConnectionConfig *Config
-
-func InitOAuth2Connection() error {
-
-	creds, err := GetCredentials()
-	if err != nil {
-		if os.IsNotExist(err) {
-			return errors.New("Please login first!")
-		}
-		return err
-	}
-
-	apiConnector, err := client.NewTapConsoleServiceApiWithOAuth2(
-		"http://"+creds.Address,
-		creds.TokenType,
-		creds.Token,
-	)
-	if err != nil {
-		return err
-	}
-
-	ConnectionConfig = &Config{}
-	ConnectionConfig.ConsoleServiceApi = apiConnector
-
-	return nil
-}
-
-func InitBasicAuthConnection(address, username, password string) error {
-
-	apiConnector, err := client.NewTapConsoleServiceLoginApiWithBasicAuth(
-		"http://"+address,
-		username,
-		password,
-	)
-	if err != nil {
-		return err
-	}
-
-	ConnectionConfig = &Config{}
-	ConnectionConfig.ConsoleServiceLoginApi = apiConnector
-
-	return nil
+	ApiService                 client.TapConsoleServiceApi
+	ApiServiceLogin            client.TapConsoleServiceLoginApi
 }

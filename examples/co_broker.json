@@ -169,7 +169,7 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_instance_id-provision-$random_dns",
+          "name": "$short_instance_id-provision-$random_dns1",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
@@ -235,7 +235,7 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_instance_id-bind-$random_dns",
+          "name": "$short_instance_id-bind-$random_dns1",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
@@ -301,7 +301,7 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_instance_id-unbind-$random_dns",
+          "name": "$short_instance_id-unbind-$random_dns1",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
@@ -363,7 +363,7 @@
         "kind": "Pod",
         "apiVersion": "v1",
         "metadata": {
-          "name": "$short_instance_id-deprovision-$random_dns",
+          "name": "$short_instance_id-deprovision-$random_dns1",
           "creationTimestamp": null,
           "labels": {
             "managed_by": "TAP",
@@ -387,7 +387,7 @@
                 },
                 {
                   "name": "EXPECTED_CODE",
-                  "value": "202"
+                  "value": "200"
                 },
                 {
                   "name": "URL",

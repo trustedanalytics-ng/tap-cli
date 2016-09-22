@@ -2,9 +2,9 @@ package cli
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
-	"testing"
-	"os"
 	"github.com/trustedanalytics/tap-cli/api"
+	"os"
+	"testing"
 )
 
 func TestApiAndLoginServiceSetters(t *testing.T) {
@@ -12,15 +12,17 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 		Convey("Should fail when no credentials.json file", func() {
 			os.Remove(api.CredsPath)
 
-			So(func(){
-				NewOAuth2Service()}, ShouldPanicWith, "Please login first!")
+			So(func() {
+				NewOAuth2Service()
+			}, ShouldPanicWith, "Please login first!")
 		})
 		Convey("Should fail when wrong format in credentials.json file", func() {
 			wrongContent := "@"
 			fillCredentialsFile(wrongContent)
 
-			So(func(){
-				NewOAuth2Service()}, ShouldPanicWith, "invalid character '" + wrongContent + "' looking for beginning of value")
+			So(func() {
+				NewOAuth2Service()
+			}, ShouldPanicWith, "invalid character '"+wrongContent+"' looking for beginning of value")
 		})
 	})
 }

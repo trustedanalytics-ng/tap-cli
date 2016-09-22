@@ -239,13 +239,13 @@ func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) er
 
 func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) error {
 
-	srcInstanceId, err := convertInstance(a,InstanceTypeBoth, srcInstanceName)
+	srcInstanceId, err := convertInstance(a, InstanceTypeBoth, srcInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	dstInstanceId, err := convertInstance(a,InstanceTypeBoth, dstInstanceName)
+	dstInstanceId, err := convertInstance(a, InstanceTypeBoth, dstInstanceName)
 	if err != nil {
 		fmt.Println(err)
 		return err

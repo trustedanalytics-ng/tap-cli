@@ -21,9 +21,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/urfave/cli"
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/urfave/cli"
 )
 
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
@@ -369,8 +369,6 @@ func GetApplicationsCommand() cli.Command {
 	}
 }
 
-
-
 func GetServiceCommand() cli.Command {
 	return cli.Command{
 		Name:      "service",
@@ -390,11 +388,11 @@ func GetServiceCommand() cli.Command {
 }
 
 func NewBasicAuthService(c *cli.Context) *ActionsConfig {
-	apiConnector, err := client.NewTapConsoleServiceLoginApiWithBasicAuth("http://"+c.Args().First(),c.Args().Get(1),c.Args().Get(2))
+	apiConnector, err := client.NewTapApiServiceLoginApiWithBasicAuth("http://"+c.Args().First(), c.Args().Get(1), c.Args().Get(2))
 	if err != nil {
 		panic(err)
 	}
-	return &ActionsConfig{api.Config{nil,apiConnector}}
+	return &ActionsConfig{api.Config{nil, apiConnector}}
 }
 
 func NewOAuth2Service() *ActionsConfig {
@@ -408,7 +406,7 @@ func NewOAuth2Service() *ActionsConfig {
 		panic(err.Error())
 	}
 
-	apiConnector, err := client.NewTapConsoleServiceApiWithOAuth2("http://"+creds.Address,creds.TokenType,creds.Token)
+	apiConnector, err := client.NewTapApiServiceApiWithOAuth2("http://"+creds.Address, creds.TokenType, creds.Token)
 	if err != nil {
 		panic(err.Error())
 	}

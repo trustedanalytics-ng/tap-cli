@@ -21,6 +21,6 @@ import (
 )
 
 type Config struct {
-	ApiService                 client.TapConsoleServiceApi
-	ApiServiceLogin            client.TapConsoleServiceLoginApi
+	ApiService      client.TapApiServiceApi
+	ApiServiceLogin client.TapApiServiceLoginApi
 }

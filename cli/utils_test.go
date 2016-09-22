@@ -17,15 +17,15 @@
 package cli
 
 import (
-	"testing"
 	"bytes"
 	"os"
+	"testing"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 
-	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/golang/mock/gomock"
+	"github.com/trustedanalytics/tap-cli/api"
 	"io"
 	"io/ioutil"
 	"strconv"
@@ -34,8 +34,8 @@ import (
 func setApiAndLoginServiceMocks(t *testing.T) *ActionsConfig {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-	a := api.NewMockTapConsoleServiceApi(mockCtrl)
-	b := api.NewMockTapConsoleServiceLoginApi(mockCtrl)
+	a := api.NewMockTapApiServiceApi(mockCtrl)
+	b := api.NewMockTapApiServiceLoginApi(mockCtrl)
 	return &ActionsConfig{api.Config{a, b}}
 }
 
@@ -46,9 +46,11 @@ func fillCredentialsFile(content string) {
 func newFakeOffering(m map[string]string) models.Service {
 	return models.Service{
 		models.ServiceEntity{
-			Label: m["label"],
+			Label:        m["label"],
 			ServicePlans: []models.ServicePlan{{models.ServicePlanEntity{Name: m["name"]}, models.Metadata{}}},
-			Description: m["desc"]},
+			Description:  m["desc"],
+			State: m["state"],
+		},
 		models.Metadata{Guid: "RANDOM_GUID"}}
 }
 
@@ -58,9 +60,9 @@ func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	rep, _ := strconv.Atoi(m["replication"])
 	return models.ApplicationInstance{
 		catalogModels.Instance{
-			Name: m["name"],
+			Name:       m["name"],
 			AuditTrail: catalogModels.AuditTrail{int64(createdOn), m["cb"], int64(updatedOn), m["ub"]},
-			State: catalogModels.InstanceState(m["instance_state"]),
+			State:      catalogModels.InstanceState(m["instance_state"]),
 		},
 		rep,
 		catalogModels.ImageState(m["image_state"]),
@@ -70,16 +72,17 @@ func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
 		m["quota"],
 		0}
 }
+
 //return service.Entity.UniqueId, plan.Entity.UniqueId, nil
 func newFakeService(m map[string]string) models.Service {
 	return models.Service{
 		models.ServiceEntity{
-			Label: m["label"],
+			Label:    m["label"],
 			UniqueId: m["service_id"],
 			ServicePlans: []models.ServicePlan{
 				{
 					models.ServicePlanEntity{
-						Name: m["plan_name"],
+						Name:     m["plan_name"],
 						UniqueId: m["plan_id"],
 					},
 					models.Metadata{},

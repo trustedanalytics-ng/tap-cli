@@ -43,8 +43,7 @@ func createAndRenderTable(header []string, rows [][]string) {
 }
 
 func printCatalog(catalog []consoleServiceModels.Service) {
-
-	header := []string{"NAME", "PLAN", "DESCRIPTION"}
+	header := []string{"NAME", "PLAN", "DESCRIPTION", "STATE"}
 	rows := [][]string{}
 
 	for _, service := range catalog {
@@ -52,7 +51,7 @@ func printCatalog(catalog []consoleServiceModels.Service) {
 		for _, planName := range service.Entity.ServicePlans {
 			planNames = append(planNames, planName.Entity.Name)
 		}
-		line := []string{service.Entity.Label, strings.Join(planNames, ", "), service.Entity.Description}
+		line := []string{service.Entity.Label, strings.Join(planNames, ", "), service.Entity.Description, service.Entity.State}
 		rows = append(rows, line)
 	}
 

@@ -16,7 +16,7 @@
 
 if [ -f $GOPATH/bin/mockgen ]; then
   echo "mockgen is already built"
-  return
+  exit 0
 fi;
 echo "building mockgen..."
 mkdir -p temp/src/github.com/golang/mock

@@ -23,6 +23,7 @@ type ServiceEntity struct {
 	ServiceBrokerGuid string        `json:"service_broker_guid"`
 	PlanUpdateable    bool          `json:"plan_updateable"`
 	ServicePlansUrl   string        `json:"service_plans_url"`
+	State             string        `json:"state"`
 	ServicePlans      []ServicePlan `json:"service_plans"`
 }
 

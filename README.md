@@ -74,3 +74,76 @@ Authentication succeeded
 | api.exampledomain.com   | admin    |
 +-------------------------+----------+
 ```
+
+### Application preparation *Python*
+
+#### Prepare list of dependencies used in requirements.txt
+It can be done manually or when using virtualenv dumped using:
+```
+pip freeze > requirements.txt
+```
+#### Store python dependencies in a foler:
+```
+mkdir vendor
+sudo pip install -r requirements.txt --download vendor
+```
+#### Prepare run.sh script which will install dependencies and start an application:
+
+```
+pip install --no-index --find-links=./vendor -r requirements.txt
+python ./src/__init__.py
+```
+
+#### Create an archive containing all files loosely:
+```
+tar cxvf python-application.tar.gz ./*
+```
+#### Create manifest.json file in current directory describing created application:
+
+```
+{
+    "type":"PYTHON",
+    "name":"my-python-app",
+    "instances":1
+}
+
+```
+#### Push application 
+
+```
+./tap push python-application.tar.gz
+```
+
+
+### Application preparation *Java*
+
+Build jar and prepare all dependencies 
+
+#### Prepare run.sh script which will start an application:
+
+```
+exec java -jar java-application-0.1.0.jar 
+```
+
+#### Create an archive containing all files loosely:
+```
+tar cxvf java-application.tar.gz ./*
+```
+
+
+#### Write manifest.json file describing created application:
+```
+{
+    "type":"JAVA",
+    "name":"my-java-app",
+    "instances":1
+}
+
+```
+
+
+#### Push application 
+
+```
+./tap push java-application.tar.gz
+```

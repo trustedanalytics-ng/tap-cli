@@ -35,6 +35,7 @@ func main() {
 		tapCli.TargetCommand(),
 		tapCli.CatalogCommand(),
 		tapCli.CreateOfferingCommand(),
+		tapCli.DeleteOfferingCommand(),
 		tapCli.CreateServiceCommand(),
 		tapCli.DeleteServiceCommand(),
 		tapCli.ListInstanceBindingsCommand(),

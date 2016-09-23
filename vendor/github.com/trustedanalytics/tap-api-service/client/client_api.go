@@ -26,6 +26,7 @@ type TapApiServiceApi interface {
 	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
 	CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
 
+	DeleteOffering(serviceId string) error
 	DeleteServiceInstance(instanceId string) error
 	DeleteApplicationInstance(instanceId string) error
 
@@ -79,6 +80,12 @@ func (c *TapApiServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate models
 	result := &[]catalogModels.Service{}
 	_, err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
 	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) DeleteOffering(serviceId string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offering/%s", c.Address, serviceId))
+	_, err := brokerHttp.DeleteModel(connector, http.StatusAccepted)
+	return err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteServiceInstance(instanceId string) error {

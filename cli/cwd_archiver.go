@@ -40,7 +40,7 @@ func createApplicationArchive(folder string) (string, error) {
 	defer tw.Close()
 
 	if _, err := os.Stat(filepath.Join(folder, "run.sh")); os.IsNotExist(err) {
-		fmt.Println("run.sh does dot exist")
+		fmt.Println("run.sh does not exist")
 		fmt.Println("Create a script with commands how to install required dependencies offline and run your application.")
 		return "", err
 	}

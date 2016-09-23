@@ -18,6 +18,7 @@ package cli
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -146,6 +147,25 @@ func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 	return nil
 }
 
+func (a *ActionsConfig) DeleteOffering(serviceName string) error {
+
+	serviceID, err := getServiceID(a, serviceName)
+	if err != nil {
+		err = errors.New("Cannot fetch service id: " + err.Error())
+		fmt.Println(err)
+		return err
+	}
+
+	if err = a.ApiService.DeleteOffering(serviceID); err != nil {
+		err = errors.New("Cannot delete offering: " + err.Error())
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Printf("OK")
+	return nil
+}
+
 func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string) error {
 
 	serviceId, planId, err := convert(a, serviceName, planName)
@@ -168,7 +188,6 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 
 	fmt.Println("OK")
 	return nil
-
 }
 
 func (a *ActionsConfig) DeleteInstance(serviceName string) error {

@@ -36,8 +36,8 @@ mock_update: install_mockgen
 	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client_api.go -package=api -destination=api/api_service_client_mock.go
 	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/login.go -package=api -destination=api/api_service_login_mock.go
 
-test: mock_update
-	go test -v --cover $(APP_DIR_LIST)
+test: verify_gopath mock_update
+	go test --cover $(APP_DIR_LIST)
 
 prepare_dirs:
 	mkdir -p ./temp/src/github.com/trustedanalytics/tap-cli

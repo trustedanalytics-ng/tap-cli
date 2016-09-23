@@ -122,6 +122,23 @@ func CreateOfferingCommand() cli.Command {
 	}
 }
 
+func DeleteOfferingCommand() cli.Command {
+	return cli.Command{
+		Name:      "delete-offering",
+		ArgsUsage: "<offering_custom_name>",
+		Aliases:   []string{"do"},
+		Usage:     "delete offering",
+		Action: func(c *cli.Context) error {
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().DeleteOffering(c.Args().First())
+		},
+	}
+}
+
 func CreateServiceCommand() cli.Command {
 	return cli.Command{
 		Name:      "create-service",
@@ -231,7 +248,7 @@ func PushApplicationCommand() cli.Command {
 		Action: func(c *cli.Context) error {
 
 			if _, err := os.Stat("manifest.json"); os.IsNotExist(err) {
-				fmt.Println("manifest.json does dot exist")
+				fmt.Println("manifest.json does not exist")
 				fmt.Println("Create one with metadata about your application.")
 				return err
 			}

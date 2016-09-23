@@ -34,6 +34,7 @@ COMMANDS:
      target                   print actual credentials
      catalog                  list available offerings
      create-offering, co      create new offering
+     delete-offering, do      delete offering
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
      bindings                 list bindings

@@ -18,6 +18,8 @@ package cli
 
 import (
 	"errors"
+	"fmt"
+
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
 
@@ -72,4 +74,20 @@ func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, 
 	}
 
 	return "", errors.New("cannot find instance with name: " + instanceName)
+}
+
+func getServiceID(a *ActionsConfig, serviceName string) (string, error) {
+
+	services, err := a.ApiService.GetCatalog()
+	if err != nil {
+		return "", errors.New("Cannot fetch offering list: " + err.Error())
+	}
+
+	for _, service := range services {
+		if service.Entity.Label == serviceName {
+			return service.Entity.UniqueId, nil
+		}
+	}
+
+	return "", fmt.Errorf("Service %s not found", serviceName)
 }

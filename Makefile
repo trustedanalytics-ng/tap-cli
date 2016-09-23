@@ -44,7 +44,7 @@ prepare_dirs:
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tap-cli
 
-build_anywhere: test
+build_anywhere:
 	$(MAKE) prepare_dirs build_anywhere_linux
 	$(MAKE) prepare_dirs build_anywhere_win32
 	$(MAKE) prepare_dirs build_anywhere_osx

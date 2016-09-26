@@ -434,7 +434,7 @@ func NewOAuth2Service() *ActionsConfig {
 		panic(err.Error())
 	}
 
-	apiConnector, err := client.NewTapApiServiceApiWithOAuth2("http://"+creds.Address, creds.TokenType, creds.Token)
+	apiConnector, err := client.NewTapApiServiceApiWithOAuth2(creds.Address, creds.TokenType, creds.Token)
 	if err != nil {
 		panic(err.Error())
 	}

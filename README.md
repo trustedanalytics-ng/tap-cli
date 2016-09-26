@@ -31,8 +31,8 @@ VERSION:
 
 COMMANDS:
      login                    login to TAP
-     target                   print actual credentials
-     catalog                  list available offerings
+     target, t                print actual credentials
+     catalog, o               list available offerings
      create-offering, co      create new offering
      delete-offering, do      delete offering
      create-service, cs       create instance of service

@@ -53,19 +53,24 @@ var expectedCredsFileContent = "{" +
 	"\"expires\":" + strconv.Itoa(expectedUaaRes.ExpiresIn) +
 	"}"
 
-func TestLoginCommand(t *testing.T) {
+func TestLoginActions(t *testing.T) {
 	actionsConfig := setApiAndLoginServiceMocks(t)
 	Convey("Test Login command", t, func() {
+
+		actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
+			EXPECT().
+			GetLoginCredentials().
+			Return(url, login, pass)
+
 		Convey("Should fail when user unauthorized", func() {
 			actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
 				EXPECT().
 				Login().
-				Return(expectedUaaRes, http.StatusUnauthorized, errors.New(""))
+				Return(expectedUaaRes, http.StatusUnauthorized, errors.New("Authentication failed"))
 
-			stdout := captureStdout(func() {
-				actionsConfig.Login(url, login, pass)
-			})
-			So(stdout, ShouldContainSubstring, "Authentication failed")
+			err := actionsConfig.Login()
+
+			So(err.Error(), ShouldContainSubstring, "Authentication failed")
 		})
 		Convey("Should fail when connecting error occurs", func() {
 			loginErrorMsg := "server error"
@@ -74,11 +79,9 @@ func TestLoginCommand(t *testing.T) {
 				Login().
 				Return(expectedUaaRes, http.StatusInternalServerError, errors.New(loginErrorMsg))
 
-			stdout := captureStdout(func() {
-				actionsConfig.Login(url, login, pass)
-			})
+			err := actionsConfig.Login()
 
-			So(stdout, ShouldContainSubstring, "Error connecting: "+loginErrorMsg)
+			So(err.Error(), ShouldContainSubstring, loginErrorMsg)
 		})
 		Convey("Should pass when credentials succesfully saved", func() {
 			actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
@@ -87,7 +90,7 @@ func TestLoginCommand(t *testing.T) {
 				Return(expectedUaaRes, http.StatusOK, nil)
 
 			stdout := captureStdout(func() {
-				actionsConfig.Login(url, login, pass)
+				actionsConfig.Login()
 			})
 
 			b, err := ioutil.ReadFile(api.CredsPath)

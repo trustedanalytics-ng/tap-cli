@@ -34,7 +34,8 @@ type ActionsConfig struct {
 	api.Config
 }
 
-func (a *ActionsConfig) Login(address string, username string, password string) error {
+func (a *ActionsConfig) Login() error {
+	address, username, _ := a.ApiServiceLogin.GetLoginCredentials()
 	creds := api.Credentials{}
 	creds.Address = address
 	creds.Username = username

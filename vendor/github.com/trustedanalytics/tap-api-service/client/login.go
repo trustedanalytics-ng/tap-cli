@@ -13,6 +13,7 @@ import (
 type TapApiServiceLoginApi interface {
 	Login() (uaa.LoginResponse, int, error)
 	GetApiServiceHealth() error
+	GetLoginCredentials() (Address, Username, Password string)
 }
 
 type TapApiServiceApiBasicAuthConnector struct {
@@ -45,6 +46,11 @@ func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string
 		Url:       url,
 	}
 }
+
+func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Username, Password string){
+	return c.Address, c.Username, c.Password
+}
+
 
 func (c *TapApiServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {
 	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v1/login", c.Address))

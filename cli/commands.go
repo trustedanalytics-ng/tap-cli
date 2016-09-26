@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
@@ -80,15 +81,16 @@ func LoginCommand() cli.Command {
 				return err
 			}
 
-			return NewBasicAuthService(c).Login(c.Args().First(), c.Args().Get(1), c.Args().Get(2))
+			return NewBasicAuthService(c.Args().First(), c.Args().Get(1), c.Args().Get(2)).Login()
 		},
 	}
 }
 
 func TargetCommand() cli.Command {
 	return cli.Command{
-		Name:  "target",
-		Usage: "print actual credentials",
+		Name:    "target",
+		Aliases: []string{"t"},
+		Usage:   "print actual credentials",
 		Action: func(c *cli.Context) error {
 			return NewOAuth2Service().Target()
 		},
@@ -97,8 +99,9 @@ func TargetCommand() cli.Command {
 
 func CatalogCommand() cli.Command {
 	return cli.Command{
-		Name:  "catalog",
-		Usage: "list available offerings",
+		Name:    "catalog",
+		Aliases: []string{"o"},
+		Usage:   "list available offerings",
 		Action: func(c *cli.Context) error {
 			return NewOAuth2Service().Catalog()
 		},
@@ -404,12 +407,20 @@ func GetServiceCommand() cli.Command {
 	}
 }
 
-func NewBasicAuthService(c *cli.Context) *ActionsConfig {
-	apiConnector, err := client.NewTapApiServiceLoginApiWithBasicAuth("http://"+c.Args().First(), c.Args().Get(1), c.Args().Get(2))
+func NewBasicAuthService(address string, username string, password string) *ActionsConfig {
+	if !isProcotolSet(address) {
+		address = "https://" + address
+	}
+	apiConnector, err := client.NewTapApiServiceLoginApiWithBasicAuth(address, username, password)
 	if err != nil {
 		panic(err)
 	}
 	return &ActionsConfig{api.Config{nil, apiConnector}}
+}
+
+func isProcotolSet(address string) bool {
+	index := strings.Index(address[0:], "://")
+	return index != -1
 }
 
 func NewOAuth2Service() *ActionsConfig {

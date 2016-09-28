@@ -78,7 +78,7 @@ func (c *TapApiServiceApiOAuth2Connector) CreateServiceInstance(serviceId string
 func (c *TapApiServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offering", c.Address))
 	result := &[]catalogModels.Service{}
-	_, err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusCreated, result)
+	_, err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusAccepted, result)
 	return *result, err
 }
 

@@ -47,10 +47,9 @@ func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string
 	}
 }
 
-func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Username, Password string){
+func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Username, Password string) {
 	return c.Address, c.Username, c.Password
 }
-
 
 func (c *TapApiServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {
 	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v1/login", c.Address))

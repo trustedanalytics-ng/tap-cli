@@ -32,7 +32,7 @@ func TestConvertFunction(t *testing.T) {
 				GetCatalog().
 				Return([]models.Service{}, fakeErr)
 
-			_, _, err := convert(actionsConfig, "service_name", "service_plan")
+			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "service_name", "service_plan")
 
 			So(err, ShouldNotBeNil)
 			So(err, ShouldEqual, fakeErr)
@@ -43,7 +43,7 @@ func TestConvertFunction(t *testing.T) {
 				GetCatalog().
 				Return(fakeServices, nil)
 
-			_, _, err := convert(actionsConfig, "label_1", "wrong_plan_name")
+			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "label_1", "wrong_plan_name")
 
 			So(err, ShouldNotBeNil)
 			So(err.Error(), ShouldEqual, "cannot find plan: 'wrong_plan_name' for service: 'label_1'")
@@ -54,7 +54,7 @@ func TestConvertFunction(t *testing.T) {
 				GetCatalog().
 				Return(fakeServices, nil)
 
-			_, _, err := convert(actionsConfig, "wrong_label_name", "plan_1")
+			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "wrong_label_name", "plan_1")
 
 			So(err, ShouldNotBeNil)
 			So(err.Error(), ShouldEqual, "cannot find service: 'wrong_label_name'")
@@ -65,7 +65,7 @@ func TestConvertFunction(t *testing.T) {
 				GetCatalog().
 				Return(fakeServices, nil)
 
-			serviceID, planID, err := convert(actionsConfig, "label_3", "plan_3")
+			serviceID, planID, err := convertServiceAndPlanNameToId(actionsConfig, "label_3", "plan_3")
 
 			So(err, ShouldBeNil)
 			So(serviceID, ShouldEqual, "service_guid_3")

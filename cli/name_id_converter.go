@@ -23,7 +23,7 @@ import (
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
 
-func convert(a *ActionsConfig, serviceName, planName string) (string, string, error) {
+func convertServiceAndPlanNameToId(a *ActionsConfig, serviceName, planName string) (string, string, error) {
 
 	catalog, err := a.ApiService.GetCatalog()
 	if err != nil {

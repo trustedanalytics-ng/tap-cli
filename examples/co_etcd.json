@@ -170,7 +170,15 @@
       {
         "name": "free",
         "description": "free",
-        "cost": "free"
+        "cost": "free",
+        "dependencies": [
+          {
+            "service_id": "real_service_id",
+            "service_name": "logstash-service",
+            "plan_id": "real_plan_id",
+            "plan_name": "free"
+          }
+        ]
       }
     ]
   }]

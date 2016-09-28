@@ -138,6 +138,22 @@ func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 		return err
 	}
 
+	for i, service := range serviceWithTemplate.Services {
+		for j, plan := range service.Plans {
+			for k, dependency := range plan.Dependencies {
+				serviceId, planId, err := convertServiceAndPlanNameToId(a, dependency.ServiceName, dependency.PlanName)
+				if err != nil {
+					fmt.Println(err)
+					return err
+				}
+				plan.Dependencies[k].ServiceId = serviceId
+				plan.Dependencies[k].PlanId = planId
+			}
+			service.Plans[j] = plan
+		}
+		serviceWithTemplate.Services[i] = service
+	}
+
 	_, err = a.ApiService.CreateOffer(serviceWithTemplate)
 	if err != nil {
 		fmt.Println(err)
@@ -169,12 +185,13 @@ func (a *ActionsConfig) DeleteOffering(serviceName string) error {
 
 func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string) error {
 
-	serviceId, planId, err := convert(a, serviceName, planName)
+	serviceId, planId, err := convertServiceAndPlanNameToId(a, serviceName, planName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
+	//TODO DPNG-11398: this should be move to api-service
 	instanceBody := models.Instance{}
 	instanceBody.Type = catalogModels.InstanceTypeService
 	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planId}

@@ -35,15 +35,15 @@ func TestNewBasicAuthService(t *testing.T) {
 
 		So(basicCreds.Address, ShouldEqual, "https://myaddress.com")
 	})
-	Convey("Should not add https", t, func(){
-		Convey("when there is http:// ", func(){
+	Convey("Should not add https", t, func() {
+		Convey("when there is http:// ", func() {
 
 			basicAuth := NewBasicAuthService("http://myaddress.com", "user", "password")
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 			So(basicCreds.Address, ShouldEqual, "http://myaddress.com")
 		})
-		Convey("when there is ftp:// ", func(){
+		Convey("when there is ftp:// ", func() {
 
 			basicAuth := NewBasicAuthService("ftp://myaddress.com", "user", "password")
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)

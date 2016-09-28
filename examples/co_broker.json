@@ -259,7 +259,7 @@
                 },
                 {
                   "name": "BODY",
-                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"$binded_instance_id\"}"
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"$bound_instance_id\"}"
                 },
                 {
                   "name": "EXPECTED_CODE",
@@ -267,7 +267,7 @@
                 },
                 {
                   "name": "URL",
-                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$binded_instance_id"
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$bound_instance_id"
                 },
                 {
                   "name": "BROKER_USERNAME",
@@ -329,7 +329,7 @@
                 },
                 {
                   "name": "URL",
-                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$binded_instance_id?service_id=$offering_id&plan_id=$plan_id"
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_id$bound_instance_id?service_id=$offering_id&plan_id=$plan_id"
                 },
                 {
                   "name": "BROKER_USERNAME",

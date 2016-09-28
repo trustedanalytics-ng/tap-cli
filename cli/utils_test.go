@@ -49,7 +49,7 @@ func newFakeOffering(m map[string]string) models.Service {
 			Label:        m["label"],
 			ServicePlans: []models.ServicePlan{{models.ServicePlanEntity{Name: m["name"]}, models.Metadata{}}},
 			Description:  m["desc"],
-			State: m["state"],
+			State:        m["state"],
 		},
 		models.Metadata{Guid: "RANDOM_GUID"}}
 }

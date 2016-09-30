@@ -193,7 +193,7 @@
                 },
                 {
                   "name": "BODY",
-                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"org\", \"space_guid\":\"space\"}"
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"org\", \"space_guid\":\"space\", \"parameters\": \"$extra_envs\"}"
                 },
                 {
                   "name": "EXPECTED_CODE",
@@ -259,7 +259,7 @@
                 },
                 {
                   "name": "BODY",
-                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"$bound_instance_id\"}"
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"$bound_instance_id\", \"parameters\": \"$extra_envs\"}"
                 },
                 {
                   "name": "EXPECTED_CODE",

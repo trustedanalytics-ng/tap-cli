@@ -183,7 +183,7 @@ func (a *ActionsConfig) DeleteOffering(serviceName string) error {
 	return nil
 }
 
-func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string) error {
+func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string, envs map[string]string) error {
 
 	serviceId, planId, err := convertServiceAndPlanNameToId(a, serviceName, planName)
 	if err != nil {
@@ -197,6 +197,13 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planId}
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
+
+	for key, value := range envs {
+		instanceBody.Metadata = append(instanceBody.Metadata, catalogModels.Metadata{
+			Id:    key,
+			Value: value,
+		})
+	}
 
 	_, err = a.ApiService.CreateServiceInstance(serviceId, instanceBody)
 	if err != nil {

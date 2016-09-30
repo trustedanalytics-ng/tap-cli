@@ -1,11 +1,14 @@
 package cli
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
-	"github.com/trustedanalytics/tap-api-service/client"
-	"github.com/trustedanalytics/tap-cli/api"
 	"os"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
+	"github.com/urfave/cli"
+
+	"github.com/trustedanalytics/tap-api-service/client"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 func TestApiAndLoginServiceSetters(t *testing.T) {
@@ -50,5 +53,41 @@ func TestNewBasicAuthService(t *testing.T) {
 
 			So(basicCreds.Address, ShouldEqual, "ftp://myaddress.com")
 		})
+	})
+}
+
+func TestValidateAndSplitEnvFlags(t *testing.T) {
+	Convey("Should successfully call validateAndSplitEnvFlags", t, func() {
+		envsFlag := cli.StringSlice{
+			"myenv=value", "my_env=", "special=Sign=123",
+		}
+
+		result, err := validateAndSplitEnvFlags(envsFlag)
+		So(err, ShouldBeNil)
+		So(len(result), ShouldEqual, 3)
+		So(result, ShouldContainKey, "myenv")
+		So(result, ShouldContainKey, "my_env")
+		So(result, ShouldContainKey, "special")
+		So(result["myenv"], ShouldEqual, "value")
+		So(result["my_env"], ShouldEqual, "")
+		So(result["special"], ShouldEqual, "Sign=123")
+	})
+
+	Convey("Should return error when key is empty", t, func() {
+		envsFlag := cli.StringSlice{
+			"=value",
+		}
+
+		_, err := validateAndSplitEnvFlags(envsFlag)
+		So(err, ShouldNotBeNil)
+	})
+
+	Convey("Should return error when there is only value", t, func() {
+		envsFlag := cli.StringSlice{
+			"value",
+		}
+
+		_, err := validateAndSplitEnvFlags(envsFlag)
+		So(err, ShouldNotBeNil)
 	})
 }

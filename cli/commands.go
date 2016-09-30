@@ -34,6 +34,20 @@ func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
 	return nil
 }
 
+func validateAndSplitEnvFlags(envs cli.StringSlice) (map[string]string, *cli.ExitError) {
+	result := make(map[string]string)
+	for _, env := range envs {
+		splittedEnv := strings.Split(env, "=")
+		if len(splittedEnv) < 2 || splittedEnv[0] == "" {
+			return result, cli.NewExitError("use NAME=VALUE format for env: \n"+env, 1)
+		}
+		key := splittedEnv[0]
+		value := strings.TrimPrefix(env, key+"=")
+		result[key] = value
+	}
+	return result, nil
+}
+
 func InviteUserCommand() cli.Command {
 	return cli.Command{
 		Name:      "invite",
@@ -143,11 +157,19 @@ func DeleteOfferingCommand() cli.Command {
 }
 
 func CreateServiceCommand() cli.Command {
+	envsFlag := cli.StringSlice{}
 	return cli.Command{
 		Name:      "create-service",
 		ArgsUsage: "<service_name> <plan_name> <custom_name>",
 		Aliases:   []string{"cs"},
 		Usage:     "create instance of service",
+		Flags: []cli.Flag{
+			cli.StringSliceFlag{
+				Name:  "env, e",
+				Usage: "pass envs in format: `NAME=VALUE` this flag can be used multiple times",
+				Value: &envsFlag,
+			},
+		},
 		Action: func(c *cli.Context) error {
 
 			err := validateArgs(c, 3)
@@ -155,7 +177,12 @@ func CreateServiceCommand() cli.Command {
 				return err
 			}
 
-			return NewOAuth2Service().CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
+			envs, err := validateAndSplitEnvFlags(envsFlag)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2), envs)
 		},
 	}
 }

@@ -195,10 +195,12 @@
 			"revisionTime": "2016-09-30T11:03:05Z"
 		},
 		{
-			"checksumSHA1": "rZnuRxDzA/FeTaXAcZ/adJGOuBg=",
+			"checksumSHA1": "hEOPbBwHATELZ1LZBhonaqT+R40=",
 			"path": "github.com/trustedanalytics/tap-catalog/models",
-			"revision": "2fee139af458811157d47489dc563eeb0aecadb0",
-			"revisionTime": "2016-09-21T14:05:55Z"
+			"revision": "1d8c48bbfc0cc88d4da53c73a4a1e85f2a245019",
+			"revisionTime": "2016-10-03T12:21:56Z",
+			"version": "develop",
+			"versionExact": "develop"
 		},
 		{
 			"checksumSHA1": "kxv337uJjHM+PZtg/AVYQQ+rpIY=",

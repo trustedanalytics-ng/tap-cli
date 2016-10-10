@@ -1,12 +1,30 @@
+/**
+ * Copyright (c) 2016 Intel Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cli
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/trustedanalytics/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
@@ -15,6 +33,15 @@ func getFakeServices() []models.Service {
 	result = append(result, newFakeService(map[string]string{"label": "label_1", "service_id": "service_guid_1", "plan_name": "plan_1", "plan_id": "plan_guid_1"}))
 	result = append(result, newFakeService(map[string]string{"label": "label_2", "service_id": "service_guid_2", "plan_name": "plan_2", "plan_id": "plan_guid_2"}))
 	result = append(result, newFakeService(map[string]string{"label": "label_3", "service_id": "service_guid_3", "plan_name": "plan_3", "plan_id": "plan_guid_3"}))
+
+	return result
+}
+
+func getFakeInstances() []models.ServiceInstance {
+	result := []models.ServiceInstance{}
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "1", Name: "instance1", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "2", Name: "instance2", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "3", Name: "instance3", Type: "SERVICE"}})
 
 	return result
 }
@@ -112,5 +139,65 @@ func TestGetServiceID(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(serviceID, ShouldEqual, "service_guid_3")
 		})
+	})
+}
+
+func TestConvertBindingsList(t *testing.T) {
+	actionsConfig := setApiAndLoginServiceMocks(t)
+
+	fakeInstances := getFakeInstances()
+
+	Convey("When ListServiceInstances returns error", t, func() {
+		fakeErr := errors.New("Error_msg")
+		actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+			EXPECT().
+			ListServiceInstances().
+			Return(nil, fakeErr)
+		sampleBindingList := []string{"instance1"}
+
+		Convey("convertBindingList should return error", func() {
+			err := convertBindingsList(actionsConfig, sampleBindingList)
+			So(err, ShouldNotBeNil)
+		})
+	})
+
+	Convey(fmt.Sprintf("When ListServiceInstance returns %v", fakeInstances), t, func() {
+		actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+			EXPECT().
+			ListServiceInstances().
+			Return(fakeInstances, nil)
+
+		testCases := []struct {
+			bindingList   []string
+			isError       bool
+			convertedList []string
+		}{
+			{[]string{"instance2", "XXXX"}, true, []string{}},
+			{[]string{"instance2", "instance4"}, true, []string{}},
+			{[]string{"", "instance4"}, true, []string{}},
+			{[]string{"instance1", "instance3"}, false, []string{"1", "3"}},
+			{[]string{"instance1", "instance3", "instance2"}, false, []string{"1", "3", "2"}},
+			{[]string{"instance2"}, false, []string{"2"}},
+			{[]string{}, false, []string{}},
+		}
+
+		for _, tc := range testCases {
+			Convey(fmt.Sprintf("convertBindingList should return proper response for %v", tc.bindingList), func() {
+				err := convertBindingsList(actionsConfig, tc.bindingList)
+
+				if tc.isError {
+					Convey("error should not be nil", func() {
+						So(err, ShouldNotBeNil)
+					})
+				} else {
+					Convey("error should be nil", func() {
+						So(err, ShouldBeNil)
+					})
+					Convey("bindingList should be properly converted", func() {
+						So(tc.bindingList, ShouldResemble, tc.convertedList)
+					})
+				}
+			})
+		}
 	})
 }

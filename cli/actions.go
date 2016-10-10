@@ -421,9 +421,14 @@ func (a *ActionsConfig) PushApplication(blob_path string) error {
 		return err
 	}
 
+	if err := convertBindingsList(a, manifest.Bindings); err != nil {
+		fmt.Printf("ERROR: %v", err)
+		return err
+	}
+
 	app, err := a.ApiService.CreateApplicationInstance(blob, manifest)
 	if err != nil {
-		fmt.Printf("ERROR: %v", err.Error())
+		fmt.Printf("ERROR: %v", err)
 		return err
 	}
 

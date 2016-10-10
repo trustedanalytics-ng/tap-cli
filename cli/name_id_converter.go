@@ -19,6 +19,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
@@ -80,7 +81,7 @@ func getServiceID(a *ActionsConfig, serviceName string) (string, error) {
 
 	services, err := a.ApiService.GetCatalog()
 	if err != nil {
-		return "", errors.New("Cannot fetch offering list: " + err.Error())
+		return "", errors.New("cannot fetch offering list: " + err.Error())
 	}
 
 	for _, service := range services {
@@ -89,5 +90,33 @@ func getServiceID(a *ActionsConfig, serviceName string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("Service %s not found", serviceName)
+	return "", fmt.Errorf("service %s not found", serviceName)
+}
+
+func convertBindingsList(a *ActionsConfig, bindings []string) error {
+	instances, err := a.ApiService.ListServiceInstances()
+	if err != nil {
+		return errors.New("cannot fetch service intances: " + err.Error())
+	}
+
+	notFound := []string{}
+	for i := 0; i < len(bindings); i++ {
+		found := false
+		for _, instance := range instances {
+			if instance.Name == bindings[i] {
+				bindings[i] = instance.Id
+				found = true
+				break
+			}
+		}
+		if !found {
+			notFound = append(notFound, bindings[i])
+		}
+	}
+
+	if len(notFound) != 0 {
+		return errors.New("following service instances don't exist: " + strings.Join(notFound, ", "))
+	}
+
+	return nil
 }

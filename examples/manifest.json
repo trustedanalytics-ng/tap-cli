@@ -1,5 +1,6 @@
 {
   "type": "PYTHON",
   "name": "sample",
-  "instances": 1
+  "instances": 1,
+  "bindings": []
 }

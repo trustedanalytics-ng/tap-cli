@@ -8,4 +8,5 @@ type Manifest struct {
 	Name      string                  `json:"name"`
 	ImageType catalogModels.ImageType `json:"type"`
 	Instances int                     `json:"instances"`
+	Bindings  []string                `json:"bindings"`
 }

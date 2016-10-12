@@ -34,6 +34,7 @@ type TapApiServiceApi interface {
 	GetApplicationInstance(instanceId string) (models.ApplicationInstance, error)
 	GetServiceInstance(instanceId string) (models.ServiceInstance, error)
 	GetInstanceLogs(instanceId string) (map[string]string, error)
+	GetInstanceCredentials(instanceId string) ([]containerBrokerModels.DeploymentEnvs, error)
 
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
 	ListServiceInstances() ([]models.ServiceInstance, error)
@@ -111,6 +112,13 @@ func (c *TapApiServiceApiOAuth2Connector) GetCatalog() ([]models.Service, error)
 func (c *TapApiServiceApiOAuth2Connector) GetInstanceLogs(instanceId string) (map[string]string, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/logs/%s", c.Address, instanceId))
 	result := make(map[string]string)
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	return result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) GetInstanceCredentials(instanceId string) ([]containerBrokerModels.DeploymentEnvs, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s/credentials", c.Address, instanceId))
+	result := []containerBrokerModels.DeploymentEnvs{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
 	return result, err
 }

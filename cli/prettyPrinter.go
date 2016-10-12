@@ -112,7 +112,7 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 	createAndRenderTable(header, rows)
 }
 
-func printInstanceDetails(instance interface{}) {
+func printFormattedDetails(instance interface{}) {
 	prettyJSON, _ := json.MarshalIndent(instance, "", "    ")
 	fmt.Print(string(prettyJSON))
 }

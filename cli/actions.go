@@ -332,7 +332,7 @@ func (a *ActionsConfig) GetApplication(applicationName string) error {
 		return err
 	}
 
-	printInstanceDetails(applicationInstance)
+	printFormattedDetails(applicationInstance)
 	fmt.Println("OK")
 	return nil
 }
@@ -350,7 +350,7 @@ func (a *ActionsConfig) GetService(serviceName string) error {
 		return err
 	}
 
-	printInstanceDetails(serviceInstance)
+	printFormattedDetails(serviceInstance)
 	fmt.Println("OK")
 	return nil
 }
@@ -471,11 +471,6 @@ func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 		return err
 	}
 
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
 	logs, err := a.ApiService.GetInstanceLogs(instanceId)
 	if err != nil {
 		fmt.Printf("ERROR: %v", err.Error())
@@ -484,6 +479,29 @@ func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 
 	for container, log := range logs {
 		fmt.Printf("%s:\n\n%s\n", container, log)
+	}
+
+	fmt.Println("OK")
+	return nil
+}
+
+func (a *ActionsConfig) GetInstanceCredentials(instanceName string) error {
+
+	instanceId, err := convertInstance(a, InstanceTypeBoth, instanceName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	creds, err := a.ApiService.GetInstanceCredentials(instanceId)
+	if err != nil {
+		fmt.Printf("ERROR: %v", err.Error())
+		return err
+	}
+
+	for _, cred := range creds {
+		printFormattedDetails(cred)
+		fmt.Println()
 	}
 
 	fmt.Println("OK")

@@ -398,6 +398,24 @@ func GetInstanceLogsCommand() cli.Command {
 	}
 }
 
+func GetInstanceCredentialsCommand() cli.Command {
+	return cli.Command{
+		Name:      "credentials",
+		ArgsUsage: "<instanceName>",
+		Aliases:   []string{"creds"},
+		Usage:     "get credentials for all containers in instance",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().GetInstanceCredentials(c.Args().First())
+		},
+	}
+}
+
 func GetApplicationsCommand() cli.Command {
 	return cli.Command{
 		Name:      "application",

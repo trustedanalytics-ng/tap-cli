@@ -139,8 +139,8 @@ func (c *TapApiServiceApiOAuth2Connector) DeleteApplication(instanceId string) e
 	return err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetApplicationInstance(instanceId string) (models.ApplicationInstance, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, instanceId))
+func (c *TapApiServiceApiOAuth2Connector) GetApplicationInstance(applicationId string) (models.ApplicationInstance, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s", c.Address, applicationId))
 	result := &models.ApplicationInstance{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err

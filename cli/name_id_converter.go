@@ -26,7 +26,7 @@ import (
 
 func convertServiceAndPlanNameToId(a *ActionsConfig, serviceName, planName string) (string, string, error) {
 
-	catalog, err := a.ApiService.GetCatalog()
+	catalog, err := a.ApiService.GetOfferings()
 	if err != nil {
 		return "", "", err
 	}
@@ -51,14 +51,14 @@ const (
 	InstanceTypeBoth catalogModels.InstanceType = "BOTH"
 )
 
-func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, instanceName string) (string, error) {
+func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, instanceName string) (string, catalogModels.InstanceType, error) {
 
 	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeService {
 		serviceInstances, err := a.ApiService.ListServiceInstances()
 		if err == nil {
 			for _, instance := range serviceInstances {
 				if instance.Name == instanceName {
-					return instance.Id, nil
+					return instance.Id, catalogModels.InstanceTypeService, nil
 				}
 			}
 		}
@@ -68,18 +68,18 @@ func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, 
 		if err == nil {
 			for _, instance := range applicationInstances {
 				if instance.Name == instanceName {
-					return instance.Id, nil
+					return instance.Id, catalogModels.InstanceTypeApplication, nil
 				}
 			}
 		}
 	}
 
-	return "", errors.New("cannot find instance with name: " + instanceName)
+	return "", "", errors.New("cannot find instance with name: " + instanceName)
 }
 
-func getServiceID(a *ActionsConfig, serviceName string) (string, error) {
+func getOfferingID(a *ActionsConfig, serviceName string) (string, error) {
 
-	services, err := a.ApiService.GetCatalog()
+	services, err := a.ApiService.GetOfferings()
 	if err != nil {
 		return "", errors.New("cannot fetch offering list: " + err.Error())
 	}
@@ -119,4 +119,20 @@ func convertBindingsList(a *ActionsConfig, bindings []string) error {
 	}
 
 	return nil
+}
+
+func getApplicationID(a *ActionsConfig, applicationName string) (string, error) {
+
+	applications, err := a.ApiService.ListApplicationInstances()
+	if err != nil {
+		return "", errors.New("Cannot fetch applications list: " + err.Error())
+	}
+
+	for _, app := range applications {
+		if app.Name == applicationName {
+			return app.Id, nil
+		}
+	}
+
+	return "", fmt.Errorf("Application %s not found", applicationName)
 }

@@ -43,7 +43,7 @@ func main() {
 		tapCli.UnbindInstanceCommand(),
 		tapCli.PushApplicationCommand(),
 		tapCli.ListApplicationsCommand(),
-		tapCli.GetApplicationsCommand(),
+		tapCli.GetApplicationCommand(),
 		tapCli.ListServicesCommand(),
 		tapCli.GetServiceCommand(),
 		tapCli.ScaleApplicationCommand(),
@@ -52,8 +52,13 @@ func main() {
 		tapCli.GetInstanceLogsCommand(),
 		tapCli.GetInstanceCredentialsCommand(),
 		tapCli.DeleteApplicationCommand(),
-		tapCli.InviteUserCommand(),
+		tapCli.SendInvitationCommand(),
+		tapCli.ResendInvitationCommand(),
+		tapCli.ListUsersCommand(),
+		tapCli.ListInvitationsCommand(),
+		tapCli.DeleteInvitationCommand(),
 		tapCli.DeleteUserCommand(),
+		tapCli.ChangeCurrentUserPasswordCommand(),
 	}
 
 	app.Run(os.Args)

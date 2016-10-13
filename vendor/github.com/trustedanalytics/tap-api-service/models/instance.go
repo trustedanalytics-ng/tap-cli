@@ -7,6 +7,7 @@ import (
 type Instance struct {
 	Name     string                           `json:"name"`
 	Type     catalogModels.InstanceType       `json:"type"`
+	ClassId  string                           `json:"classId"`
 	Bindings []catalogModels.InstanceBindings `json:"bindings"`
 	Metadata []catalogModels.Metadata         `json:"metadata"`
 }
@@ -17,6 +18,11 @@ type InstanceBindings struct {
 
 type InstanceBindingsResource struct {
 	InstanceBindingsEntity `json:"entity"`
+}
+
+type InstanceBindingRequest struct {
+	ApplicationId string `json:"application_id"`
+	ServiceId     string `json:"service_id"`
 }
 
 type InstanceBindingsEntity struct {

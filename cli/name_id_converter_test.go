@@ -114,7 +114,7 @@ func TestGetServiceID(t *testing.T) {
 				GetCatalog().
 				Return([]models.Service{}, fakeErr)
 
-			_, err := getServiceID(actionsConfig, "service_name")
+			_, err := getOfferingID(actionsConfig, "service_name")
 
 			So(err, ShouldNotBeNil)
 		})
@@ -124,7 +124,7 @@ func TestGetServiceID(t *testing.T) {
 				GetCatalog().
 				Return(fakeServices, nil)
 
-			_, err := getServiceID(actionsConfig, "wrong_label_name")
+			_, err := getOfferingID(actionsConfig, "wrong_label_name")
 
 			So(err, ShouldNotBeNil)
 		})
@@ -134,7 +134,7 @@ func TestGetServiceID(t *testing.T) {
 				GetCatalog().
 				Return(fakeServices, nil)
 
-			serviceID, err := getServiceID(actionsConfig, "label_3")
+			serviceID, err := getOfferingID(actionsConfig, "label_3")
 
 			So(err, ShouldBeNil)
 			So(serviceID, ShouldEqual, "service_guid_3")

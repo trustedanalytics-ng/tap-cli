@@ -18,31 +18,42 @@ var logger = logger_wrapper.InitLogger("client")
 type TapApiServiceApi interface {
 	GetPlatformInfo() (models.PlatformInfo, error)
 
-	GetInstanceBindings(instanceId string) (models.InstanceBindings, error)
-	BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
-	UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error)
+	GetApplicationBindings(applicationId string) (models.InstanceBindings, error)
+	GetServiceBindings(serviceId string) (models.InstanceBindings, error)
+	BindToApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (containerBrokerModels.MessageResponse, error)
+	BindToServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (containerBrokerModels.MessageResponse, error)
+	UnbindFromApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (int, error)
+	UnbindFromServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (int, error)
 
 	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error)
 	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
-	CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error)
+	CreateServiceInstance(instance models.Instance) (containerBrokerModels.MessageResponse, error)
 
 	DeleteOffering(serviceId string) error
 	DeleteServiceInstance(instanceId string) error
 	DeleteApplicationInstance(instanceId string) error
 
-	GetCatalog() ([]models.Service, error)
-	GetApplicationInstance(instanceId string) (models.ApplicationInstance, error)
-	GetServiceInstance(instanceId string) (models.ServiceInstance, error)
-	GetInstanceLogs(instanceId string) (map[string]string, error)
+	GetOfferings() ([]models.Service, error)
+	GetOffering(offeringId string) (models.Service, error)
+	GetApplicationInstance(applicationId string) (models.ApplicationInstance, error)
+	GetServiceInstance(serviceId string) (models.ServiceInstance, error)
+	GetApplicationLogs(applicationId string) (map[string]string, error)
+	GetServiceLogs(serviceId string) (map[string]string, error)
 	GetInstanceCredentials(instanceId string) ([]containerBrokerModels.DeploymentEnvs, error)
 
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
 	ListServiceInstances() ([]models.ServiceInstance, error)
 
-	ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
-	ScaleServiceInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error)
+	ScaleApplicationInstance(applicationId string, replication int) (containerBrokerModels.MessageResponse, error)
+	ScaleServiceInstance(serviceId string, replication int) (containerBrokerModels.MessageResponse, error)
 
-	InviteUser(email string) (userManagement.InvitationResponse, error)
+	GetInvitations() ([]string, error)
+	SendInvitation(email string) (userManagement.InvitationResponse, error)
+	ResendInvitation(email string) error
+	DeleteInvitation(email string) error
+
+	GetUsers() ([]userManagement.UaaUser, error)
+	ChangeCurrentUserPassword(password, newPassword string) error
 	DeleteUser(email string) error
 }
 
@@ -69,22 +80,22 @@ func (c *TapApiServiceApiOAuth2Connector) getApiOAuth2Connector(url string) brok
 	}
 }
 
-func (c *TapApiServiceApiOAuth2Connector) CreateServiceInstance(serviceId string, instance models.Instance) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, serviceId))
+func (c *TapApiServiceApiOAuth2Connector) CreateServiceInstance(instance models.Instance) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services", c.Address))
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PostModel(connector, instance, http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offering", c.Address))
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offerings", c.Address))
 	result := &[]catalogModels.Service{}
 	_, err := brokerHttp.PostModel(connector, serviceWithTemplate, http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteOffering(serviceId string) error {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offering/%s", c.Address, serviceId))
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offerings/%s", c.Address, serviceId))
 	_, err := brokerHttp.DeleteModel(connector, http.StatusAccepted)
 	return err
 }
@@ -102,15 +113,29 @@ func (c *TapApiServiceApiOAuth2Connector) GetPlatformInfo() (models.PlatformInfo
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetCatalog() ([]models.Service, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/catalog", c.Address))
+func (c *TapApiServiceApiOAuth2Connector) GetOfferings() ([]models.Service, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offerings", c.Address))
 	result := &[]models.Service{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetInstanceLogs(instanceId string) (map[string]string, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/logs/%s", c.Address, instanceId))
+func (c *TapApiServiceApiOAuth2Connector) GetOffering(offeringId string) (models.Service, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/offerings/%s", c.Address, offeringId))
+	result := &models.Service{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) GetApplicationLogs(applicationId string) (map[string]string, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s/logs", c.Address, applicationId))
+	result := make(map[string]string)
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	return result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) GetServiceLogs(serviceId string) (map[string]string, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s/logs", c.Address, serviceId))
 	result := make(map[string]string)
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
 	return result, err
@@ -130,8 +155,8 @@ func (c *TapApiServiceApiOAuth2Connector) ListServiceInstances() ([]models.Servi
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetServiceInstance(instanceId string) (models.ServiceInstance, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, instanceId))
+func (c *TapApiServiceApiOAuth2Connector) GetServiceInstance(serviceId string) (models.ServiceInstance, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s", c.Address, serviceId))
 	result := &models.ServiceInstance{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
@@ -147,29 +172,46 @@ func (c *TapApiServiceApiOAuth2Connector) ScaleServiceInstance(instanceId string
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetInstanceBindings(instanceId string) (models.InstanceBindings, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/bindings/%s", c.Address, instanceId))
+func (c *TapApiServiceApiOAuth2Connector) GetApplicationBindings(applicationId string) (models.InstanceBindings, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s/bindings", c.Address, applicationId))
 	result := &models.InstanceBindings{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) BindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/bind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
-	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
+func (c *TapApiServiceApiOAuth2Connector) GetServiceBindings(serviceId string) (models.InstanceBindings, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s/bindings", c.Address, serviceId))
+	result := &models.InstanceBindings{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) UnbindInstance(srcInstanceId, dstInstanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/unbind/%s/%s", c.Address, srcInstanceId, dstInstanceId))
+func (c *TapApiServiceApiOAuth2Connector) BindToApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s/bindings", c.Address, applicationId))
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PostModel(connector, "", http.StatusOK, result)
+	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) InviteUser(email string) (userManagement.InvitationResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users", c.Address))
+func (c *TapApiServiceApiOAuth2Connector) BindToServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s/bindings", c.Address, serviceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) UnbindFromApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (int, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/applications/%s/bindings", c.Address, applicationId))
+	return brokerHttp.DeleteModelWithBody(connector, bindingRequest, http.StatusNoContent)
+}
+
+func (c *TapApiServiceApiOAuth2Connector) UnbindFromServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (int, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/services/%s/bindings", c.Address, serviceId))
+	return brokerHttp.DeleteModelWithBody(connector, bindingRequest, http.StatusOK)
+}
+
+func (c *TapApiServiceApiOAuth2Connector) SendInvitation(email string) (userManagement.InvitationResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users/invitations", c.Address))
 	body := userManagement.InvitationRequest{
 		Email: email,
 	}
@@ -178,11 +220,53 @@ func (c *TapApiServiceApiOAuth2Connector) InviteUser(email string) (userManageme
 	return *result, err
 }
 
+func (c *TapApiServiceApiOAuth2Connector) ResendInvitation(email string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users/invitations/resend", c.Address))
+	body := userManagement.InvitationRequest{
+		Email: email,
+	}
+	_, err := brokerHttp.PostModel(connector, body, http.StatusCreated, "")
+	return err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) GetInvitations() ([]string, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users/invitations", c.Address))
+	result := []string{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	return result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) GetUsers() ([]userManagement.UaaUser, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users", c.Address))
+	result := []userManagement.UaaUser{}
+	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	return result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) DeleteInvitation(email string) error {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users/invitations", c.Address))
+	body := userManagement.InvitationRequest{
+		Email: email,
+	}
+	_, err := brokerHttp.DeleteModelWithBody(connector, body, http.StatusNoContent)
+	return err
+}
+
 func (c *TapApiServiceApiOAuth2Connector) DeleteUser(email string) error {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users", c.Address))
 	body := userManagement.InvitationRequest{
 		Email: email,
 	}
 	_, err := brokerHttp.DeleteModelWithBody(connector, body, http.StatusNoContent)
+	return err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) ChangeCurrentUserPassword(password, newPassword string) error {
+	body := userManagement.ChangePasswordRequest{
+		CurrentPasswd: password,
+		NewPasswd:     newPassword,
+	}
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v1/users/current/password", c.Address))
+	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, "")
 	return err
 }

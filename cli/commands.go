@@ -48,10 +48,10 @@ func validateAndSplitEnvFlags(envs cli.StringSlice) (map[string]string, *cli.Exi
 	return result, nil
 }
 
-func InviteUserCommand() cli.Command {
+func SendInvitationCommand() cli.Command {
 	return cli.Command{
 		Name:      "invite",
-		Usage:     "invite new user to TAP or resend invitation",
+		Usage:     "invite new user to TAP",
 		ArgsUsage: "<email>",
 		Action: func(c *cli.Context) error {
 
@@ -60,7 +60,63 @@ func InviteUserCommand() cli.Command {
 				return err
 			}
 
-			return NewOAuth2Service().InviteUser(c.Args().First())
+			return NewOAuth2Service().SendInvitation(c.Args().First())
+		},
+	}
+}
+
+func ResendInvitationCommand() cli.Command {
+	return cli.Command{
+		Name:      "reinvite",
+		Usage:     "resend invitation for user",
+		ArgsUsage: "<email>",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().ResendInvitation(c.Args().First())
+		},
+	}
+}
+
+func ListUsersCommand() cli.Command {
+	return cli.Command{
+		Name:  "users",
+		Usage: "list platform users",
+		Action: func(c *cli.Context) error {
+			return NewOAuth2Service().ListUsers()
+		},
+	}
+}
+
+func ListInvitationsCommand() cli.Command {
+	return cli.Command{
+		Name:    "invitations",
+		Usage:   "list pending invitations",
+		Aliases: []string{"invs"},
+		Action: func(c *cli.Context) error {
+			return NewOAuth2Service().ListInvitations()
+		},
+	}
+}
+
+func DeleteInvitationCommand() cli.Command {
+	return cli.Command{
+		Name:      "delete-invitation",
+		Usage:     "delete invitation",
+		Aliases:   []string{"di"},
+		ArgsUsage: "<email>",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().DeleteInvitation(c.Args().First())
 		},
 	}
 }
@@ -79,6 +135,23 @@ func DeleteUserCommand() cli.Command {
 			}
 
 			return NewOAuth2Service().DeleteUser(c.Args().First())
+		},
+	}
+}
+
+func ChangeCurrentUserPasswordCommand() cli.Command {
+	return cli.Command{
+		Name:      "chpasswd",
+		Usage:     "change password of currently logged user",
+		ArgsUsage: "<currentPassword newPassword>",
+		Action: func(c *cli.Context) error {
+
+			err := validateArgs(c, 2)
+			if err != nil {
+				return err
+			}
+
+			return NewOAuth2Service().ChangeCurrentUserPassword(c.Args().First(), c.Args().Get(1))
 		},
 	}
 }
@@ -252,7 +325,7 @@ func ListInstanceBindingsCommand() cli.Command {
 				return err
 			}
 
-			return NewOAuth2Service().GetInstanceBindings(c.Args().First())
+			return NewOAuth2Service().GetApplicationBindings(c.Args().First())
 		},
 	}
 }
@@ -403,7 +476,7 @@ func GetInstanceCredentialsCommand() cli.Command {
 		Name:      "credentials",
 		ArgsUsage: "<instanceName>",
 		Aliases:   []string{"creds"},
-		Usage:     "get credentials for all containers in instance",
+		Usage:     "get credentials for all containers in service instance",
 		Action: func(c *cli.Context) error {
 
 			err := validateArgs(c, 1)
@@ -416,7 +489,7 @@ func GetInstanceCredentialsCommand() cli.Command {
 	}
 }
 
-func GetApplicationsCommand() cli.Command {
+func GetApplicationCommand() cli.Command {
 	return cli.Command{
 		Name:      "application",
 		ArgsUsage: "<applicationName>",

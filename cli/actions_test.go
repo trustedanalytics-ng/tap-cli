@@ -114,7 +114,7 @@ func TestInviteUserCommand(t *testing.T) {
 				Return(user_management_connector.InvitationResponse{}, errors.New(errorMsg))
 
 			stdout := captureStdout(func() {
-				actionsConfig.InviteUser(login)
+				actionsConfig.SendInvitation(login)
 			})
 
 			So(stdout, ShouldContainSubstring, errorMsg)
@@ -129,7 +129,7 @@ func TestInviteUserCommand(t *testing.T) {
 				Return(user_management_connector.InvitationResponse{}, nil)
 
 			stdout := captureStdout(func() {
-				actionsConfig.InviteUser(login)
+				actionsConfig.SendInvitation(login)
 			})
 
 			So(stdout, ShouldContainSubstring, "User "+login+" successfully invited")

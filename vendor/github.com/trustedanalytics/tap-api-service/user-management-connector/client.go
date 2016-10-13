@@ -32,6 +32,16 @@ type InvitationRequest struct {
 	Email string `json:"email"`
 }
 
+type ChangePasswordRequest struct {
+	CurrentPasswd string `json:"current_password"`
+	NewPasswd     string `json:"new_password"`
+}
+
+type ChangePasswordUaaRequest struct {
+	CurrentPasswd string `json:"oldPassword"`
+	NewPasswd     string `json:"password"`
+}
+
 type InvitationResponse struct {
 	State   string `json:"state"`
 	Details string `json:"details"`
@@ -48,7 +58,9 @@ type UaaUser struct {
 }
 
 type UserManagementApi interface {
-	InviteUser(email string) (*InvitationResponse, error)
+	InviteUser(email string) (*InvitationResponse, int, error)
+	ResendUserInvitation(email string) (int, error)
+	ChangeCurrentUserPassword(changePasswdReq ChangePasswordRequest) (int, error)
 	DeleteUser(email string) (int, error)
 	GetInvitations() ([]string, error)
 	GetUsers() ([]UaaUser, error)
@@ -110,7 +122,7 @@ func (u *UserManagementApiConnector) CurrentUser() (*User, error) {
 	return user, nil
 }
 
-func (u *UserManagementApiConnector) InviteUser(email string) (*InvitationResponse, error) {
+func (u *UserManagementApiConnector) InviteUser(email string) (*InvitationResponse, int, error) {
 	invResp := &InvitationResponse{}
 
 	url := fmt.Sprintf("%s/rest/invitations", u.Address)
@@ -119,24 +131,27 @@ func (u *UserManagementApiConnector) InviteUser(email string) (*InvitationRespon
 	reqBody := InvitationRequest{
 		Email: email,
 	}
-	_, err := brokerHttp.PostModel(connector, reqBody, http.StatusOK, invResp)
+	status, err := brokerHttp.PostModel(connector, reqBody, http.StatusCreated, invResp)
 	if err != nil {
-		return nil, err
+		return nil, status, err
 	}
 
-	if invResp.State == "NEW" {
-		return invResp, nil
+	return invResp, status, nil
+}
+
+func (u *UserManagementApiConnector) ResendUserInvitation(email string) (int, error) {
+	url := fmt.Sprintf("%s/rest/invitations/%s/resend", u.Address, email)
+	connector := u.getApiConnector(url)
+
+	reqBody := InvitationRequest{
+		Email: email,
 	}
-
-	url += "/" + email + "/resend"
-	connector = u.getApiConnector(url)
-
-	_, err = brokerHttp.PostModel(connector, reqBody, http.StatusOK, "")
+	status, err := brokerHttp.PostModel(connector, reqBody, http.StatusOK, "")
 	if err != nil {
-		return nil, err
+		return status, err
 	}
 
-	return invResp, nil
+	return status, nil
 }
 
 func (u *UserManagementApiConnector) GetInvitations() ([]string, error) {
@@ -193,7 +208,7 @@ func (u *UserManagementApiConnector) getUserUUID(email string) string {
 	return ""
 }
 
-func (u *UserManagementApiConnector) DeleteUser(email string) (int, error) {
+func (u *UserManagementApiConnector) DeleteUserInvitation(email string) (int, error) {
 	connector := u.getApiConnector(fmt.Sprintf("%s/rest/invitations/%s", u.Address, email))
 
 	if u.invitationExists(email) {
@@ -203,6 +218,12 @@ func (u *UserManagementApiConnector) DeleteUser(email string) (int, error) {
 		}
 		return http.StatusNoContent, nil
 	}
+
+	return http.StatusNotFound, nil
+}
+
+func (u *UserManagementApiConnector) DeleteUser(email string) (int, error) {
+	connector := u.getApiConnector(fmt.Sprintf("%s/rest/invitations/%s", u.Address, email))
 
 	if uid := u.getUserUUID(email); uid != "" {
 		connector = u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users/%s", u.Address, DEFAULT_ORG, uid))
@@ -214,4 +235,13 @@ func (u *UserManagementApiConnector) DeleteUser(email string) (int, error) {
 	}
 
 	return http.StatusNotFound, nil
+}
+
+func (u *UserManagementApiConnector) ChangeCurrentUserPassword(changePasswdReq ChangePasswordRequest) (int, error) {
+	req := ChangePasswordUaaRequest{
+		CurrentPasswd: changePasswdReq.CurrentPasswd,
+		NewPasswd:     changePasswdReq.NewPasswd,
+	}
+	connector := u.getApiConnector(fmt.Sprintf("%s/rest/users/current/password", u.Address))
+	return brokerHttp.PutModel(connector, req, http.StatusOK, "")
 }

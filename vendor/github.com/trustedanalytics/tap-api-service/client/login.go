@@ -52,14 +52,14 @@ func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Use
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {
-	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v1/login", c.Address))
+	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v2/login", c.Address))
 	result := &uaa.LoginResponse{}
 	status, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, status, err
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) GetApiServiceHealth() error {
-	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v1/healthz", c.Address))
+	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v2/healthz", c.Address))
 	status, _, err := brokerHttp.RestGET(connector.Url, brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
 	if status != http.StatusOK {
 		err = errors.New("Invalid health status: " + string(status))

@@ -185,23 +185,43 @@
               "env": [
                 {
                   "name": "ACTION",
-                  "value": "CREATE"
+                  "value": "CREATE_AND_BIND"
                 },
                 {
                   "name": "BROKER_SERVICE_NAME",
                   "value": "$broker_short_instance_id"
                 },
                 {
-                  "name": "BODY",
-                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"org\", \"space_guid\":\"space\", \"parameters\": \"$extra_envs\"}"
+                  "name": "CREATE_BODY",
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"parameters\": \"$extra_envs\"}"
                 },
                 {
-                  "name": "EXPECTED_CODE",
+                  "name": "CREATE_EXPECTED_CODE",
                   "value": "201"
                 },
                 {
-                  "name": "URL",
+                  "name": "CREATE_URL",
                   "value": "/v2/service_instances/$instance_id"
+                },
+                {
+                  "name": "BIND_BODY",
+                  "value": "{\"plan_id\": \"$plan_id\", \"service_id\": \"$offering_id\", \"organization_guid\": \"$org\", \"space_guid\":\"$space\", \"app_guid\": \"fake_provision_guid\", \"parameters\": \"$extra_envs\"}"
+                },
+                {
+                  "name": "BIND_EXPECTED_CODE",
+                  "value": "201"
+                },
+                {
+                  "name": "BIND_URL",
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_idfake_provision_guid"
+                },
+                {
+                  "name": "UNBIND_EXPECTED_CODE",
+                  "value": "200"
+                },
+                {
+                  "name": "UNBIND_URL",
+                  "value": "/v2/service_instances/$instance_id/service_bindings/$short_instance_idfake_provision_guid?service_id=$offering_id&plan_id=$plan_id"
                 },
                 {
                   "name": "BROKER_USERNAME",

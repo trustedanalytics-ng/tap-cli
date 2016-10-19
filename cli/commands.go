@@ -162,7 +162,6 @@ func LoginCommand() cli.Command {
 		Usage:     "login to TAP",
 		ArgsUsage: "<address> <username> <password>",
 		Action: func(c *cli.Context) error {
-
 			err := validateArgs(c, 3)
 			if err != nil {
 				return err

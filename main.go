@@ -17,6 +17,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/urfave/cli"
@@ -25,6 +26,13 @@ import (
 )
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", r)
+			os.Exit(1)
+		}
+	}()
+
 	app := cli.NewApp()
 	app.Name = "TAP CLI"
 	app.Usage = "client for managing TAP"
@@ -61,5 +69,10 @@ func main() {
 		tapCli.ChangeCurrentUserPasswordCommand(),
 	}
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+
+	os.Exit(0)
 }

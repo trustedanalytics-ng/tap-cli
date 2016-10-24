@@ -52,11 +52,11 @@ func TestConvertFunction(t *testing.T) {
 	fakeServices := getFakeServices()
 
 	Convey("Test convert method", t, func() {
-		Convey("Should fail when GetCatalog return err", func() {
+		Convey("Should fail when GetOfferings return err", func() {
 			fakeErr := errors.New("Error_msg")
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return([]models.Service{}, fakeErr)
 
 			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "service_name", "service_plan")
@@ -67,7 +67,7 @@ func TestConvertFunction(t *testing.T) {
 		Convey("Should fail when given plan doesn't exit", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return(fakeServices, nil)
 
 			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "label_1", "wrong_plan_name")
@@ -78,7 +78,7 @@ func TestConvertFunction(t *testing.T) {
 		Convey("Should fail when given service doesn't exist", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return(fakeServices, nil)
 
 			_, _, err := convertServiceAndPlanNameToId(actionsConfig, "wrong_label_name", "plan_1")
@@ -89,7 +89,7 @@ func TestConvertFunction(t *testing.T) {
 		Convey("Should pass when service guid and plan guid returned succesfully", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return(fakeServices, nil)
 
 			serviceID, planID, err := convertServiceAndPlanNameToId(actionsConfig, "label_3", "plan_3")
@@ -107,11 +107,11 @@ func TestGetServiceID(t *testing.T) {
 	fakeServices := getFakeServices()
 
 	Convey("Test getServiceID", t, func() {
-		Convey("Should fail when GetCatalog returns error", func() {
+		Convey("Should fail when GetOfferings returns error", func() {
 			fakeErr := errors.New("Error_msg")
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return([]models.Service{}, fakeErr)
 
 			_, err := getOfferingID(actionsConfig, "service_name")
@@ -121,7 +121,7 @@ func TestGetServiceID(t *testing.T) {
 		Convey("Should fail when given service doesn't exist", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return(fakeServices, nil)
 
 			_, err := getOfferingID(actionsConfig, "wrong_label_name")
@@ -131,7 +131,7 @@ func TestGetServiceID(t *testing.T) {
 		Convey("Should pass when service guid returned succesfully", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return(fakeServices, nil)
 
 			serviceID, err := getOfferingID(actionsConfig, "label_3")

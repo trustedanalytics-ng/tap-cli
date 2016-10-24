@@ -10,10 +10,10 @@ import (
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 )
 
-var logger = logger_wrapper.InitLogger("client")
+var logger, _ = commonLogger.InitLogger("client")
 
 type TapApiServiceApi interface {
 	GetPlatformInfo() (models.PlatformInfo, error)
@@ -55,6 +55,10 @@ type TapApiServiceApi interface {
 	GetUsers() ([]userManagement.UaaUser, error)
 	ChangeCurrentUserPassword(password, newPassword string) error
 	DeleteUser(email string) error
+}
+
+func SetLoggerLevel(level string) error {
+	return commonLogger.SetLoggerLevel(logger, level)
 }
 
 func NewTapApiServiceApiWithOAuth2(address, tokenType, token string) (TapApiServiceApi, error) {

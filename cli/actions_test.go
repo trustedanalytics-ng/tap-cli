@@ -18,18 +18,21 @@ package cli
 
 import (
 	"errors"
-	. "github.com/smartystreets/goconvey/convey"
+	"fmt"
 	"net/http"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/trustedanalytics/tap-api-service/models"
 	"github.com/trustedanalytics/tap-api-service/uaa-connector"
 
-	"github.com/trustedanalytics/tap-api-service/user-management-connector"
-	"github.com/trustedanalytics/tap-cli/api"
 	"io/ioutil"
 	"strconv"
 	"strings"
+
+	"github.com/trustedanalytics/tap-api-service/user-management-connector"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
 var url string = "fake_url"
@@ -101,23 +104,21 @@ func TestLoginActions(t *testing.T) {
 	})
 }
 
-func TestInviteUserCommand(t *testing.T) {
+func TestSendInvitationCommand(t *testing.T) {
 	actionsConfig := setApiAndLoginServiceMocks(t)
 	Convey("Test Login command", t, func() {
 		Convey("Should fail when inviting error occurs", func() {
-			errorMsg := "cannot invite given user"
+			errorMsg := "cannot invite"
 			fillCredentialsFile(expectedCredsFileContent)
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				InviteUser(login).
+				SendInvitation(login).
 				Return(user_management_connector.InvitationResponse{}, errors.New(errorMsg))
 
-			stdout := captureStdout(func() {
-				actionsConfig.SendInvitation(login)
-			})
+			err := actionsConfig.SendInvitation(login)
 
-			So(stdout, ShouldContainSubstring, errorMsg)
+			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Should pass when user invited", func() {
@@ -125,14 +126,14 @@ func TestInviteUserCommand(t *testing.T) {
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				InviteUser(login).
+				SendInvitation(login).
 				Return(user_management_connector.InvitationResponse{}, nil)
 
 			stdout := captureStdout(func() {
 				actionsConfig.SendInvitation(login)
 			})
 
-			So(stdout, ShouldContainSubstring, "User "+login+" successfully invited")
+			So(stdout, ShouldContainSubstring, fmt.Sprintf("User %q successfully invited", login))
 		})
 	})
 }
@@ -150,11 +151,9 @@ func TestDeleteUserCommand(t *testing.T) {
 				DeleteUser(login).
 				Return(errors.New(errorMsg))
 
-			stdout := captureStdout(func() {
-				actionsConfig.DeleteUser(login)
-			})
+			err := actionsConfig.DeleteUser(login)
 
-			So(stdout, ShouldContainSubstring, errorMsg)
+			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Should pass when user exists", func() {
@@ -167,7 +166,7 @@ func TestDeleteUserCommand(t *testing.T) {
 				actionsConfig.DeleteUser(login)
 			})
 
-			So(stdout, ShouldContainSubstring, "User "+login+" successfully removed\n")
+			So(stdout, ShouldContainSubstring, fmt.Sprintf("User %q successfully removed\n", login))
 		})
 	})
 }
@@ -184,7 +183,7 @@ func TestCatalogCommand(t *testing.T) {
 		Convey("Should pretty print offerings list", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
-				GetCatalog().
+				GetOfferings().
 				Return([]models.Service{fakeOff1, fakeOff2, fakeOff3}, nil)
 
 			stdout := captureStdout(func() {

@@ -17,6 +17,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -27,13 +28,35 @@ import (
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
+func TestSumFlags(t *testing.T) {
+	testCases := []struct {
+		a   []cli.Flag
+		b   []cli.Flag
+		res []cli.Flag
+	}{
+		{[]cli.Flag{}, []cli.Flag{}, []cli.Flag{}},
+		{[]cli.Flag{cli.StringSliceFlag{Name: "abc"}, cli.StringFlag{Name: "cba"}}, []cli.Flag{cli.BoolFlag{Name: "qwe"}}, []cli.Flag{cli.StringSliceFlag{Name: "abc"}, cli.StringFlag{Name: "cba"}, cli.BoolFlag{Name: "qwe"}}},
+		{[]cli.Flag{}, []cli.Flag{cli.BoolFlag{Name: "qwe"}}, []cli.Flag{cli.BoolFlag{Name: "qwe"}}},
+		{[]cli.Flag{cli.StringSliceFlag{Name: "abc"}, cli.StringFlag{Name: "cba"}}, []cli.Flag{}, []cli.Flag{cli.StringSliceFlag{Name: "abc"}, cli.StringFlag{Name: "cba"}}},
+	}
+
+	Convey("For set of test cases sumFlags should return proper responses", t, func() {
+		for _, tc := range testCases {
+			Convey(fmt.Sprintf("For set of flags %v and %v sumFlags should result in %v", tc.a, tc.b, tc.res), func() {
+				response := sumFlags(tc.a, tc.b)
+				So(response, ShouldResemble, tc.res)
+			})
+		}
+	})
+}
+
 func TestApiAndLoginServiceSetters(t *testing.T) {
 	Convey("Test OAuth2 login2", t, func() {
 		Convey("Should fail when no credentials.json file", func() {
 			os.Remove(api.CredsPath)
 
 			So(func() {
-				NewOAuth2Service()
+				newOAuth2Service()
 			}, ShouldPanicWith, "Please login first!")
 		})
 		Convey("Should fail when wrong format in credentials.json file", func() {
@@ -41,15 +64,15 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 			fillCredentialsFile(wrongContent)
 
 			So(func() {
-				NewOAuth2Service()
+				newOAuth2Service()
 			}, ShouldPanicWith, "invalid character '"+wrongContent+"' looking for beginning of value")
 		})
 	})
 }
 
-func TestNewBasicAuthService(t *testing.T) {
+func TestnewBasicAuthService(t *testing.T) {
 	Convey("Should add https address if address not provided", t, func() {
-		basicAuth := NewBasicAuthService("myaddress.com", "user", "password")
+		basicAuth := newBasicAuthService("myaddress.com", "user", "password")
 		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 		So(basicCreds.Address, ShouldEqual, "https://myaddress.com")
@@ -57,14 +80,14 @@ func TestNewBasicAuthService(t *testing.T) {
 	Convey("Should not add https", t, func() {
 		Convey("when there is http:// ", func() {
 
-			basicAuth := NewBasicAuthService("http://myaddress.com", "user", "password")
+			basicAuth := newBasicAuthService("http://myaddress.com", "user", "password")
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 			So(basicCreds.Address, ShouldEqual, "http://myaddress.com")
 		})
 		Convey("when there is ftp:// ", func() {
 
-			basicAuth := NewBasicAuthService("ftp://myaddress.com", "user", "password")
+			basicAuth := newBasicAuthService("ftp://myaddress.com", "user", "password")
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 			So(basicCreds.Address, ShouldEqual, "ftp://myaddress.com")

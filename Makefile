@@ -33,7 +33,7 @@ install_mockgen:
 	scripts/install_mockgen.sh
 
 mock_update: install_mockgen
-	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client_api.go -package=api -destination=api/api_service_client_mock.go
+	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client.go -package=api -destination=api/api_service_client_mock.go
 	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/login.go -package=api -destination=api/api_service_login_mock.go
 
 test: verify_gopath mock_update

@@ -24,7 +24,7 @@ NAME:
    TAP CLI - client for managing TAP
 
 USAGE:
-   tap [global options] command [command options] [arguments...]
+   tap-cli [global options] command [command options] [arguments...]
 
 VERSION:
    0.8.0
@@ -50,14 +50,21 @@ COMMANDS:
      start                    start application with single instance
      stop                     stop all application instances
      logs, log                get logs for all containers in instance
+     credentials, creds       get credentials for all containers in service instance
      delete, d                delete application
-     invite                   invite new user to TAP or resend invitation
+     invite                   invite new user to TAP
+     reinvite                 resend invitation for user
+     users                    list platform users
+     invitations, invs        list pending invitations
+     delete-invitation, di    delete invitation
      delete-user, du          delete user from TAP
+     chpasswd                 change password of currently logged user
      help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h     show help
-   --version, -v  print the version
+   --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
+   --help, -h                   show help
+   --version, -V                print the version
 ```
 
 ## Examples

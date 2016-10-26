@@ -39,7 +39,7 @@ type TapApiServiceApi interface {
 	GetServiceInstance(serviceId string) (models.ServiceInstance, error)
 	GetApplicationLogs(applicationId string) (map[string]string, error)
 	GetServiceLogs(serviceId string) (map[string]string, error)
-	GetInstanceCredentials(instanceId string) ([]containerBrokerModels.DeploymentEnvs, error)
+	GetInstanceCredentials(instanceId string) ([]containerBrokerModels.ContainerCredenials, error)
 
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
 	ListServiceInstances() ([]models.ServiceInstance, error)
@@ -145,9 +145,9 @@ func (c *TapApiServiceApiOAuth2Connector) GetServiceLogs(serviceId string) (map[
 	return result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetInstanceCredentials(instanceId string) ([]containerBrokerModels.DeploymentEnvs, error) {
+func (c *TapApiServiceApiOAuth2Connector) GetInstanceCredentials(instanceId string) ([]containerBrokerModels.ContainerCredenials, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/services/%s/credentials", c.Address, instanceId))
-	result := []containerBrokerModels.DeploymentEnvs{}
+	result := []containerBrokerModels.ContainerCredenials{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
 	return result, err
 }

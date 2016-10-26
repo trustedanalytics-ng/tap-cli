@@ -506,7 +506,7 @@ func (a *ActionsConfig) GetInstanceCredentials(instanceName string) error {
 		return err
 	}
 
-	creds := []containerBrokerModels.DeploymentEnvs{}
+	creds := []containerBrokerModels.ContainerCredenials{}
 	if instanceType == catalogModels.InstanceTypeService {
 		creds, err = a.ApiService.GetInstanceCredentials(instanceId)
 		if err != nil {

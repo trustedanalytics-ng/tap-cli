@@ -20,10 +20,10 @@ package api
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	models "github.com/trustedanalytics/tap-api-service/models"
+	models0 "github.com/trustedanalytics/tap-api-service/models"
 	user_management_connector "github.com/trustedanalytics/tap-api-service/user-management-connector"
-	models1 "github.com/trustedanalytics/tap-catalog/models"
-	models0 "github.com/trustedanalytics/tap-container-broker/models"
+	models "github.com/trustedanalytics/tap-catalog/models"
+	models1 "github.com/trustedanalytics/tap-container-broker/models"
 	multipart "mime/multipart"
 )
 
@@ -48,9 +48,9 @@ func (_m *MockTapApiServiceApi) EXPECT() *_MockTapApiServiceApiRecorder {
 	return _m.recorder
 }
 
-func (_m *MockTapApiServiceApi) GetPlatformInfo() (models.PlatformInfo, error) {
+func (_m *MockTapApiServiceApi) GetPlatformInfo() (models0.PlatformInfo, error) {
 	ret := _m.ctrl.Call(_m, "GetPlatformInfo")
-	ret0, _ := ret[0].(models.PlatformInfo)
+	ret0, _ := ret[0].(models0.PlatformInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -59,9 +59,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetPlatformInfo() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetPlatformInfo")
 }
 
-func (_m *MockTapApiServiceApi) GetApplicationBindings(applicationId string) (models.InstanceBindings, error) {
+func (_m *MockTapApiServiceApi) GetApplicationBindings(applicationId string) (models0.InstanceBindings, error) {
 	ret := _m.ctrl.Call(_m, "GetApplicationBindings", applicationId)
-	ret0, _ := ret[0].(models.InstanceBindings)
+	ret0, _ := ret[0].(models0.InstanceBindings)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -70,9 +70,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetApplicationBindings(arg0 interface{
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetApplicationBindings", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetServiceBindings(serviceId string) (models.InstanceBindings, error) {
+func (_m *MockTapApiServiceApi) GetServiceBindings(serviceId string) (models0.InstanceBindings, error) {
 	ret := _m.ctrl.Call(_m, "GetServiceBindings", serviceId)
-	ret0, _ := ret[0].(models.InstanceBindings)
+	ret0, _ := ret[0].(models0.InstanceBindings)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,9 +81,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetServiceBindings(arg0 interface{}) *
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetServiceBindings", arg0)
 }
 
-func (_m *MockTapApiServiceApi) BindToApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (models0.MessageResponse, error) {
+func (_m *MockTapApiServiceApi) BindToApplicationInstance(bindingRequest models0.InstanceBindingRequest, applicationId string) (models1.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "BindToApplicationInstance", bindingRequest, applicationId)
-	ret0, _ := ret[0].(models0.MessageResponse)
+	ret0, _ := ret[0].(models1.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -92,9 +92,9 @@ func (_mr *_MockTapApiServiceApiRecorder) BindToApplicationInstance(arg0, arg1 i
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "BindToApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) BindToServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (models0.MessageResponse, error) {
+func (_m *MockTapApiServiceApi) BindToServiceInstance(bindingRequest models0.InstanceBindingRequest, serviceId string) (models1.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "BindToServiceInstance", bindingRequest, serviceId)
-	ret0, _ := ret[0].(models0.MessageResponse)
+	ret0, _ := ret[0].(models1.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -103,7 +103,7 @@ func (_mr *_MockTapApiServiceApiRecorder) BindToServiceInstance(arg0, arg1 inter
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "BindToServiceInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) UnbindFromApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (int, error) {
+func (_m *MockTapApiServiceApi) UnbindFromApplicationInstance(bindingRequest models0.InstanceBindingRequest, applicationId string) (int, error) {
 	ret := _m.ctrl.Call(_m, "UnbindFromApplicationInstance", bindingRequest, applicationId)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
@@ -114,7 +114,7 @@ func (_mr *_MockTapApiServiceApiRecorder) UnbindFromApplicationInstance(arg0, ar
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindFromApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) UnbindFromServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (int, error) {
+func (_m *MockTapApiServiceApi) UnbindFromServiceInstance(bindingRequest models0.InstanceBindingRequest, serviceId string) (int, error) {
 	ret := _m.ctrl.Call(_m, "UnbindFromServiceInstance", bindingRequest, serviceId)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
@@ -125,9 +125,9 @@ func (_mr *_MockTapApiServiceApiRecorder) UnbindFromServiceInstance(arg0, arg1 i
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindFromServiceInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models1.Application, error) {
+func (_m *MockTapApiServiceApi) CreateApplicationInstance(blob multipart.File, manifest models0.Manifest) (models.Application, error) {
 	ret := _m.ctrl.Call(_m, "CreateApplicationInstance", blob, manifest)
-	ret0, _ := ret[0].(models1.Application)
+	ret0, _ := ret[0].(models.Application)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -136,9 +136,9 @@ func (_mr *_MockTapApiServiceApiRecorder) CreateApplicationInstance(arg0, arg1 i
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]models1.Service, error) {
+func (_m *MockTapApiServiceApi) CreateOffer(serviceWithTemplate models0.ServiceDeploy) ([]models.Service, error) {
 	ret := _m.ctrl.Call(_m, "CreateOffer", serviceWithTemplate)
-	ret0, _ := ret[0].([]models1.Service)
+	ret0, _ := ret[0].([]models.Service)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -147,9 +147,9 @@ func (_mr *_MockTapApiServiceApiRecorder) CreateOffer(arg0 interface{}) *gomock.
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateOffer", arg0)
 }
 
-func (_m *MockTapApiServiceApi) CreateServiceInstance(instance models.Instance) (models0.MessageResponse, error) {
+func (_m *MockTapApiServiceApi) CreateServiceInstance(instance models0.Instance) (models1.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "CreateServiceInstance", instance)
-	ret0, _ := ret[0].(models0.MessageResponse)
+	ret0, _ := ret[0].(models1.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -188,9 +188,9 @@ func (_mr *_MockTapApiServiceApiRecorder) DeleteApplicationInstance(arg0 interfa
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteApplicationInstance", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetOfferings() ([]models.Service, error) {
+func (_m *MockTapApiServiceApi) GetOfferings() ([]models0.Service, error) {
 	ret := _m.ctrl.Call(_m, "GetOfferings")
-	ret0, _ := ret[0].([]models.Service)
+	ret0, _ := ret[0].([]models0.Service)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -199,9 +199,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetOfferings() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetOfferings")
 }
 
-func (_m *MockTapApiServiceApi) GetOffering(offeringId string) (models.Service, error) {
+func (_m *MockTapApiServiceApi) GetOffering(offeringId string) (models0.Service, error) {
 	ret := _m.ctrl.Call(_m, "GetOffering", offeringId)
-	ret0, _ := ret[0].(models.Service)
+	ret0, _ := ret[0].(models0.Service)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -210,9 +210,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetOffering(arg0 interface{}) *gomock.
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetOffering", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetApplicationInstance(applicationId string) (models.ApplicationInstance, error) {
+func (_m *MockTapApiServiceApi) GetApplicationInstance(applicationId string) (models0.ApplicationInstance, error) {
 	ret := _m.ctrl.Call(_m, "GetApplicationInstance", applicationId)
-	ret0, _ := ret[0].(models.ApplicationInstance)
+	ret0, _ := ret[0].(models0.ApplicationInstance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -221,9 +221,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetApplicationInstance(arg0 interface{
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetApplicationInstance", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetServiceInstance(serviceId string) (models.ServiceInstance, error) {
+func (_m *MockTapApiServiceApi) GetServiceInstance(serviceId string) (models0.ServiceInstance, error) {
 	ret := _m.ctrl.Call(_m, "GetServiceInstance", serviceId)
-	ret0, _ := ret[0].(models.ServiceInstance)
+	ret0, _ := ret[0].(models0.ServiceInstance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -254,9 +254,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetServiceLogs(arg0 interface{}) *gomo
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetServiceLogs", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetInstanceCredentials(instanceId string) ([]models0.DeploymentEnvs, error) {
+func (_m *MockTapApiServiceApi) GetInstanceCredentials(instanceId string) ([]models1.ContainerCredenials, error) {
 	ret := _m.ctrl.Call(_m, "GetInstanceCredentials", instanceId)
-	ret0, _ := ret[0].([]models0.DeploymentEnvs)
+	ret0, _ := ret[0].([]models1.ContainerCredenials)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -265,9 +265,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetInstanceCredentials(arg0 interface{
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetInstanceCredentials", arg0)
 }
 
-func (_m *MockTapApiServiceApi) ListApplicationInstances() ([]models.ApplicationInstance, error) {
+func (_m *MockTapApiServiceApi) ListApplicationInstances() ([]models0.ApplicationInstance, error) {
 	ret := _m.ctrl.Call(_m, "ListApplicationInstances")
-	ret0, _ := ret[0].([]models.ApplicationInstance)
+	ret0, _ := ret[0].([]models0.ApplicationInstance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -276,9 +276,9 @@ func (_mr *_MockTapApiServiceApiRecorder) ListApplicationInstances() *gomock.Cal
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListApplicationInstances")
 }
 
-func (_m *MockTapApiServiceApi) ListServiceInstances() ([]models.ServiceInstance, error) {
+func (_m *MockTapApiServiceApi) ListServiceInstances() ([]models0.ServiceInstance, error) {
 	ret := _m.ctrl.Call(_m, "ListServiceInstances")
-	ret0, _ := ret[0].([]models.ServiceInstance)
+	ret0, _ := ret[0].([]models0.ServiceInstance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -287,9 +287,9 @@ func (_mr *_MockTapApiServiceApiRecorder) ListServiceInstances() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListServiceInstances")
 }
 
-func (_m *MockTapApiServiceApi) ScaleApplicationInstance(applicationId string, replication int) (models0.MessageResponse, error) {
+func (_m *MockTapApiServiceApi) ScaleApplicationInstance(applicationId string, replication int) (models1.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "ScaleApplicationInstance", applicationId, replication)
-	ret0, _ := ret[0].(models0.MessageResponse)
+	ret0, _ := ret[0].(models1.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -298,9 +298,9 @@ func (_mr *_MockTapApiServiceApiRecorder) ScaleApplicationInstance(arg0, arg1 in
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ScaleApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) ScaleServiceInstance(serviceId string, replication int) (models0.MessageResponse, error) {
+func (_m *MockTapApiServiceApi) ScaleServiceInstance(serviceId string, replication int) (models1.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "ScaleServiceInstance", serviceId, replication)
-	ret0, _ := ret[0].(models0.MessageResponse)
+	ret0, _ := ret[0].(models1.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -32,11 +32,12 @@ bin/govendor: verify_gopath
 install_mockgen:
 	scripts/install_mockgen.sh
 
-mock_update: install_mockgen
-	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client.go -package=api -destination=api/api_service_client_mock.go
-	$(GOBIN)/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/login.go -package=api -destination=api/api_service_login_mock.go
+mock_update:
+	$(GOPATH)/bin/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/client.go -package=api -destination=api/api_service_client_mock.go
+	$(GOPATH)/bin/mockgen -source=vendor/github.com/trustedanalytics/tap-api-service/client/login.go -package=api -destination=api/api_service_login_mock.go
+	./add_license.sh
 
-test: verify_gopath mock_update
+test: verify_gopath
 	go test --cover $(APP_DIR_LIST)
 
 prepare_dirs:

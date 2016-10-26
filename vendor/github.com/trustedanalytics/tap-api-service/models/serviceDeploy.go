@@ -6,7 +6,7 @@ import (
 )
 
 type ServiceDeploy struct {
-	BrokerName string                            `json:"broker_name"`
-	Template   templateRepositoryModels.Template `json:"template"`
-	Services   []catalogModels.Service           `json:"services"`
+	BrokerName string                               `json:"broker_name"`
+	Template   templateRepositoryModels.RawTemplate `json:"template"`
+	Services   []catalogModels.Service              `json:"services"`
 }

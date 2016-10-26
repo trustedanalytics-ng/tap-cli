@@ -6,7 +6,7 @@
       "deployments": [
         {
           "kind": "Deployment",
-          "apiVersion": "extensions/v1beta1",
+          "apiVersion": "extensions\/v1beta1",
           "metadata": {
             "name": "$idx_and_short_instance_id",
             "creationTimestamp": null,
@@ -41,51 +41,32 @@
                 "volumes": null,
                 "containers": [
                   {
-                    "name": "k-logstash14",
-                    "image": "cfcommunity/logstash",
+                    "name": "k-etcd",
+                    "image": "127.0.0.1:30000/coreos/etcd:v3.0.10",
                     "ports": [
                       {
-                        "containerPort": 514,
+                        "containerPort": 4001,
                         "protocol": "TCP"
                       },
                       {
-                        "containerPort": 9200,
-                        "protocol": "TCP"
-                      },
-                      {
-                        "containerPort": 9292,
-                        "protocol": "TCP"
-                      },
-                      {
-                        "containerPort": 9300,
+                        "containerPort": 7001,
                         "protocol": "TCP"
                       }
                     ],
                     "env": [
                       {
-                        "name": "RABBITMQ_USERNAME",
-                        "valueFrom": {
-                          "secretKeyRef": {
-                            "Name": "$short_instance_id-logstash-credentials",
-                            "key": "rabbitmq-username"
-                          }
-                        }
-                      },
-                      {
-                        "name": "RABBITMQ_PASSWORD",
-                        "valueFrom": {
-                          "secretKeyRef": {
-                            "Name": "$short_instance_id-logstash-credentials",
-                            "key": "rabbitmq-password"
-                          }
-                        }
-                      },
-                      {
                         "name": "MANAGED_BY",
                         "value": "TAP"
                       }
                     ],
-                    "resources": {},
+                    "resources": {
+                      "limits": {
+                        "memory": "500M"
+                      },
+                      "requests": {
+                        "memory": "100M"
+                      }
+                    },
                     "imagePullPolicy": "IfNotPresent"
                   }
                 ],
@@ -94,11 +75,16 @@
                 "serviceAccountName": ""
               }
             },
-            "strategy": {}
+            "strategy": {
+
+            }
           },
-          "status": {}
+          "status": {
+
+          }
         }
       ],
+      "ingresses": null,
       "services": [
         {
           "kind": "Service",
@@ -120,30 +106,16 @@
             "type": "NodePort",
             "ports": [
               {
-                "name": "syslog",
+                "name": "rest",
                 "protocol": "TCP",
-                "port": 514,
+                "port": 4001,
                 "targetPort": 0,
                 "nodePort": 0
               },
               {
                 "name": "transport",
                 "protocol": "TCP",
-                "port": 9200,
-                "targetPort": 0,
-                "nodePort": 0
-              },
-              {
-                "name": "kibana",
-                "protocol": "TCP",
-                "port": 9292,
-                "targetPort": 0,
-                "nodePort": 0
-              },
-              {
-                "name": "rest",
-                "protocol": "TCP",
-                "port": 9300,
+                "port": 7001,
                 "targetPort": 0,
                 "nodePort": 0
               }
@@ -153,7 +125,9 @@
             }
           },
           "status": {
-            "loadBalancer": {}
+            "loadBalancer": {
+
+            }
           }
         }
       ],
@@ -177,44 +151,34 @@
           "secrets": null
         }
       ],
-      "secrets": [
-        {
-          "kind": "Secret",
-          "apiVersion": "v1",
-          "metadata": {
-            "name": "$short_instance_id-logstash-credentials",
-            "creationTimestamp": null,
-            "labels": {
-              "idx_and_short_instance_id": "$idx_and_short_instance_id",
-              "managed_by": "TAP",
-              "instance_id": "$instance_id"
-            }
-          },
-          "data": {
-            "rabbitmq-password": "$base64-$random1",
-            "rabbitmq-username": "$base64-$random2"
-          }
-        }
-      ]
+      "secrets": null
     },
     "hooks": null
   },
   "services": [{
-    "name": "logstash",
-    "description": "it's finally logstash!",
+    "name": "etcd",
+    "description": "Etcd key-value storage",
     "metadata": [],
     "bindable": true,
     "tags": [
-      "logstash14",
-      "logstash",
-      "syslog",
+      "etcd",
+      "keyvalue",
+      "etcd-0.4.6",
       "k8s"
     ],
     "plans": [
       {
         "name": "free",
         "description": "free",
-        "cost": "free"
+        "cost": "free",
+        "dependencies": [
+          {
+            "service_id": "real_service_id",
+            "service_name": "logstash-service",
+            "plan_id": "real_plan_id",
+            "plan_name": "free"
+          }
+        ]
       }
     ]
   }]

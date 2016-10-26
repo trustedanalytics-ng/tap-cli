@@ -180,8 +180,8 @@
             }
           },
           "data": {
-            "nats-password": "JHJhbmRvbTI=",
-            "nats-username": "JHJhbmRvbTE="
+            "nats-password": "$base64-$random1",
+            "nats-username": "$base64-$random2"
           }
         }
       ]

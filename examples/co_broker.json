@@ -158,8 +158,8 @@
             }
           },
           "data": {
-            "password": "JHJhbmRvbTI=",
-            "username": "JHJhbmRvbTE="
+            "password": "$base64-$random1",
+            "username": "$base64-$random2"
           }
         }
       ]

@@ -30,6 +30,10 @@ import (
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 )
 
+func announceSuccessfulOperation() {
+	fmt.Println("OK")
+}
+
 type ActionsConfig struct {
 	api.Config
 }
@@ -195,6 +199,8 @@ func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 		return err
 	}
 
+	announceSuccessfulOperation()
+
 	return nil
 }
 
@@ -207,6 +213,8 @@ func (a *ActionsConfig) DeleteOffering(serviceName string) error {
 	if err = a.ApiService.DeleteOffering(serviceID); err != nil {
 		return fmt.Errorf("Cannot delete offering: %v", err.Error())
 	}
+
+	announceSuccessfulOperation()
 
 	return nil
 }
@@ -235,6 +243,8 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 		return err
 	}
 
+	announceSuccessfulOperation()
+
 	return nil
 }
 
@@ -247,6 +257,8 @@ func (a *ActionsConfig) DeleteInstance(serviceName string) error {
 	if err = a.ApiService.DeleteServiceInstance(instanceId); err != nil {
 		return err
 	}
+
+	announceSuccessfulOperation()
 
 	return nil
 }
@@ -299,6 +311,8 @@ func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) er
 		return err
 	}
 
+	announceSuccessfulOperation()
+
 	return nil
 }
 
@@ -328,6 +342,8 @@ func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) 
 	if err != nil {
 		return err
 	}
+
+	announceSuccessfulOperation()
 
 	return nil
 }
@@ -370,6 +386,7 @@ func (a *ActionsConfig) GetService(serviceName string) error {
 	}
 
 	printFormattedDetails(serviceInstance)
+
 	return nil
 }
 
@@ -533,6 +550,8 @@ func (a *ActionsConfig) DeleteApplication(applicationName string) error {
 	if err = a.ApiService.DeleteApplicationInstance(instanceId); err != nil {
 		return err
 	}
+
+	announceSuccessfulOperation()
 
 	return nil
 }

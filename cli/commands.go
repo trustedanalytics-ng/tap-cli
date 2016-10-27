@@ -475,9 +475,7 @@ func pushApplicationCommand() cli.Command {
 			}
 
 			if _, err := os.Stat("manifest.json"); os.IsNotExist(err) {
-				fmt.Println("manifest.json does not exist")
-				fmt.Println("Create one with metadata about your application.")
-				return err
+				return fmt.Errorf("manifest.json does not exist: create one with metadata about your application")
 			}
 
 			err := validateArgs(c, 1)

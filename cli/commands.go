@@ -21,6 +21,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"errors"
 
 	"github.com/urfave/cli"
 
@@ -376,6 +377,33 @@ func deleteServiceCommand() cli.Command {
 				return err
 			}
 			return newOAuth2Service().DeleteInstance(c.Args().Get(0))
+		},
+	}
+}
+
+func exposeServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "expose-service",
+		ArgsUsage: "<service_custom_name>, <should_expose>",
+		Aliases:   []string{"expose"},
+		Usage:     "expose service ports",
+		Flags:     getCommonFlags(),
+		Action: func(c *cli.Context) error {
+			if err := handleCommonFlags(c); err != nil {
+				return err
+			}
+
+			err := validateArgs(c, 2)
+			if err != nil {
+				return err
+			}
+
+			exposed, parseErr := strconv.ParseBool(c.Args().Get(1))
+			if parseErr != nil {
+				return errors.New("exposed argument has to be a boolean value: true/false")
+			}
+
+			return newOAuth2Service().ExposeService(c.Args().First(), exposed)
 		},
 	}
 }

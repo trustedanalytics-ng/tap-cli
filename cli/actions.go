@@ -284,6 +284,20 @@ func (a *ActionsConfig) GetApplicationBindings(instanceName string) error {
 	return nil
 }
 
+func (a *ActionsConfig) ExposeService(serviceId string, shouldExpose bool) error {
+	instanceId, _, err := convertInstance(a, InstanceTypeBoth, serviceId)
+	if err != nil {
+		return err
+	}
+
+	if hosts, _, err := a.ApiService.ExposeService(instanceId, shouldExpose); err != nil {
+		return err
+	} else {
+		printFormattedDetails(hosts)
+		return nil
+	}
+}
+
 func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) error {
 	srcInstanceId, srcInstanceType, err := convertInstance(a, InstanceTypeBoth, srcInstanceName)
 	if err != nil {

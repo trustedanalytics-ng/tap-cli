@@ -37,6 +37,7 @@ COMMANDS:
      delete-offering, do      delete offering
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
+     expose-service, expose   expose service ports
      bindings                 list bindings
      bind-instance, bind      bind instance to another
      unbind-instance, unbind  unbind instance from another

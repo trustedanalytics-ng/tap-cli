@@ -36,6 +36,7 @@ func getCommands() []cli.Command {
 		deleteOfferingCommand(),
 		createServiceCommand(),
 		deleteServiceCommand(),
+		exposeServiceCommand(),
 		listInstanceBindingsCommand(),
 		bindInstanceCommand(),
 		unbindInstanceCommand(),

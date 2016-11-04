@@ -62,8 +62,8 @@ type UserManagementApi interface {
 	ResendUserInvitation(email string) (int, error)
 	ChangeCurrentUserPassword(changePasswdReq ChangePasswordRequest) (int, error)
 	DeleteUser(email string) (int, error)
-	GetInvitations() ([]string, error)
-	GetUsers() ([]UaaUser, error)
+	GetInvitations() ([]string, int, error)
+	GetUsers() ([]UaaUser, int, error)
 }
 
 type UserManagementApiConnectorFactory struct {
@@ -154,20 +154,20 @@ func (u *UserManagementApiConnector) ResendUserInvitation(email string) (int, er
 	return status, nil
 }
 
-func (u *UserManagementApiConnector) GetInvitations() ([]string, error) {
+func (u *UserManagementApiConnector) GetInvitations() ([]string, int, error) {
 	connector := u.getApiConnector(fmt.Sprintf("%s/rest/invitations", u.Address))
 
 	invitations := []string{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, &invitations)
+	status, err := brokerHttp.GetModel(connector, http.StatusOK, &invitations)
 	if err != nil {
-		return nil, err
+		return nil, status, err
 	}
 
-	return invitations, nil
+	return invitations, status, nil
 }
 
 func (u *UserManagementApiConnector) invitationExists(email string) bool {
-	invitations, err := u.GetInvitations()
+	invitations, _, err := u.GetInvitations()
 	if err != nil {
 		return false
 	}
@@ -181,20 +181,20 @@ func (u *UserManagementApiConnector) invitationExists(email string) bool {
 	return false
 }
 
-func (u *UserManagementApiConnector) GetUsers() ([]UaaUser, error) {
+func (u *UserManagementApiConnector) GetUsers() ([]UaaUser, int, error) {
 	connector := u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users", u.Address, DEFAULT_ORG))
 
 	users := []UaaUser{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, &users)
+	status, err := brokerHttp.GetModel(connector, http.StatusOK, &users)
 	if err != nil {
-		return nil, err
+		return nil, status, err
 	}
 
-	return users, nil
+	return users, status, nil
 }
 
 func (u *UserManagementApiConnector) getUserUUID(email string) string {
-	users, err := u.GetUsers()
+	users, _, err := u.GetUsers()
 	if err != nil {
 		return ""
 	}

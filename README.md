@@ -14,7 +14,7 @@ There are no requirements for binary app.
 * in dir of repo just cloned, invoke: `make build_anywhere(_linux/_osx/_win32)`
 * binaries are available in ./application/
 
-`make build_anywhere` will compile binaries for all platforms, `make build_anywhere_linux` for Linux etc.
+`make build_anywhere` will compile binaries for all platforms, `make build_anywhere_linux` for Linux, etc.
 
 
 ## Usage

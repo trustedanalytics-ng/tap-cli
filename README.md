@@ -3,7 +3,7 @@
 ## Requirements
 
 ### Binary
-There is no requirements for binary app.
+There are no requirements for binary app.
 
 ### Compilation
 * git (for pulling repo only) 
@@ -11,7 +11,7 @@ There is no requirements for binary app.
 
 ## Compilation
 * clone this repo
-* in dir of just cloned repo invoke: `make build_anywhere(_linux/_osx/_win32)`
+* in dir of repo just cloned, invoke: `make build_anywhere(_linux/_osx/_win32)`
 * binaries are available in ./application/
 
 `make build_anywhere` will compile binaries for all platforms, `make build_anywhere_linux` for Linux etc.
@@ -31,10 +31,11 @@ VERSION:
 
 COMMANDS:
      login                    login to TAP
+     logout                   logout of TAP (Dan's guess)
      target, t                print actual credentials
-     catalog, o               list available offerings
-     create-offering, co      create new offering
-     delete-offering, do      delete offering
+     catalog, o               list available catalog offerings
+     create-offering, co      create new catalog offering
+     delete-offering, do      delete catalog offering
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
      expose-service, expose   expose service ports
@@ -44,9 +45,9 @@ COMMANDS:
      push                     create application from archive provided or from compressed current directory by default,
                               manifest should be in current working directory
      applications, apps       list applications
-     application, a           application instance details
+     application, a           list application instance details
      services, svcs           list all service instances
-     service, s               service instance details
+     service, s               list service instance details
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances
@@ -54,13 +55,13 @@ COMMANDS:
      credentials, creds       get credentials for all containers in service instance
      delete, d                delete application
      invite                   invite new user to TAP
-     reinvite                 resend invitation for user
+     reinvite                 resend invitation to user
      users                    list platform users
      invitations, invs        list pending invitations
      delete-invitation, di    delete invitation
      delete-user, du          delete user from TAP
      chpasswd                 change password of currently logged user
-     help, h                  Shows a list of commands or help for one command
+     help, h                  show a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
@@ -87,11 +88,11 @@ Authentication succeeded
 ### Application preparation *Python*
 
 #### Prepare list of dependencies used in requirements.txt
-It can be done manually or when using virtualenv dumped using:
+Can be done manually, or when using virtualenv, dumped using:
 ```
 pip freeze > requirements.txt
 ```
-#### Store python dependencies in a foler:
+#### Store python dependencies in a folder:
 ```
 mkdir vendor
 sudo pip install -r requirements.txt --download vendor

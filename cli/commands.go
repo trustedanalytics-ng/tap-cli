@@ -210,7 +210,7 @@ func changeCurrentUserPasswordCommand() cli.Command {
 	return cli.Command{
 		Name:      "chpasswd",
 		Usage:     "change password of currently logged user",
-		ArgsUsage: "<currentPassword newPassword>",
+		ArgsUsage: "<currentPassword> <newPassword>",
 		Flags:     getCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {

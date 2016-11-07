@@ -68,6 +68,7 @@ func (a *ActionsConfig) Login() error {
 
 func (a *ActionsConfig) ChangeCurrentUserPassword(currentPassword, newPassword string) error {
 	if err := a.ApiService.ChangeCurrentUserPassword(currentPassword, newPassword); err != nil {
+		fmt.Println("Changing user password failed")
 		return err
 	}
 
@@ -78,6 +79,7 @@ func (a *ActionsConfig) ChangeCurrentUserPassword(currentPassword, newPassword s
 
 func (a *ActionsConfig) SendInvitation(email string) error {
 	if _, err := a.ApiService.SendInvitation(email); err != nil {
+		fmt.Printf("Sending invitation to email %s failed\n", email)
 		return err
 	}
 
@@ -88,6 +90,7 @@ func (a *ActionsConfig) SendInvitation(email string) error {
 
 func (a *ActionsConfig) ResendInvitation(email string) error {
 	if err := a.ApiService.ResendInvitation(email); err != nil {
+		fmt.Printf("Resending invitation to email %s failed\n", email)
 		return err
 	}
 
@@ -99,6 +102,7 @@ func (a *ActionsConfig) ResendInvitation(email string) error {
 func (a *ActionsConfig) ListUsers() error {
 	users, err := a.ApiService.GetUsers()
 	if err != nil {
+		fmt.Println("Listing users failed")
 		return err
 	}
 
@@ -112,6 +116,7 @@ func (a *ActionsConfig) ListUsers() error {
 func (a *ActionsConfig) ListInvitations() error {
 	invitations, err := a.ApiService.GetInvitations()
 	if err != nil {
+		fmt.Println("Listing invitations failed")
 		return err
 	}
 
@@ -124,6 +129,7 @@ func (a *ActionsConfig) ListInvitations() error {
 
 func (a *ActionsConfig) DeleteInvitation(email string) error {
 	if err := a.ApiService.DeleteInvitation(email); err != nil {
+		fmt.Printf("Deleting invitation of user %s failed\n", email)
 		return err
 	}
 
@@ -134,6 +140,7 @@ func (a *ActionsConfig) DeleteInvitation(email string) error {
 
 func (a *ActionsConfig) DeleteUser(email string) error {
 	if err := a.ApiService.DeleteUser(email); err != nil {
+		fmt.Printf("Deleting user %s failed\n", email)
 		return err
 	}
 
@@ -145,6 +152,7 @@ func (a *ActionsConfig) DeleteUser(email string) error {
 func (a *ActionsConfig) Catalog() error {
 	servicesList, err := a.ApiService.GetOfferings()
 	if err != nil {
+		fmt.Println("Retrieving catalog failed")
 		return err
 	}
 
@@ -365,6 +373,7 @@ func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) 
 func (a *ActionsConfig) ListApplications() error {
 	applicationInstances, err := a.ApiService.ListApplicationInstances()
 	if err != nil {
+		fmt.Println("Retrieving applications list failed")
 		return err
 	}
 
@@ -407,6 +416,7 @@ func (a *ActionsConfig) GetService(serviceName string) error {
 func (a *ActionsConfig) ListServices() error {
 	services, err := a.ApiService.ListServiceInstances()
 	if err != nil {
+		fmt.Println("Retrieving services list failed")
 		return err
 	}
 

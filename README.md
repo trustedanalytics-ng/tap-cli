@@ -77,6 +77,10 @@ GLOBAL OPTIONS:
 Authenticating...
 Authentication succeeded
 
+#If you ommitt address you will be logged to previously set target
+
+./tap login admin password
+
 ./tap target
 +-------------------------+----------+
 |           API           | USERNAME |

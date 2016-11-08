@@ -230,8 +230,8 @@ func changeCurrentUserPasswordCommand() cli.Command {
 func loginCommand() cli.Command {
 	return cli.Command{
 		Name:      "login",
-		Usage:     "login to TAP",
-		ArgsUsage: "<address> <username> <password>",
+		Usage:     "login to TAP. You can omitt address if it was set as target previously",
+		ArgsUsage: "[<address>] <username> <password>",
 		Flags:     getCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
@@ -239,11 +239,25 @@ func loginCommand() cli.Command {
 			}
 
 			err := validateArgs(c, 3)
+			//if there are less than 3 args...
 			if err != nil {
+				a := &ActionsConfig{api.Config{}}
+				creds, errcreds := a.GetCredentials()
+				//...and we have credentials..
+				if errcreds == nil && creds.Address != "" {
+					err := validateArgs(c, 2)
+					if err != nil {
+						return err
+					}
+
+					return newBasicAuthService(creds.Address, c.Args().First(), c.Args().Get(1)).Login()
+				}
 				return err
+
+			} else {
+				return newBasicAuthService(c.Args().First(), c.Args().Get(1), c.Args().Get(2)).Login()
 			}
 
-			return newBasicAuthService(c.Args().First(), c.Args().Get(1), c.Args().Get(2)).Login()
 		},
 	}
 }

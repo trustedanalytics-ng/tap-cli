@@ -19,19 +19,18 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/trustedanalytics/tap-api-service/models"
 	"github.com/trustedanalytics/tap-api-service/uaa-connector"
-
-	"io/ioutil"
-	"strconv"
-	"strings"
-
 	"github.com/trustedanalytics/tap-api-service/user-management-connector"
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
@@ -211,7 +210,7 @@ func TestListApplicationsCommand(t *testing.T) {
 	actionsConfig := setApiAndLoginServiceMocks(t)
 	fillCredentialsFile(expectedCredsFileContent)
 
-	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE"}
+	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
 
 	fakeApp1Params := map[string]string{
 		"name":           "App_1",
@@ -225,6 +224,7 @@ func TestListApplicationsCommand(t *testing.T) {
 		"co":             "1",
 		"ub":             "user_2",
 		"uo":             "2",
+		catalogModels.LAST_STATE_CHANGE_REASON: "message",
 	}
 
 	fakeApp2Params := map[string]string{
@@ -273,8 +273,12 @@ func TestListApplicationsCommand(t *testing.T) {
 			for _, val := range header {
 				So(lines[1], ShouldContainSubstring, val)
 			}
-			for _, val := range fakeApp1Params {
-				So(lines[3], ShouldContainSubstring, val)
+			for key, val := range fakeApp1Params {
+				if key == catalogModels.LAST_STATE_CHANGE_REASON {
+					So(lines[3], ShouldContainSubstring, LAST_MESSAGE_MARK)
+				} else {
+					So(lines[3], ShouldContainSubstring, val)
+				}
 			}
 			for _, val := range fakeApp2Params {
 				So(lines[4], ShouldContainSubstring, val)

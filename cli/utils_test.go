@@ -18,17 +18,16 @@ package cli
 
 import (
 	"bytes"
+	"github.com/golang/mock/gomock"
+	"io"
+	"io/ioutil"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/trustedanalytics/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-
-	"github.com/golang/mock/gomock"
 	"github.com/trustedanalytics/tap-cli/api"
-	"io"
-	"io/ioutil"
-	"strconv"
 )
 
 func setApiAndLoginServiceMocks(t *testing.T) *ActionsConfig {
@@ -58,7 +57,7 @@ func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	createdOn, _ := strconv.Atoi(m["ob"])
 	updatedOn, _ := strconv.Atoi(m["ub"])
 	rep, _ := strconv.Atoi(m["replication"])
-	return models.ApplicationInstance{
+	appInstance := models.ApplicationInstance{
 		catalogModels.Instance{
 			Name:       m["name"],
 			AuditTrail: catalogModels.AuditTrail{int64(createdOn), m["cb"], int64(updatedOn), m["ub"]},
@@ -71,6 +70,13 @@ func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
 		m["memory"],
 		m["quota"],
 		0}
+
+	if value, exist := m[catalogModels.LAST_STATE_CHANGE_REASON]; exist {
+		appInstance.Metadata = []catalogModels.Metadata{
+			{Id: catalogModels.LAST_STATE_CHANGE_REASON, Value: value},
+		}
+	}
+	return appInstance
 }
 
 //return service.Entity.UniqueId, plan.Entity.UniqueId, nil

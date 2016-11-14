@@ -104,13 +104,15 @@ sudo pip install -r requirements.txt --download vendor
 #### Prepare run.sh script which will install dependencies and start an application:
 
 ```
+#!/usr/bin/env bash
+
 pip install --no-index --find-links=./vendor -r requirements.txt
 python ./src/__init__.py
 ```
 
 #### Create an archive containing all files loosely:
 ```
-tar cxvf python-application.tar.gz ./*
+tar czvf python-application.tar.gz ./*
 ```
 #### Create manifest.json file in current directory describing created application:
 
@@ -136,12 +138,14 @@ Build jar and prepare all dependencies
 #### Prepare run.sh script which will start an application:
 
 ```
+#!/usr/bin/env bash
+
 exec java -jar java-application-0.1.0.jar 
 ```
 
 #### Create an archive containing all files loosely:
 ```
-tar cxvf java-application.tar.gz ./*
+tar czvf java-application.tar.gz ./*
 ```
 
 

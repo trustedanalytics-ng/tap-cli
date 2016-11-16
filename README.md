@@ -77,7 +77,7 @@ GLOBAL OPTIONS:
 Authenticating...
 Authentication succeeded
 
-#If you ommitt address you will be logged to previously set target
+#If you omit address you will be logged to previously set target
 
 ./tap login admin password
 
@@ -118,7 +118,7 @@ tar czvf python-application.tar.gz ./*
 
 ```
 {
-    "type":"PYTHON",
+    "type":"PYTHON2.7",
     "name":"my-python-app",
     "instances":1
 }

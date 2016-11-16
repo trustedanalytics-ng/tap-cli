@@ -99,7 +99,7 @@ func convertBindingsList(a *ActionsConfig, bindings []string) error {
 		return errors.New("cannot fetch service intances: " + err.Error())
 	}
 
-	notFound := []string{}
+	notFoundIDs := []string{}
 	for i := 0; i < len(bindings); i++ {
 		found := false
 		for _, instance := range instances {
@@ -110,12 +110,12 @@ func convertBindingsList(a *ActionsConfig, bindings []string) error {
 			}
 		}
 		if !found {
-			notFound = append(notFound, bindings[i])
+			notFoundIDs = append(notFoundIDs, bindings[i])
 		}
 	}
 
-	if len(notFound) != 0 {
-		return errors.New("following service instances don't exist: " + strings.Join(notFound, ", "))
+	if len(notFoundIDs) != 0 {
+		return errors.New("following service instances don't exist: " + strings.Join(notFoundIDs, ", "))
 	}
 
 	return nil

@@ -64,6 +64,19 @@ func walkAndCompress(baseDir string, tw *tar.Writer) filepath.WalkFunc {
 		}
 
 		relativePath := strings.TrimPrefix(path, baseDir+"/")
+
+		if (info.Mode() & os.ModeSymlink) > 0 {
+			symlink, err := os.Readlink(relativePath)
+			if err != nil {
+				return fmt.Errorf("cannot readlink file %q: %v", relativePath, err)
+			}
+			relativePath = symlink
+
+			if info, err = os.Stat(relativePath); err != nil {
+				return fmt.Errorf("cannot read file %q info: %v", relativePath, err)
+			}
+		}
+
 		header, err := tar.FileInfoHeader(info, relativePath)
 		if err != nil {
 			return err

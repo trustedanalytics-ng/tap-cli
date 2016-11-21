@@ -50,8 +50,8 @@ type TapApiServiceApi interface {
 	DeleteServiceInstance(instanceId string) error
 	DeleteApplicationInstance(instanceId string) error
 
-	GetOfferings() ([]models.Service, error)
-	GetOffering(offeringId string) (models.Service, error)
+	GetOfferings() ([]models.Offering, error)
+	GetOffering(offeringId string) (models.Offering, error)
 	GetApplicationInstance(applicationId string) (models.ApplicationInstance, error)
 	GetServiceInstance(serviceId string) (models.ServiceInstance, error)
 	GetApplicationLogs(applicationId string) (map[string]string, error)
@@ -149,16 +149,16 @@ func (c *TapApiServiceApiOAuth2Connector) GetPlatformInfo() (models.PlatformInfo
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetOfferings() ([]models.Service, error) {
+func (c *TapApiServiceApiOAuth2Connector) GetOfferings() ([]models.Offering, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/offerings", c.Address))
-	result := &[]models.Service{}
+	result := &[]models.Offering{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) GetOffering(offeringId string) (models.Service, error) {
+func (c *TapApiServiceApiOAuth2Connector) GetOffering(offeringId string) (models.Offering, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/offerings/%s", c.Address, offeringId))
-	result := &models.Service{}
+	result := &models.Offering{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }

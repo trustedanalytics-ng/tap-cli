@@ -34,16 +34,16 @@ import (
 const timeFormatter = "Jan 02 15:04"
 const LastMessageMark = "..."
 
-func PrintCatalog(catalog []consoleServiceModels.Service) {
+func PrintCatalog(catalog []consoleServiceModels.Offering) {
 	header := []string{"NAME", "PLAN", "DESCRIPTION", "STATE"}
 	rows := [][]string{}
 
-	for _, service := range catalog {
+	for _, offering := range catalog {
 		planNames := []string{}
-		for _, planName := range service.Entity.ServicePlans {
-			planNames = append(planNames, planName.Entity.Name)
+		for _, planName := range offering.OfferingPlans {
+			planNames = append(planNames, planName.Name)
 		}
-		line := []string{service.Entity.Label, strings.Join(planNames, ", "), service.Entity.Description, service.Entity.State}
+		line := []string{offering.Name, strings.Join(planNames, ", "), offering.Description, offering.State}
 		rows = append(rows, line)
 	}
 

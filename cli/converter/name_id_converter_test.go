@@ -29,11 +29,11 @@ import (
 	"github.com/trustedanalytics/tap-cli/cli/test"
 )
 
-func getFakeServices() []models.Service {
-	result := []models.Service{}
-	result = append(result, test.NewFakeService(map[string]string{"label": "label_1", "service_id": "service_guid_1", "plan_name": "plan_1", "plan_id": "plan_guid_1"}))
-	result = append(result, test.NewFakeService(map[string]string{"label": "label_2", "service_id": "service_guid_2", "plan_name": "plan_2", "plan_id": "plan_guid_2"}))
-	result = append(result, test.NewFakeService(map[string]string{"label": "label_3", "service_id": "service_guid_3", "plan_name": "plan_3", "plan_id": "plan_guid_3"}))
+func getFakeServices() []models.Offering {
+	result := []models.Offering{}
+	result = append(result, test.NewFakeOffering(map[string]string{"name": "name_1", "offering_id": "offering_id_1", "plan_name": "plan_1", "plan_id": "plan_id_1"}))
+	result = append(result, test.NewFakeOffering(map[string]string{"name": "name_2", "offering_id": "offering_id_2", "plan_name": "plan_2", "plan_id": "plan_id_2"}))
+	result = append(result, test.NewFakeOffering(map[string]string{"name": "name_3", "offering_id": "offering_id_3", "plan_name": "plan_3", "plan_id": "plan_id_3"}))
 
 	return result
 }
@@ -58,7 +58,7 @@ func TestConvertFunction(t *testing.T) {
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
 				GetOfferings().
-				Return([]models.Service{}, fakeErr)
+				Return([]models.Offering{}, fakeErr)
 
 			_, _, err := FetchServiceAndPlanID(apiConfig, "service_name", "service_plan")
 
@@ -71,10 +71,10 @@ func TestConvertFunction(t *testing.T) {
 				GetOfferings().
 				Return(fakeServices, nil)
 
-			_, _, err := FetchServiceAndPlanID(apiConfig, "label_1", "wrong_plan_name")
+			_, _, err := FetchServiceAndPlanID(apiConfig, "name_1", "wrong_plan_name")
 
 			So(err, ShouldNotBeNil)
-			So(err.Error(), ShouldEqual, "cannot find plan: 'wrong_plan_name' for service: 'label_1'")
+			So(err.Error(), ShouldEqual, "cannot find plan: 'wrong_plan_name' for service: 'name_1'")
 		})
 		Convey("Should fail when given service doesn't exist", func() {
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).
@@ -93,11 +93,11 @@ func TestConvertFunction(t *testing.T) {
 				GetOfferings().
 				Return(fakeServices, nil)
 
-			serviceID, planID, err := FetchServiceAndPlanID(apiConfig, "label_3", "plan_3")
+			serviceID, planID, err := FetchServiceAndPlanID(apiConfig, "name_3", "plan_3")
 
 			So(err, ShouldBeNil)
-			So(serviceID, ShouldEqual, "service_guid_3")
-			So(planID, ShouldEqual, "plan_guid_3")
+			So(serviceID, ShouldEqual, "offering_id_3")
+			So(planID, ShouldEqual, "plan_id_3")
 		})
 	})
 }
@@ -113,7 +113,7 @@ func TestGetServiceID(t *testing.T) {
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
 				GetOfferings().
-				Return([]models.Service{}, fakeErr)
+				Return([]models.Offering{}, fakeErr)
 
 			_, err := GetOfferingID(apiConfig, "service_name")
 
@@ -135,10 +135,10 @@ func TestGetServiceID(t *testing.T) {
 				GetOfferings().
 				Return(fakeServices, nil)
 
-			serviceID, err := GetOfferingID(apiConfig, "label_3")
+			serviceID, err := GetOfferingID(apiConfig, "name_3")
 
 			So(err, ShouldBeNil)
-			So(serviceID, ShouldEqual, "service_guid_3")
+			So(serviceID, ShouldEqual, "offering_id_3")
 		})
 	})
 }

@@ -43,26 +43,14 @@ func FillCredentialsFile(content string) {
 	ioutil.WriteFile(api.CredsPath, []byte(content), api.PERMISSIONS)
 }
 
-func NewFakeOffering(m map[string]string) models.Service {
-	return models.Service{
-		Entity: models.ServiceEntity{
-			Label: m["label"],
-			ServicePlans: []models.ServicePlan{
-				{Entity: models.ServicePlanEntity{Name: m["name"]}, Metadata: models.Metadata{}}},
-			Description: m["desc"],
-			State:       m["state"],
-		},
-		Metadata: models.Metadata{Guid: "RANDOM_GUID"}}
-}
-
 func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	createdOn, _ := strconv.Atoi(m["ob"])
 	updatedOn, _ := strconv.Atoi(m["ub"])
 	rep, _ := strconv.Atoi(m["replication"])
 	appInstance := models.ApplicationInstance{
 		Instance: catalogModels.Instance{
-			Id:    m["id"],
-			Name:  m["name"],
+			Id:   m["id"],
+			Name: m["name"],
 			AuditTrail: catalogModels.AuditTrail{
 				CreatedOn:     int64(createdOn),
 				CreatedBy:     m["cb"],
@@ -86,22 +74,19 @@ func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	return appInstance
 }
 
-func NewFakeService(m map[string]string) models.Service {
-	return models.Service{
-		Entity: models.ServiceEntity{
-			Label:    m["label"],
-			UniqueId: m["service_id"],
-			ServicePlans: []models.ServicePlan{
-				{
-					Entity: models.ServicePlanEntity{
-						Name:     m["plan_name"],
-						UniqueId: m["plan_id"],
-					},
-					Metadata: models.Metadata{},
-				},
+func NewFakeOffering(m map[string]string) models.Offering {
+	return models.Offering{
+		Name:        m["name"],
+		Id:          m["offering_id"],
+		Description: m["desc"],
+		State:       m["state"],
+		OfferingPlans: []models.OfferingPlan{
+			{
+				Name: m["plan_name"],
+				Id:   m["plan_id"],
 			},
 		},
-		Metadata: models.Metadata{Guid: m["service_id"]},
+		Metadata: []catalogModels.Metadata{},
 	}
 }
 

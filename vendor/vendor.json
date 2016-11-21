@@ -75,16 +75,16 @@
 			"revisionTime": "2016-03-29T19:32:22Z"
 		},
 		{
-			"checksumSHA1": "HpdMduF1+TbAkVfbZTdfY8H5REA=",
+			"checksumSHA1": "pkx6I0DkXWCTgNYHzn1apXMBzD8=",
 			"path": "github.com/trustedanalytics/tap-api-service/client",
-			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
-			"revisionTime": "2016-11-30T14:51:23Z"
+			"revision": "0913fc671dbd8ef5dc83afde1faf5a2f240a3757",
+			"revisionTime": "2016-12-02T09:03:41Z"
 		},
 		{
-			"checksumSHA1": "O7jjnvuWpBWzQMS6TUgdS749gQo=",
+			"checksumSHA1": "ySXAB2hznQv6KrlGtTHoETnvRBc=",
 			"path": "github.com/trustedanalytics/tap-api-service/models",
-			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
-			"revisionTime": "2016-11-30T14:51:23Z"
+			"revision": "0913fc671dbd8ef5dc83afde1faf5a2f240a3757",
+			"revisionTime": "2016-12-02T09:03:41Z"
 		},
 		{
 			"checksumSHA1": "r0fr4fZgLUtVB/a5iOnwtAVbE2g=",

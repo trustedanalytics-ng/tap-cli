@@ -84,7 +84,7 @@ func (a *ActionsConfig) GetInstanceBindings(instanceName string) error {
 
 func (a *ActionsConfig) handleUnbindOperation(srcID string, srcType catalogModels.InstanceType, dstType catalogModels.InstanceType, dstID string) error {
 	var err error
-	if srcType == catalogModels.InstanceTypeApplication && dstType == catalogModels.InstanceTypeApplication  {
+	if srcType == catalogModels.InstanceTypeApplication && dstType == catalogModels.InstanceTypeApplication {
 		_, err = a.ApiService.UnbindApplicationFromApplicationInstance(srcID, dstID)
 	}
 	if srcType == catalogModels.InstanceTypeService && dstType == catalogModels.InstanceTypeApplication {

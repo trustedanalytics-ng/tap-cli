@@ -210,9 +210,9 @@ func (_mr *_MockTapApiServiceApiRecorder) DeleteApplicationInstance(arg0 interfa
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteApplicationInstance", arg0)
 }
 
-func (_m *MockTapApiServiceApi) GetOfferings() ([]models.Service, error) {
+func (_m *MockTapApiServiceApi) GetOfferings() ([]models.Offering, error) {
 	ret := _m.ctrl.Call(_m, "GetOfferings")
-	ret0, _ := ret[0].([]models.Service)
+	ret0, _ := ret[0].([]models.Offering)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -221,9 +221,9 @@ func (_mr *_MockTapApiServiceApiRecorder) GetOfferings() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetOfferings")
 }
 
-func (_m *MockTapApiServiceApi) GetOffering(offeringId string) (models.Service, error) {
+func (_m *MockTapApiServiceApi) GetOffering(offeringId string) (models.Offering, error) {
 	ret := _m.ctrl.Call(_m, "GetOffering", offeringId)
-	ret0, _ := ret[0].(models.Service)
+	ret0, _ := ret[0].(models.Offering)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

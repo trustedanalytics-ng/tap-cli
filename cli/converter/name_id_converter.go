@@ -34,11 +34,11 @@ func FetchServiceAndPlanID(apiConfig api.Config, serviceName, planName string) (
 
 	for _, service := range catalog {
 
-		if service.Entity.Label == serviceName {
-			for _, plan := range service.Entity.ServicePlans {
+		if service.Name == serviceName {
+			for _, plan := range service.OfferingPlans {
 
-				if plan.Entity.Name == planName {
-					return service.Entity.UniqueId, plan.Entity.UniqueId, nil
+				if plan.Name == planName {
+					return service.Id, plan.Id, nil
 				}
 			}
 			return "", "", errors.New("cannot find plan: '" + planName + "' for service: '" + serviceName + "'")
@@ -86,8 +86,8 @@ func GetOfferingID(apiConfig api.Config, serviceName string) (string, error) {
 	}
 
 	for _, service := range services {
-		if service.Entity.Label == serviceName {
-			return service.Entity.UniqueId, nil
+		if service.Name == serviceName {
+			return service.Id, nil
 		}
 	}
 

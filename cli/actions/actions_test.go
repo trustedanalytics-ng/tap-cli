@@ -176,16 +176,16 @@ func TestCatalogCommand(t *testing.T) {
 	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	test.FillCredentialsFile(expectedCredsFileContent)
 
-	fakeOff1 := test.NewFakeOffering(map[string]string{"label": "OFFERING_1", "name": "PLAN_1", "desc": "DESC_1", "state": "READY"})
-	fakeOff2 := test.NewFakeOffering(map[string]string{"label": "OFFERING_2", "name": "PLAN_2", "desc": "DESC_2", "state": "READY"})
-	fakeOff3 := test.NewFakeOffering(map[string]string{"label": "OFFERING_3", "name": "PLAN_3", "desc": "DESC_3", "state": "READY"})
+	fakeOff1 := test.NewFakeOffering(map[string]string{"name": "OFFERING_1", "offering_id": "offering_id_1", "plan_name": "PLAN_1", "plan_id": "plan_id_1", "desc": "DESC_1", "state": "READY"})
+	fakeOff2 := test.NewFakeOffering(map[string]string{"name": "OFFERING_2", "offering_id": "offering_id_2", "plan_name": "PLAN_2", "plan_id": "plan_id_2", "desc": "DESC_2", "state": "READY"})
+	fakeOff3 := test.NewFakeOffering(map[string]string{"name": "OFFERING_3", "offering_id": "offering_id_3", "plan_name": "PLAN_3", "plan_id": "plan_id_3", "desc": "DESC_3", "state": "READY"})
 
 	Convey("Test catalog command", t, func() {
 		Convey("Should pretty print offerings list", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
 				GetOfferings().
-				Return([]models.Service{fakeOff1, fakeOff2, fakeOff3}, nil)
+				Return([]models.Offering{fakeOff1, fakeOff2, fakeOff3}, nil)
 
 			stdout := test.CaptureStdout(func() {
 				actionsConfig.Catalog()

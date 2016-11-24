@@ -85,11 +85,32 @@ func (c *TapApiServiceApiOAuth2Connector) ListApplicationInstances() ([]models.A
 
 func (c *TapApiServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/applications/%s/scale", c.Address, instanceId))
-	body := containerBrokerModels.ScaleInstanceRequest{
+	body := models.ScaleApplicationRequest{
 		Replicas: replication,
 	}
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) StartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/applications/%s/start", c.Address, instanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) StopApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/applications/%s/stop", c.Address, instanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) RestartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/applications/%s/restart", c.Address, instanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 

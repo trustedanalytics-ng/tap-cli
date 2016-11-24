@@ -43,7 +43,7 @@ func NewTapApiServiceLoginApiWithBasicAuth(address, username, password string) (
 	if err != nil {
 		return nil, err
 	}
-	return &TapApiServiceApiBasicAuthConnector{address, username, password, client}, nil
+	return &TapApiServiceApiBasicAuthConnector{Address: address, Username: username, Password: password, Client: client}, nil
 }
 
 func NewTapApiServiceLoginApiWithSSLAndBasicAuth(address, username, password, certPemFile, keyPemFile, caPemFile string) (TapApiServiceLoginApi, error) {
@@ -51,7 +51,7 @@ func NewTapApiServiceLoginApiWithSSLAndBasicAuth(address, username, password, ce
 	if err != nil {
 		return nil, err
 	}
-	return &TapApiServiceApiBasicAuthConnector{address, username, password, client}, nil
+	return &TapApiServiceApiBasicAuthConnector{Address: address, Username: username, Password: password, Client: client}, nil
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string) brokerHttp.ApiConnector {
@@ -63,7 +63,10 @@ func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Username, Password string) {
-	return c.Address, c.Username, c.Password
+	Address = c.Address
+	Username = c.Username
+	Password = c.Password
+	return
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {

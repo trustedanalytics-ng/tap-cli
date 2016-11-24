@@ -271,6 +271,48 @@ func (a *ActionsConfig) DeleteInstance(serviceName string) error {
 	return nil
 }
 
+func (a *ActionsConfig) RestartService(serviceName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.RestartServiceInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
+}
+
+func (a *ActionsConfig) StartService(serviceName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.StartServiceInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
+}
+
+func (a *ActionsConfig) StopService(serviceName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.StopServiceInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
+}
+
 func (a *ActionsConfig) GetApplicationBindings(instanceName string) error {
 	instanceId, instanceType, err := convertInstance(a, InstanceTypeBoth, instanceName)
 	if err != nil {
@@ -436,16 +478,49 @@ func (a *ActionsConfig) ScaleApplication(applicationName string, replication int
 		return err
 	}
 	fmt.Println(message.Message)
-
 	return nil
 }
 
-func (a *ActionsConfig) StartApplication(instanceId string) error {
-	return a.ScaleApplication(instanceId, 1)
+func (a *ActionsConfig) RestartApplication(applicationName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.RestartApplicationInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
 }
 
-func (a *ActionsConfig) StopApplication(instanceId string) error {
-	return a.ScaleApplication(instanceId, 0)
+func (a *ActionsConfig) StartApplication(applicationName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.StartApplicationInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
+}
+
+func (a *ActionsConfig) StopApplication(applicationName string) error {
+	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
+	if err != nil {
+		return err
+	}
+
+	message, err := a.ApiService.StopApplicationInstance(instanceId)
+	if err != nil {
+		return err
+	}
+	fmt.Println(message.Message)
+	return nil
 }
 
 func (a *ActionsConfig) PushApplication(blob_path string) error {
@@ -481,12 +556,6 @@ func (a *ActionsConfig) PushApplication(blob_path string) error {
 	}
 
 	printApplication([]catalogModels.Application{app})
-
-	if manifest.Instances != 1 {
-		a.ScaleApplication(app.Id, manifest.Instances)
-		printApplication([]catalogModels.Application{app})
-	}
-
 	return nil
 }
 

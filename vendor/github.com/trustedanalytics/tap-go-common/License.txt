@@ -13,12 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package models
-
-const (
-	CONTAINER_BROKER_QUEUE_NAME         = "tap-container-broker"
-	CONTAINER_BROKER_CREATE_ROUTING_KEY = "create"
-	CONTAINER_BROKER_DELETE_ROUTING_KEY = "delete"
-	CONTAINER_BROKER_SCALE_ROUTING_KEY  = "scale"
-)

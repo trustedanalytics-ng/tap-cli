@@ -395,6 +395,69 @@ func deleteServiceCommand() cli.Command {
 	}
 }
 
+func restartServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "service-restart",
+		ArgsUsage: "<service_custom_name>",
+		Usage:     "restart service",
+		Flags:     getCommonFlags(),
+		Action: func(c *cli.Context) error {
+			if err := handleCommonFlags(c); err != nil {
+				return err
+			}
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return newOAuth2Service().RestartService(c.Args().First())
+		},
+	}
+}
+
+func startServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "service-start",
+		ArgsUsage: "<service_custom_name>",
+		Usage:     "start service",
+		Flags:     getCommonFlags(),
+		Action: func(c *cli.Context) error {
+			if err := handleCommonFlags(c); err != nil {
+				return err
+			}
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return newOAuth2Service().StartService(c.Args().First())
+		},
+	}
+}
+
+func stopServiceCommand() cli.Command {
+	return cli.Command{
+		Name:      "service-stop",
+		ArgsUsage: "<service_custom_name>",
+		Usage:     "stop all service instances",
+		Flags:     getCommonFlags(),
+		Action: func(c *cli.Context) error {
+			if err := handleCommonFlags(c); err != nil {
+				return err
+			}
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return newOAuth2Service().StopService(c.Args().First())
+		},
+	}
+}
+
 func exposeServiceCommand() cli.Command {
 	return cli.Command{
 		Name:      "expose-service",
@@ -570,6 +633,27 @@ func scaleApplicationCommand() cli.Command {
 			}
 
 			return newOAuth2Service().ScaleApplication(c.Args().First(), i)
+		},
+	}
+}
+
+func restartApplicationCommand() cli.Command {
+	return cli.Command{
+		Name:      "restart",
+		ArgsUsage: "<applicationName>",
+		Usage:     "restart application",
+		Flags:     getCommonFlags(),
+		Action: func(c *cli.Context) error {
+			if err := handleCommonFlags(c); err != nil {
+				return err
+			}
+
+			err := validateArgs(c, 1)
+			if err != nil {
+				return err
+			}
+
+			return newOAuth2Service().RestartApplication(c.Args().First())
 		},
 	}
 }

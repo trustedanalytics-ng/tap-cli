@@ -29,3 +29,7 @@ type ApplicationInstance struct {
 	DiskQuota        string                   `json:"disk_quota"`
 	RunningInstances int                      `json:"running_instances"`
 }
+
+type ScaleApplicationRequest struct {
+	Replicas int `json:"replicas"`
+}

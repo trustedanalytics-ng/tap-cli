@@ -59,8 +59,14 @@ type TapApiServiceApi interface {
 	ListApplicationInstances() ([]models.ApplicationInstance, error)
 	ListServiceInstances() ([]models.ServiceInstance, error)
 
+	StartApplicationInstance(applicationId string) (containerBrokerModels.MessageResponse, error)
+	StopApplicationInstance(applicationId string) (containerBrokerModels.MessageResponse, error)
+	RestartApplicationInstance(applicationId string) (containerBrokerModels.MessageResponse, error)
 	ScaleApplicationInstance(applicationId string, replication int) (containerBrokerModels.MessageResponse, error)
-	ScaleServiceInstance(serviceId string, replication int) (containerBrokerModels.MessageResponse, error)
+
+	StartServiceInstance(serviceId string) (containerBrokerModels.MessageResponse, error)
+	StopServiceInstance(serviceId string) (containerBrokerModels.MessageResponse, error)
+	RestartServiceInstance(serviceId string) (containerBrokerModels.MessageResponse, error)
 
 	GetInvitations() ([]string, error)
 	SendInvitation(email string) (userManagement.InvitationResponse, error)
@@ -78,12 +84,19 @@ func SetLoggerLevel(level string) error {
 	return commonLogger.SetLoggerLevel(logger, level)
 }
 
-func NewTapApiServiceApiWithOAuth2(address, tokenType, token string) (TapApiServiceApi, error) {
+func NewTapApiServiceApiWithOAuth2(address, tokenType, token string) (tapApiServiceApi TapApiServiceApi, err error) {
 	client, _, err := brokerHttp.GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
-	return &TapApiServiceApiOAuth2Connector{address, tokenType, token, client}, nil
+
+	tapApiServiceApi = &TapApiServiceApiOAuth2Connector{
+		Address:   address,
+		TokenType: tokenType,
+		Token:     token,
+		Client:    client,
+	}
+	return
 }
 
 type TapApiServiceApiOAuth2Connector struct {
@@ -95,7 +108,7 @@ type TapApiServiceApiOAuth2Connector struct {
 
 func (c *TapApiServiceApiOAuth2Connector) getApiOAuth2Connector(url string) brokerHttp.ApiConnector {
 	return brokerHttp.ApiConnector{
-		OAuth2: &brokerHttp.OAuth2{c.TokenType, c.Token},
+		OAuth2: &brokerHttp.OAuth2{TokenType: c.TokenType, Token: c.Token},
 		Client: c.Client,
 		Url:    url,
 	}
@@ -183,13 +196,24 @@ func (c *TapApiServiceApiOAuth2Connector) GetServiceInstance(serviceId string) (
 	return *result, err
 }
 
-func (c *TapApiServiceApiOAuth2Connector) ScaleServiceInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/services/%s/scale", c.Address, instanceId))
-	body := containerBrokerModels.ScaleInstanceRequest{
-		Replicas: replication,
-	}
+func (c *TapApiServiceApiOAuth2Connector) StartServiceInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/services/%s/start", c.Address, instanceId))
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) StopServiceInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/services/%s/stop", c.Address, instanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	return *result, err
+}
+
+func (c *TapApiServiceApiOAuth2Connector) RestartServiceInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
+	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v2/services/%s/restart", c.Address, instanceId))
+	result := &containerBrokerModels.MessageResponse{}
+	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 

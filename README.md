@@ -38,6 +38,9 @@ COMMANDS:
      delete-offering, do      delete catalog offering
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
+     service-start            service start
+     service-stop             stop all service instances
+     service-restart          restart service
      expose-service, expose   expose service ports
      bindings                 list bindings
      bind-instance, bind      bind instance to another
@@ -51,6 +54,7 @@ COMMANDS:
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances
+     restart                  restart application
      logs, log                get logs for all containers in instance
      credentials, creds       get credentials for all containers in service instance
      delete, d                delete application

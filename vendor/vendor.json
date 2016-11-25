@@ -75,28 +75,28 @@
 			"revisionTime": "2016-03-29T19:32:22Z"
 		},
 		{
-			"checksumSHA1": "QJUNiQhDQM6ed0c2cGsja+0Arp0=",
+			"checksumSHA1": "HpdMduF1+TbAkVfbZTdfY8H5REA=",
 			"path": "github.com/trustedanalytics/tap-api-service/client",
-			"revision": "63cda3af0c04f5b03410edcc2e113fba6ec0245a",
-			"revisionTime": "2016-11-21T07:47:30Z"
+			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
+			"revisionTime": "2016-11-30T14:51:23Z"
 		},
 		{
-			"checksumSHA1": "jaLMBPYQUkQNwzzbxLrJd3aSS1E=",
+			"checksumSHA1": "O7jjnvuWpBWzQMS6TUgdS749gQo=",
 			"path": "github.com/trustedanalytics/tap-api-service/models",
-			"revision": "63cda3af0c04f5b03410edcc2e113fba6ec0245a",
-			"revisionTime": "2016-11-21T07:47:30Z"
+			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
+			"revisionTime": "2016-11-30T14:51:23Z"
 		},
 		{
 			"checksumSHA1": "r0fr4fZgLUtVB/a5iOnwtAVbE2g=",
 			"path": "github.com/trustedanalytics/tap-api-service/uaa-connector",
-			"revision": "63cda3af0c04f5b03410edcc2e113fba6ec0245a",
-			"revisionTime": "2016-11-21T07:47:30Z"
+			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
+			"revisionTime": "2016-11-30T14:51:23Z"
 		},
 		{
 			"checksumSHA1": "7Baa/kkfx9TNFmTJXuCbqsCuI88=",
 			"path": "github.com/trustedanalytics/tap-api-service/user-management-connector",
-			"revision": "63cda3af0c04f5b03410edcc2e113fba6ec0245a",
-			"revisionTime": "2016-11-21T07:47:30Z"
+			"revision": "dbbff2c42822cac9964294b8376efbc9104b7f4a",
+			"revisionTime": "2016-11-30T14:51:23Z"
 		},
 		{
 			"checksumSHA1": "Y/ei8Y8FdaIdwFfvdYG6KVGrxDk=",

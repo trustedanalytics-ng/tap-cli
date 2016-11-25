@@ -38,7 +38,7 @@ func getFakeServices() []models.Service {
 	return result
 }
 
-func getFakeInstances() []models.ServiceInstance {
+func GetFakeServiceInstances() []models.ServiceInstance {
 	result := []models.ServiceInstance{}
 	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "1", Name: "instance1", Type: "SERVICE"}})
 	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "2", Name: "instance2", Type: "SERVICE"}})
@@ -146,7 +146,7 @@ func TestGetServiceID(t *testing.T) {
 func TestConvertBindingsList(t *testing.T) {
 	apiConfig := test.SetApiAndLoginServiceMocks(t)
 
-	fakeInstances := getFakeInstances()
+	fakeInstances := GetFakeServiceInstances()
 
 	Convey("When ListServiceInstances returns error", t, func() {
 		fakeErr := errors.New("Error_msg")

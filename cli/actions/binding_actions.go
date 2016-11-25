@@ -46,10 +46,8 @@ func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType
 		_, err = a.ApiService.BindToApplicationInstance(instanceBinding, dstInstanceID)
 	} else if operationType == BIND && dstInstanceType == catalogModels.InstanceTypeService {
 		_, err = a.ApiService.BindToServiceInstance(instanceBinding, dstInstanceID)
-	} else if operationType == UNBIND && dstInstanceType == catalogModels.InstanceTypeApplication {
-		_, err = a.ApiService.UnbindFromApplicationInstance(instanceBinding, dstInstanceID)
-	} else if operationType == UNBIND && dstInstanceType == catalogModels.InstanceTypeService {
-		_, err = a.ApiService.UnbindFromServiceInstance(instanceBinding, dstInstanceID)
+	} else if operationType == UNBIND {
+		err = a.handleUnbindOperation(srcInstanceID, srcInstanceType, dstInstanceType, dstInstanceID)
 	} else {
 		err = errors.New("Cannot " + string(operationType) + " instance of type: " + string(dstInstanceType))
 	}
@@ -81,5 +79,25 @@ func (a *ActionsConfig) GetInstanceBindings(instanceName string) error {
 
 	printer.PrintInstancesBindings(bindings)
 
+	return nil
+}
+
+func (a *ActionsConfig) handleUnbindOperation(srcID string, srcType catalogModels.InstanceType, dstType catalogModels.InstanceType, dstID string) error {
+	var err error
+	if srcType == catalogModels.InstanceTypeApplication && dstType == catalogModels.InstanceTypeApplication  {
+		_, err = a.ApiService.UnbindApplicationFromApplicationInstance(srcID, dstID)
+	}
+	if srcType == catalogModels.InstanceTypeService && dstType == catalogModels.InstanceTypeApplication {
+		_, err = a.ApiService.UnbindServiceFromApplicationInstance(srcID, dstID)
+	}
+	if srcType == catalogModels.InstanceTypeApplication && dstType == catalogModels.InstanceTypeService {
+		_, err = a.ApiService.UnbindApplicationFromServiceInstance(srcID, dstID)
+	}
+	if srcType == catalogModels.InstanceTypeService && dstType == catalogModels.InstanceTypeService {
+		_, err = a.ApiService.UnbindServiceFromServiceInstance(srcID, dstID)
+	}
+	if err != nil {
+		return err
+	}
 	return nil
 }

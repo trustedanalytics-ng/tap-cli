@@ -33,6 +33,8 @@ import (
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 )
 
+const SuccessMessage = "OK"
+
 type ActionsConfig struct {
 	api.Config
 }

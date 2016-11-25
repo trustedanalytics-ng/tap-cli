@@ -103,26 +103,48 @@ func (_mr *_MockTapApiServiceApiRecorder) BindToServiceInstance(arg0, arg1 inter
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "BindToServiceInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) UnbindFromApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (int, error) {
-	ret := _m.ctrl.Call(_m, "UnbindFromApplicationInstance", bindingRequest, applicationId)
+func (_m *MockTapApiServiceApi) UnbindServiceFromApplicationInstance(serviceId string, applicationId string) (int, error) {
+	ret := _m.ctrl.Call(_m, "UnbindServiceFromApplicationInstance", serviceId, applicationId)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockTapApiServiceApiRecorder) UnbindFromApplicationInstance(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindFromApplicationInstance", arg0, arg1)
+func (_mr *_MockTapApiServiceApiRecorder) UnbindServiceFromApplicationInstance(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindServiceFromApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) UnbindFromServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (int, error) {
-	ret := _m.ctrl.Call(_m, "UnbindFromServiceInstance", bindingRequest, serviceId)
+func (_m *MockTapApiServiceApi) UnbindApplicationFromApplicationInstance(srcApplicationId string, dstApplicationId string) (int, error) {
+	ret := _m.ctrl.Call(_m, "UnbindApplicationFromApplicationInstance", srcApplicationId, dstApplicationId)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockTapApiServiceApiRecorder) UnbindFromServiceInstance(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindFromServiceInstance", arg0, arg1)
+func (_mr *_MockTapApiServiceApiRecorder) UnbindApplicationFromApplicationInstance(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindApplicationFromApplicationInstance", arg0, arg1)
+}
+
+func (_m *MockTapApiServiceApi) UnbindServiceFromServiceInstance(srcServiceId string, dstApplicationId string) (int, error) {
+	ret := _m.ctrl.Call(_m, "UnbindServiceFromServiceInstance", srcServiceId, dstApplicationId)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) UnbindServiceFromServiceInstance(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindServiceFromServiceInstance", arg0, arg1)
+}
+
+func (_m *MockTapApiServiceApi) UnbindApplicationFromServiceInstance(applicationId string, serviceId string) (int, error) {
+	ret := _m.ctrl.Call(_m, "UnbindApplicationFromServiceInstance", applicationId, serviceId)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) UnbindApplicationFromServiceInstance(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindApplicationFromServiceInstance", arg0, arg1)
 }
 
 func (_m *MockTapApiServiceApi) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models1.Application, error) {

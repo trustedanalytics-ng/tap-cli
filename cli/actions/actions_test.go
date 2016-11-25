@@ -213,7 +213,6 @@ func TestListApplicationsCommand(t *testing.T) {
 	test.FillCredentialsFile(expectedCredsFileContent)
 
 	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
-
 	fakeApp1Params := map[string]string{
 		"name":           "App_1",
 		"image_state":    "fake_State_1",
@@ -289,4 +288,165 @@ func TestListApplicationsCommand(t *testing.T) {
 			}
 		})
 	})
+}
+
+func TestUnbindInstance(t *testing.T) {
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
+
+	fakeApplications := GetFakeApplicationInstances()
+	fakeServices := GetFakeServiceInstances()
+
+	Convey("Testing UnbindInstance", t, func() {
+		actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+			EXPECT().
+			ListApplicationInstances().
+			Return(fakeApplications, nil).AnyTimes()
+		actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+			EXPECT().
+			ListServiceInstances().
+			Return(fakeServices, nil).AnyTimes()
+
+		Convey("When unbind destination is application", func() {
+			Convey("When unbind source is service", func() {
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					UnbindServiceFromApplicationInstance(fakeServices[0].Id, fakeApplications[0].Id).
+					Return(http.StatusAccepted, nil)
+
+				var err error
+				stdout := test.CaptureStdout(func() {
+					err = actionsConfig.UnbindInstance(fakeServices[0].Name, fakeApplications[0].Name)
+				})
+
+				Convey("err should be nil", func() {
+					So(err, ShouldBeNil)
+				})
+				Convey("success message should be printed", func() {
+					assertSuccessMessage(stdout)
+				})
+			})
+
+			Convey("When unbind source is application", func() {
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					UnbindApplicationFromApplicationInstance(fakeApplications[0].Id, fakeApplications[1].Id).
+					Return(http.StatusAccepted, nil)
+
+				var err error
+				stdout := test.CaptureStdout(func() {
+					err = actionsConfig.UnbindInstance(fakeApplications[0].Name, fakeApplications[1].Name)
+				})
+
+				Convey("err should be nil", func() {
+					So(err, ShouldBeNil)
+				})
+				Convey("success message should be printed", func() {
+					assertSuccessMessage(stdout)
+				})
+			})
+		})
+
+		Convey("When unbind destination is service", func() {
+			Convey("When unbind source is service", func() {
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					UnbindServiceFromServiceInstance(fakeServices[0].Id, fakeServices[1].Id).
+					Return(http.StatusAccepted, nil)
+
+				var err error
+				stdout := test.CaptureStdout(func() {
+					err = actionsConfig.UnbindInstance(fakeServices[0].Name, fakeServices[1].Name)
+				})
+
+				Convey("err should be nil", func() {
+					So(err, ShouldBeNil)
+				})
+				Convey("success message should be printed", func() {
+					assertSuccessMessage(stdout)
+				})
+			})
+
+			Convey("When unbind source is application", func() {
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					UnbindApplicationFromServiceInstance(fakeApplications[0].Id, fakeServices[0].Id).
+					Return(http.StatusAccepted, nil)
+
+				var err error
+				stdout := test.CaptureStdout(func() {
+					err = actionsConfig.UnbindInstance(fakeApplications[0].Name, fakeServices[0].Name)
+				})
+
+				Convey("err should be nil", func() {
+					So(err, ShouldBeNil)
+				})
+				Convey("success message should be printed", func() {
+					assertSuccessMessage(stdout)
+				})
+			})
+
+			Convey("When unbind operation is not successful", func() {
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					UnbindApplicationFromServiceInstance(fakeApplications[0].Id, fakeServices[0].Id).
+					Return(http.StatusInternalServerError, errors.New("some error"))
+
+				err := actionsConfig.UnbindInstance(fakeApplications[0].Name, fakeServices[0].Name)
+
+				Convey("err should not be nil", func() {
+					So(err, ShouldNotBeNil)
+				})
+			})
+			Convey("When unbind source does not exist", func() {
+				fakeName := "fake_id"
+				actionsConfig.ApiService.(*api.MockTapApiServiceApi).
+					EXPECT().
+					ListApplicationInstances().
+					Return(fakeApplications, nil).AnyTimes()
+
+				err := actionsConfig.UnbindInstance(fakeName, fakeServices[0].Name)
+
+				Convey("err should not be nil", func() {
+					So(err, ShouldNotBeNil)
+				})
+			})
+		})
+	})
+
+}
+
+func assertSuccessMessage(stdout string) {
+	lines := strings.Split(stdout, "\n")
+	So(len(lines), ShouldBeGreaterThan, 0)
+	if len(lines) <= 0 {
+		return
+	}
+
+	So(lines[0], ShouldEqual, SuccessMessage)
+}
+
+func GetFakeApplicationInstances() []models.ApplicationInstance {
+	fakeApp1Params := map[string]string{
+		"name": "App_1",
+		"id":   "ID132482375",
+	}
+
+	fakeApp2Params := map[string]string{
+		"name": "App_2",
+		"id":   "ID623463247",
+	}
+
+	fakeApp1 := test.NewFakeAppInstance(fakeApp1Params)
+	fakeApp2 := test.NewFakeAppInstance(fakeApp2Params)
+
+	return []models.ApplicationInstance{fakeApp1, fakeApp2}
+}
+
+func GetFakeServiceInstances() []models.ServiceInstance {
+	result := []models.ServiceInstance{}
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "1", Name: "instance1", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "2", Name: "instance2", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "3", Name: "instance3", Type: "SERVICE"}})
+
+	return result
 }

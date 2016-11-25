@@ -65,18 +65,6 @@ func walkAndCompress(baseDir string, tw *tar.Writer) filepath.WalkFunc {
 
 		relativePath := strings.TrimPrefix(path, baseDir+"/")
 
-		if (info.Mode() & os.ModeSymlink) > 0 {
-			symlink, err := os.Readlink(relativePath)
-			if err != nil {
-				return fmt.Errorf("cannot readlink file %q: %v", relativePath, err)
-			}
-			relativePath = symlink
-
-			if info, err = os.Stat(relativePath); err != nil {
-				return fmt.Errorf("cannot read file %q info: %v", relativePath, err)
-			}
-		}
-
 		header, err := tar.FileInfoHeader(info, relativePath)
 		if err != nil {
 			return err
@@ -92,14 +80,16 @@ func walkAndCompress(baseDir string, tw *tar.Writer) filepath.WalkFunc {
 			return nil
 		}
 
-		file, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-		_, err = io.Copy(tw, file)
-		if err != nil {
-			return err
+		if (info.Mode() & os.ModeSymlink) == 0 {
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+			_, err = io.Copy(tw, file)
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Printf("Added to archive: %v\n", relativePath)

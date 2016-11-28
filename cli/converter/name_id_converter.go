@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package converter
 
 import (
 	"errors"
@@ -22,11 +22,12 @@ import (
 	"strings"
 
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	"github.com/trustedanalytics/tap-cli/api"
 )
 
-func convertServiceAndPlanNameToId(a *ActionsConfig, serviceName, planName string) (string, string, error) {
+func FetchServiceAndPlanID(apiConfig api.Config, serviceName, planName string) (string, string, error) {
 
-	catalog, err := a.ApiService.GetOfferings()
+	catalog, err := apiConfig.ApiService.GetOfferings()
 	if err != nil {
 		return "", "", err
 	}
@@ -51,10 +52,10 @@ const (
 	InstanceTypeBoth catalogModels.InstanceType = "BOTH"
 )
 
-func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, instanceName string) (string, catalogModels.InstanceType, error) {
+func FetchInstanceIDandType(apiConfig api.Config, instanceType catalogModels.InstanceType, instanceName string) (string, catalogModels.InstanceType, error) {
 
 	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeService {
-		serviceInstances, err := a.ApiService.ListServiceInstances()
+		serviceInstances, err := apiConfig.ApiService.ListServiceInstances()
 		if err == nil {
 			for _, instance := range serviceInstances {
 				if instance.Name == instanceName {
@@ -64,7 +65,7 @@ func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, 
 		}
 	}
 	if instanceType == InstanceTypeBoth || instanceType == catalogModels.InstanceTypeApplication {
-		applicationInstances, err := a.ApiService.ListApplicationInstances()
+		applicationInstances, err := apiConfig.ApiService.ListApplicationInstances()
 		if err == nil {
 			for _, instance := range applicationInstances {
 				if instance.Name == instanceName {
@@ -77,9 +78,9 @@ func convertInstance(a *ActionsConfig, instanceType catalogModels.InstanceType, 
 	return "", "", errors.New("cannot find instance with name: " + instanceName)
 }
 
-func getOfferingID(a *ActionsConfig, serviceName string) (string, error) {
+func GetOfferingID(apiConfig api.Config, serviceName string) (string, error) {
 
-	services, err := a.ApiService.GetOfferings()
+	services, err := apiConfig.ApiService.GetOfferings()
 	if err != nil {
 		return "", errors.New("cannot fetch offering list: " + err.Error())
 	}
@@ -93,8 +94,8 @@ func getOfferingID(a *ActionsConfig, serviceName string) (string, error) {
 	return "", fmt.Errorf("service %s not found", serviceName)
 }
 
-func convertBindingsList(a *ActionsConfig, bindings []string) error {
-	instances, err := a.ApiService.ListServiceInstances()
+func ConvertBindingsList(apiConfig api.Config, bindings []string) error {
+	instances, err := apiConfig.ApiService.ListServiceInstances()
 	if err != nil {
 		return errors.New("cannot fetch service intances: " + err.Error())
 	}
@@ -121,9 +122,9 @@ func convertBindingsList(a *ActionsConfig, bindings []string) error {
 	return nil
 }
 
-func getApplicationID(a *ActionsConfig, applicationName string) (string, error) {
+func GetApplicationID(apiConfig api.Config, applicationName string) (string, error) {
 
-	applications, err := a.ApiService.ListApplicationInstances()
+	applications, err := apiConfig.ApiService.ListApplicationInstances()
 	if err != nil {
 		return "", errors.New("Cannot fetch applications list: " + err.Error())
 	}

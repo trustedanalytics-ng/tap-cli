@@ -14,62 +14,68 @@
  * limitations under the License.
  */
 
-package cli
+package test
 
 import (
 	"bytes"
-	"github.com/golang/mock/gomock"
 	"io"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+
 	"github.com/trustedanalytics/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
-func setApiAndLoginServiceMocks(t *testing.T) *ActionsConfig {
+func SetApiAndLoginServiceMocks(t *testing.T) api.Config {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-	a := api.NewMockTapApiServiceApi(mockCtrl)
-	b := api.NewMockTapApiServiceLoginApi(mockCtrl)
-	return &ActionsConfig{api.Config{a, b}}
+	apiServiceMock := api.NewMockTapApiServiceApi(mockCtrl)
+	apiServiceLoginMock := api.NewMockTapApiServiceLoginApi(mockCtrl)
+	return api.Config{ApiService: apiServiceMock, ApiServiceLogin: apiServiceLoginMock}
 }
 
-func fillCredentialsFile(content string) {
+func FillCredentialsFile(content string) {
 	ioutil.WriteFile(api.CredsPath, []byte(content), api.PERMISSIONS)
 }
 
-func newFakeOffering(m map[string]string) models.Service {
+func NewFakeOffering(m map[string]string) models.Service {
 	return models.Service{
-		models.ServiceEntity{
-			Label:        m["label"],
-			ServicePlans: []models.ServicePlan{{models.ServicePlanEntity{Name: m["name"]}, models.Metadata{}}},
-			Description:  m["desc"],
-			State:        m["state"],
+		Entity: models.ServiceEntity{
+			Label: m["label"],
+			ServicePlans: []models.ServicePlan{
+				{Entity: models.ServicePlanEntity{Name: m["name"]}, Metadata: models.Metadata{}}},
+			Description: m["desc"],
+			State:       m["state"],
 		},
-		models.Metadata{Guid: "RANDOM_GUID"}}
+		Metadata: models.Metadata{Guid: "RANDOM_GUID"}}
 }
 
-func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
+func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	createdOn, _ := strconv.Atoi(m["ob"])
 	updatedOn, _ := strconv.Atoi(m["ub"])
 	rep, _ := strconv.Atoi(m["replication"])
 	appInstance := models.ApplicationInstance{
-		catalogModels.Instance{
-			Name:       m["name"],
-			AuditTrail: catalogModels.AuditTrail{int64(createdOn), m["cb"], int64(updatedOn), m["ub"]},
-			State:      catalogModels.InstanceState(m["instance_state"]),
+		Instance: catalogModels.Instance{
+			Name: m["name"],
+			AuditTrail: catalogModels.AuditTrail{
+				CreatedOn:     int64(createdOn),
+				CreatedBy:     m["cb"],
+				LastUpdatedOn: int64(updatedOn),
+				LastUpdateBy:  m["ub"]},
+			State: catalogModels.InstanceState(m["instance_state"]),
 		},
-		rep,
-		catalogModels.ImageState(m["image_state"]),
-		[]string{m["urls"]},
-		catalogModels.ImageType("fakeType"),
-		m["memory"],
-		m["quota"],
-		0}
+		Replication:      rep,
+		ImageState:       catalogModels.ImageState(m["image_state"]),
+		Urls:             []string{m["urls"]},
+		ImageType:        catalogModels.ImageType("fakeType"),
+		Memory:           m["memory"],
+		DiskQuota:        m["quota"],
+		RunningInstances: 0}
 
 	if value, exist := m[catalogModels.LAST_STATE_CHANGE_REASON]; exist {
 		appInstance.Metadata = []catalogModels.Metadata{
@@ -79,27 +85,26 @@ func newFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	return appInstance
 }
 
-//return service.Entity.UniqueId, plan.Entity.UniqueId, nil
-func newFakeService(m map[string]string) models.Service {
+func NewFakeService(m map[string]string) models.Service {
 	return models.Service{
-		models.ServiceEntity{
+		Entity: models.ServiceEntity{
 			Label:    m["label"],
 			UniqueId: m["service_id"],
 			ServicePlans: []models.ServicePlan{
 				{
-					models.ServicePlanEntity{
+					Entity: models.ServicePlanEntity{
 						Name:     m["plan_name"],
 						UniqueId: m["plan_id"],
 					},
-					models.Metadata{},
+					Metadata: models.Metadata{},
 				},
 			},
 		},
-		models.Metadata{m["service_id"]},
+		Metadata: models.Metadata{Guid: m["service_id"]},
 	}
 }
 
-func captureStdout(f func()) string {
+func CaptureStdout(f func()) string {
 	old := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w

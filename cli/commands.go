@@ -27,6 +27,7 @@ import (
 
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics/tap-cli/cli/actions"
 	commonHttp "github.com/trustedanalytics/tap-go-common/http"
 	"github.com/trustedanalytics/tap-go-common/logger"
 )
@@ -59,12 +60,8 @@ func handleCommonFlags(c *cli.Context) error {
 
 func sumFlags(a []cli.Flag, b []cli.Flag) []cli.Flag {
 	res := []cli.Flag{}
-	for _, flag := range a {
-		res = append(res, flag)
-	}
-	for _, flag := range b {
-		res = append(res, flag)
-	}
+	res = append(res, a...)
+	res = append(res, b...)
 	return res
 }
 
@@ -241,7 +238,7 @@ func loginCommand() cli.Command {
 			err := validateArgs(c, 3)
 			//if there are less than 3 args...
 			if err != nil {
-				a := &ActionsConfig{api.Config{}}
+				a := &actions.ActionsConfig{Config: api.Config{}}
 				creds, errcreds := a.GetCredentials()
 				//...and we have credentials..
 				if errcreds == nil && creds.Address != "" {
@@ -390,7 +387,7 @@ func deleteServiceCommand() cli.Command {
 			if err != nil {
 				return err
 			}
-			return newOAuth2Service().DeleteInstance(c.Args().Get(0))
+			return newOAuth2Service().DeleteService(c.Args().Get(0))
 		},
 	}
 }
@@ -545,7 +542,7 @@ func listInstanceBindingsCommand() cli.Command {
 				return err
 			}
 
-			return newOAuth2Service().GetApplicationBindings(c.Args().First())
+			return newOAuth2Service().GetInstanceBindings(c.Args().First())
 		},
 	}
 }
@@ -810,7 +807,7 @@ func getServiceCommand() cli.Command {
 	}
 }
 
-func newBasicAuthService(address string, username string, password string) *ActionsConfig {
+func newBasicAuthService(address string, username string, password string) *actions.ActionsConfig {
 	if !isProcotolSet(address) {
 		address = "https://" + address
 	}
@@ -818,7 +815,7 @@ func newBasicAuthService(address string, username string, password string) *Acti
 	if err != nil {
 		panic(err)
 	}
-	return &ActionsConfig{api.Config{nil, apiConnector}}
+	return &actions.ActionsConfig{Config: api.Config{ApiService: nil, ApiServiceLogin: apiConnector}}
 }
 
 func isProcotolSet(address string) bool {
@@ -826,8 +823,8 @@ func isProcotolSet(address string) bool {
 	return index != -1
 }
 
-func newOAuth2Service() *ActionsConfig {
-	a := &ActionsConfig{api.Config{}}
+func newOAuth2Service() *actions.ActionsConfig {
+	a := &actions.ActionsConfig{Config: api.Config{}}
 
 	creds, err := a.GetCredentials()
 	if err != nil {

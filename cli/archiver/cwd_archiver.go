@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package archiver
 
 import (
 	"archive/tar"
@@ -27,7 +27,7 @@ import (
 	"strings"
 )
 
-func createApplicationArchive(folder string) (string, error) {
+func CreateApplicationArchive(folder string) (string, error) {
 	tarball, err := ioutil.TempFile(os.TempDir(), "blob")
 	if err != nil {
 		fmt.Println(err)

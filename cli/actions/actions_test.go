@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package actions
 
 import (
 	"errors"
@@ -32,6 +32,8 @@ import (
 	"github.com/trustedanalytics/tap-api-service/user-management-connector"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics/tap-cli/cli/printer"
+	"github.com/trustedanalytics/tap-cli/cli/test"
 )
 
 var url string = "fake_url"
@@ -39,12 +41,12 @@ var login string = "fake_admin"
 var pass string = "fake_password"
 
 var expectedUaaRes = uaa_connector.LoginResponse{
-	"fake_access_token",
-	"fake_refresh_token",
-	"fake_token_type",
-	10,
-	"fake_scope",
-	"fake_jti",
+	AccessToken:  "fake_access_token",
+	RefreshToken: "fake_refresh_token",
+	TokenType:    "fake_token_type",
+	ExpiresIn:    10,
+	Scope:        "fake_scope",
+	Jti:          "fake_jti",
 }
 
 var expectedCredsFileContent = "{" +
@@ -56,7 +58,7 @@ var expectedCredsFileContent = "{" +
 	"}"
 
 func TestLoginActions(t *testing.T) {
-	actionsConfig := setApiAndLoginServiceMocks(t)
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	Convey("Test Login command", t, func() {
 
 		actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
@@ -91,7 +93,7 @@ func TestLoginActions(t *testing.T) {
 				Login().
 				Return(expectedUaaRes, http.StatusOK, nil)
 
-			stdout := captureStdout(func() {
+			stdout := test.CaptureStdout(func() {
 				actionsConfig.Login()
 			})
 
@@ -104,11 +106,11 @@ func TestLoginActions(t *testing.T) {
 }
 
 func TestSendInvitationCommand(t *testing.T) {
-	actionsConfig := setApiAndLoginServiceMocks(t)
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	Convey("Test Login command", t, func() {
 		Convey("Should fail when inviting error occurs", func() {
 			errorMsg := "cannot invite"
-			fillCredentialsFile(expectedCredsFileContent)
+			test.FillCredentialsFile(expectedCredsFileContent)
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
@@ -121,14 +123,14 @@ func TestSendInvitationCommand(t *testing.T) {
 		})
 
 		Convey("Should pass when user invited", func() {
-			fillCredentialsFile(expectedCredsFileContent)
+			test.FillCredentialsFile(expectedCredsFileContent)
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
 				SendInvitation(login).
 				Return(user_management_connector.InvitationResponse{}, nil)
 
-			stdout := captureStdout(func() {
+			stdout := test.CaptureStdout(func() {
 				actionsConfig.SendInvitation(login)
 			})
 
@@ -138,8 +140,8 @@ func TestSendInvitationCommand(t *testing.T) {
 }
 
 func TestDeleteUserCommand(t *testing.T) {
-	actionsConfig := setApiAndLoginServiceMocks(t)
-	fillCredentialsFile(expectedCredsFileContent)
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
+	test.FillCredentialsFile(expectedCredsFileContent)
 
 	Convey("Test delete-user command", t, func() {
 		errorMsg := "error message"
@@ -161,7 +163,7 @@ func TestDeleteUserCommand(t *testing.T) {
 				DeleteUser(login).
 				Return(nil)
 
-			stdout := captureStdout(func() {
+			stdout := test.CaptureStdout(func() {
 				actionsConfig.DeleteUser(login)
 			})
 
@@ -171,12 +173,12 @@ func TestDeleteUserCommand(t *testing.T) {
 }
 
 func TestCatalogCommand(t *testing.T) {
-	actionsConfig := setApiAndLoginServiceMocks(t)
-	fillCredentialsFile(expectedCredsFileContent)
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
+	test.FillCredentialsFile(expectedCredsFileContent)
 
-	fakeOff1 := newFakeOffering(map[string]string{"label": "OFFERING_1", "name": "PLAN_1", "desc": "DESC_1", "state": "READY"})
-	fakeOff2 := newFakeOffering(map[string]string{"label": "OFFERING_2", "name": "PLAN_2", "desc": "DESC_2", "state": "READY"})
-	fakeOff3 := newFakeOffering(map[string]string{"label": "OFFERING_3", "name": "PLAN_3", "desc": "DESC_3", "state": "READY"})
+	fakeOff1 := test.NewFakeOffering(map[string]string{"label": "OFFERING_1", "name": "PLAN_1", "desc": "DESC_1", "state": "READY"})
+	fakeOff2 := test.NewFakeOffering(map[string]string{"label": "OFFERING_2", "name": "PLAN_2", "desc": "DESC_2", "state": "READY"})
+	fakeOff3 := test.NewFakeOffering(map[string]string{"label": "OFFERING_3", "name": "PLAN_3", "desc": "DESC_3", "state": "READY"})
 
 	Convey("Test catalog command", t, func() {
 		Convey("Should pretty print offerings list", func() {
@@ -185,7 +187,7 @@ func TestCatalogCommand(t *testing.T) {
 				GetOfferings().
 				Return([]models.Service{fakeOff1, fakeOff2, fakeOff3}, nil)
 
-			stdout := captureStdout(func() {
+			stdout := test.CaptureStdout(func() {
 				actionsConfig.Catalog()
 			})
 
@@ -207,8 +209,8 @@ func TestCatalogCommand(t *testing.T) {
 }
 
 func TestListApplicationsCommand(t *testing.T) {
-	actionsConfig := setApiAndLoginServiceMocks(t)
-	fillCredentialsFile(expectedCredsFileContent)
+	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
+	test.FillCredentialsFile(expectedCredsFileContent)
 
 	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
 
@@ -223,7 +225,6 @@ func TestListApplicationsCommand(t *testing.T) {
 		"cb":             "user_1",
 		"co":             "1",
 		"ub":             "user_2",
-		"uo":             "2",
 		catalogModels.LAST_STATE_CHANGE_REASON: "message",
 	}
 
@@ -255,9 +256,9 @@ func TestListApplicationsCommand(t *testing.T) {
 		"uo":             "6",
 	}
 
-	fakeApp1 := newFakeAppInstance(fakeApp1Params)
-	fakeApp2 := newFakeAppInstance(fakeApp2Params)
-	fakeApp3 := newFakeAppInstance(fakeApp3Params)
+	fakeApp1 := test.NewFakeAppInstance(fakeApp1Params)
+	fakeApp2 := test.NewFakeAppInstance(fakeApp2Params)
+	fakeApp3 := test.NewFakeAppInstance(fakeApp3Params)
 	Convey("Test list applications command", t, func() {
 		Convey("Should pretty print applications list", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
@@ -265,7 +266,7 @@ func TestListApplicationsCommand(t *testing.T) {
 				ListApplicationInstances().
 				Return([]models.ApplicationInstance{fakeApp1, fakeApp2, fakeApp3}, nil)
 
-			stdout := captureStdout(func() {
+			stdout := test.CaptureStdout(func() {
 				actionsConfig.ListApplications()
 			})
 
@@ -275,7 +276,7 @@ func TestListApplicationsCommand(t *testing.T) {
 			}
 			for key, val := range fakeApp1Params {
 				if key == catalogModels.LAST_STATE_CHANGE_REASON {
-					So(lines[3], ShouldContainSubstring, LAST_MESSAGE_MARK)
+					So(lines[3], ShouldContainSubstring, printer.LastMessageMark)
 				} else {
 					So(lines[3], ShouldContainSubstring, val)
 				}

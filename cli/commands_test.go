@@ -26,6 +26,7 @@ import (
 
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics/tap-cli/cli/test"
 )
 
 func TestSumFlags(t *testing.T) {
@@ -61,7 +62,7 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 		})
 		Convey("Should fail when wrong format in credentials.json file", func() {
 			wrongContent := "@"
-			fillCredentialsFile(wrongContent)
+			test.FillCredentialsFile(wrongContent)
 
 			So(func() {
 				newOAuth2Service()
@@ -70,7 +71,7 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 	})
 }
 
-func TestnewBasicAuthService(t *testing.T) {
+func TestNewBasicAuthService(t *testing.T) {
 	Convey("Should add https address if address not provided", t, func() {
 		basicAuth := newBasicAuthService("myaddress.com", "user", "password")
 		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package printer
 
 import (
 	"encoding/json"
@@ -31,21 +31,10 @@ import (
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
-const TIME_FORMATER = "Jan 02 15:04"
-const LAST_MESSAGE_MARK = "..."
+const timeFormatter = "Jan 02 15:04"
+const LastMessageMark = "..."
 
-func createAndRenderTable(header []string, rows [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header)
-
-	for _, row := range rows {
-		table.Append(row)
-	}
-
-	table.Render()
-}
-
-func printCatalog(catalog []consoleServiceModels.Service) {
+func PrintCatalog(catalog []consoleServiceModels.Service) {
 	header := []string{"NAME", "PLAN", "DESCRIPTION", "STATE"}
 	rows := [][]string{}
 
@@ -62,7 +51,7 @@ func printCatalog(catalog []consoleServiceModels.Service) {
 
 }
 
-func printCredentials(creds api.Credentials) {
+func PrintCredentials(creds api.Credentials) {
 
 	header := []string{"API", "USERNAME"}
 	rows := [][]string{}
@@ -72,7 +61,7 @@ func printCredentials(creds api.Credentials) {
 	createAndRenderTable(header, rows)
 }
 
-func printApplicationInstances(applications []consoleServiceModels.ApplicationInstance) {
+func PrintApplicationInstances(applications []consoleServiceModels.ApplicationInstance) {
 
 	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
 	rows := [][]string{}
@@ -81,8 +70,8 @@ func printApplicationInstances(applications []consoleServiceModels.ApplicationIn
 		rows = append(rows, []string{
 			app.Name, fmt.Sprintf("%s", app.ImageState), fmt.Sprintf("%s", app.State),
 			strconv.Itoa(app.Replication), app.Memory, app.DiskQuota, strings.Join(app.Urls, ","),
-			app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).Format(TIME_FORMATER),
-			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).Format(TIME_FORMATER),
+			app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).Format(timeFormatter),
+			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).Format(timeFormatter),
 			getLastMessageMark(app.Metadata),
 		})
 	}
@@ -90,21 +79,21 @@ func printApplicationInstances(applications []consoleServiceModels.ApplicationIn
 	createAndRenderTable(header, rows)
 }
 
-func printApplication(applications []catalogModels.Application) {
+func PrintApplication(applications []catalogModels.Application) {
 
 	header := []string{"NAME", "IMAGE ID", "DESCRIPTION", "REPLICATION", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE"}
 	rows := [][]string{}
 
 	for _, app := range applications {
 		rows = append(rows, []string{app.Name, fmt.Sprintf("%s", app.ImageId), fmt.Sprintf("%s", app.Description),
-			strconv.Itoa(app.Replication), app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).Format(TIME_FORMATER),
-			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).Format(TIME_FORMATER)})
+			strconv.Itoa(app.Replication), app.AuditTrail.CreatedBy, time.Unix(app.AuditTrail.CreatedOn, 0).Format(timeFormatter),
+			app.AuditTrail.LastUpdateBy, time.Unix(app.AuditTrail.LastUpdatedOn, 0).Format(timeFormatter)})
 	}
 
 	createAndRenderTable(header, rows)
 }
 
-func printServices(services []consoleServiceModels.ServiceInstance) {
+func PrintServices(services []consoleServiceModels.ServiceInstance) {
 
 	header := []string{"NAME", "SERVICE", "PLAN", "STATE", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
 	rows := [][]string{}
@@ -112,8 +101,8 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 	for _, service := range services {
 		rows = append(rows, []string{
 			service.Name, service.ServiceName, service.ServicePlanName, fmt.Sprintf("%s", service.State),
-			service.AuditTrail.CreatedBy, time.Unix(service.AuditTrail.CreatedOn, 0).Format(TIME_FORMATER),
-			service.AuditTrail.LastUpdateBy, time.Unix(service.AuditTrail.LastUpdatedOn, 0).Format(TIME_FORMATER),
+			service.AuditTrail.CreatedBy, time.Unix(service.AuditTrail.CreatedOn, 0).Format(timeFormatter),
+			service.AuditTrail.LastUpdateBy, time.Unix(service.AuditTrail.LastUpdatedOn, 0).Format(timeFormatter),
 			getLastMessageMark(service.Metadata),
 		})
 	}
@@ -121,19 +110,16 @@ func printServices(services []consoleServiceModels.ServiceInstance) {
 	createAndRenderTable(header, rows)
 }
 
-func getLastMessageMark(metadata []catalogModels.Metadata) string {
-	if catalogModels.GetValueFromMetadata(metadata, catalogModels.LAST_STATE_CHANGE_REASON) != "" {
-		return LAST_MESSAGE_MARK
+func PrintFormattedDetails(instance interface{}) {
+	prettyJSON, err := json.MarshalIndent(instance, "", "    ")
+	if err == nil {
+		fmt.Print(string(prettyJSON))
+	} else {
+		fmt.Print("Error marshaling JSON")
 	}
-	return ""
 }
 
-func printFormattedDetails(instance interface{}) {
-	prettyJSON, _ := json.MarshalIndent(instance, "", "    ")
-	fmt.Print(string(prettyJSON))
-}
-
-func printInstancesBindings(bindings consoleServiceModels.InstanceBindings) {
+func PrintInstancesBindings(bindings consoleServiceModels.InstanceBindings) {
 
 	header := []string{"BINDING NAME", "BINDING ID"}
 	rows := [][]string{}
@@ -143,4 +129,18 @@ func printInstancesBindings(bindings consoleServiceModels.InstanceBindings) {
 	}
 
 	createAndRenderTable(header, rows)
+}
+
+func createAndRenderTable(header []string, rows [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header)
+	table.AppendBulk(rows)
+	table.Render()
+}
+
+func getLastMessageMark(metadata []catalogModels.Metadata) string {
+	if catalogModels.GetValueFromMetadata(metadata, catalogModels.LAST_STATE_CHANGE_REASON) != "" {
+		return LastMessageMark
+	}
+	return ""
 }

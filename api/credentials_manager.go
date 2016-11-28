@@ -46,11 +46,7 @@ func (c *Config) GetCredentials() (Credentials, error) {
 	}
 
 	err = json.Unmarshal(b, &creds)
-	if err != nil {
-		return creds, err
-	}
-
-	return creds, nil
+	return creds, err
 }
 
 func (c *Config) SetCredentials(creds Credentials) error {
@@ -60,7 +56,7 @@ func (c *Config) SetCredentials(creds Credentials) error {
 		return err
 	}
 
-	os.MkdirAll(cliConfigDir, PERMISSIONS)
+	err = os.MkdirAll(cliConfigDir, PERMISSIONS)
 	if err != nil {
 		return err
 	}

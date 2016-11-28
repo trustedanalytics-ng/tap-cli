@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package actions
 
 import (
 	"encoding/json"
@@ -27,15 +27,18 @@ import (
 	apiServiceModels "github.com/trustedanalytics/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics/tap-cli/cli/archiver"
+	"github.com/trustedanalytics/tap-cli/cli/converter"
+	"github.com/trustedanalytics/tap-cli/cli/printer"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 )
 
-func announceSuccessfulOperation() {
-	fmt.Println("OK")
-}
-
 type ActionsConfig struct {
 	api.Config
+}
+
+func announceSuccessfulOperation() {
+	fmt.Println("OK")
 }
 
 func (a *ActionsConfig) Login() error {
@@ -156,7 +159,7 @@ func (a *ActionsConfig) Catalog() error {
 		return err
 	}
 
-	printCatalog(servicesList)
+	printer.PrintCatalog(servicesList)
 
 	return nil
 }
@@ -170,7 +173,7 @@ func (a *ActionsConfig) Target() error {
 		return err
 	}
 
-	printCredentials(creds)
+	printer.PrintCredentials(creds)
 
 	return nil
 }
@@ -191,12 +194,13 @@ func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 	for i, service := range serviceWithTemplate.Services {
 		for j, plan := range service.Plans {
 			for k, dependency := range plan.Dependencies {
-				serviceId, planId, err := convertServiceAndPlanNameToId(a, dependency.ServiceName, dependency.PlanName)
+				serviceID, planID, err := converter.FetchServiceAndPlanID(
+					a.Config, dependency.ServiceName, dependency.PlanName)
 				if err != nil {
 					return err
 				}
-				plan.Dependencies[k].ServiceId = serviceId
-				plan.Dependencies[k].PlanId = planId
+				plan.Dependencies[k].ServiceId = serviceID
+				plan.Dependencies[k].PlanId = planID
 			}
 			service.Plans[j] = plan
 		}
@@ -213,7 +217,7 @@ func (a *ActionsConfig) CreateOffer(jsonFilename string) error {
 }
 
 func (a *ActionsConfig) DeleteOffering(serviceName string) error {
-	serviceID, err := getOfferingID(a, serviceName)
+	serviceID, err := converter.GetOfferingID(a.Config, serviceName)
 	if err != nil {
 		return fmt.Errorf("Cannot fetch service id: %v", err.Error())
 	}
@@ -228,7 +232,7 @@ func (a *ActionsConfig) DeleteOffering(serviceName string) error {
 }
 
 func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string, envs map[string]string) error {
-	serviceId, planId, err := convertServiceAndPlanNameToId(a, serviceName, planName)
+	serviceID, planID, err := converter.FetchServiceAndPlanID(a.Config, serviceName, planName)
 	if err != nil {
 		return err
 	}
@@ -236,8 +240,8 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 	//TODO DPNG-11398: this should be move to api-service
 	instanceBody := apiServiceModels.Instance{}
 	instanceBody.Type = catalogModels.InstanceTypeService
-	instanceBody.ClassId = serviceId
-	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planId}
+	instanceBody.ClassId = serviceID
+	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planID}
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName
 	for key, value := range envs {
@@ -256,160 +260,38 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 	return nil
 }
 
-func (a *ActionsConfig) DeleteInstance(serviceName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+func (a *ActionsConfig) DeleteService(serviceName string) error {
+	return a.deleteInstance(catalogModels.InstanceTypeService, serviceName)
+}
+
+func (a *ActionsConfig) DeleteApplication(applicationName string) error {
+	return a.deleteInstance(catalogModels.InstanceTypeApplication, applicationName)
+}
+
+func (a *ActionsConfig) deleteInstance(instanceType catalogModels.InstanceType, instanceName string) error {
+	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, instanceType, instanceName)
 	if err != nil {
 		return err
 	}
-
-	if err = a.ApiService.DeleteServiceInstance(instanceId); err != nil {
+	if err = a.ApiService.DeleteApplicationInstance(instanceID); err != nil {
 		return err
 	}
-
 	announceSuccessfulOperation()
-
 	return nil
 }
 
-func (a *ActionsConfig) RestartService(serviceName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+func (a *ActionsConfig) ExposeService(serviceID string, shouldExpose bool) error {
+	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, serviceID)
 	if err != nil {
 		return err
 	}
 
-	message, err := a.ApiService.RestartServiceInstance(instanceId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) StartService(serviceName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
-	if err != nil {
-		return err
-	}
-
-	message, err := a.ApiService.StartServiceInstance(instanceId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) StopService(serviceName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
-	if err != nil {
-		return err
-	}
-
-	message, err := a.ApiService.StopServiceInstance(instanceId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) GetApplicationBindings(instanceName string) error {
-	instanceId, instanceType, err := convertInstance(a, InstanceTypeBoth, instanceName)
-	if err != nil {
-		return err
-	}
-
-	var bindings apiServiceModels.InstanceBindings
-	if instanceType == catalogModels.InstanceTypeApplication {
-		bindings, err = a.ApiService.GetApplicationBindings(instanceId)
-	} else if instanceType == catalogModels.InstanceTypeService {
-		bindings, err = a.ApiService.GetServiceBindings(instanceId)
-	}
-	if err != nil {
-		return err
-	}
-
-	printInstancesBindings(bindings)
-
-	return nil
-}
-
-func (a *ActionsConfig) ExposeService(serviceId string, shouldExpose bool) error {
-	instanceId, _, err := convertInstance(a, InstanceTypeBoth, serviceId)
-	if err != nil {
-		return err
-	}
-
-	if hosts, _, err := a.ApiService.ExposeService(instanceId, shouldExpose); err != nil {
+	if hosts, _, err := a.ApiService.ExposeService(instanceID, shouldExpose); err != nil {
 		return err
 	} else {
-		printFormattedDetails(hosts)
+		printer.PrintFormattedDetails(hosts)
 		return nil
 	}
-}
-
-func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) error {
-	srcInstanceId, srcInstanceType, err := convertInstance(a, InstanceTypeBoth, srcInstanceName)
-	if err != nil {
-		return err
-	}
-
-	dstInstanceId, dstInstanceType, err := convertInstance(a, InstanceTypeBoth, dstInstanceName)
-	if err != nil {
-		return err
-	}
-
-	instanceBinding := apiServiceModels.InstanceBindingRequest{}
-	if srcInstanceType == catalogModels.InstanceTypeApplication {
-		instanceBinding.ApplicationId = srcInstanceId
-	} else if srcInstanceType == catalogModels.InstanceTypeService {
-		instanceBinding.ServiceId = srcInstanceId
-	}
-
-	if dstInstanceType == catalogModels.InstanceTypeApplication {
-		_, err = a.ApiService.BindToApplicationInstance(instanceBinding, dstInstanceId)
-	} else if dstInstanceType == catalogModels.InstanceTypeService {
-		_, err = a.ApiService.BindToServiceInstance(instanceBinding, dstInstanceId)
-	}
-	if err != nil {
-		return err
-	}
-
-	announceSuccessfulOperation()
-
-	return nil
-}
-
-func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) error {
-	srcInstanceId, srcInstanceType, err := convertInstance(a, InstanceTypeBoth, srcInstanceName)
-	if err != nil {
-		return err
-	}
-
-	dstInstanceId, dstInstanceType, err := convertInstance(a, InstanceTypeBoth, dstInstanceName)
-	if err != nil {
-		return err
-	}
-
-	instanceBinding := apiServiceModels.InstanceBindingRequest{}
-	if srcInstanceType == catalogModels.InstanceTypeApplication {
-		instanceBinding.ApplicationId = srcInstanceId
-	} else if srcInstanceType == catalogModels.InstanceTypeService {
-		instanceBinding.ServiceId = srcInstanceId
-	}
-
-	if dstInstanceType == catalogModels.InstanceTypeApplication {
-		_, err = a.ApiService.UnbindFromApplicationInstance(instanceBinding, dstInstanceId)
-	} else if dstInstanceType == catalogModels.InstanceTypeService {
-		_, err = a.ApiService.UnbindFromServiceInstance(instanceBinding, dstInstanceId)
-	}
-	if err != nil {
-		return err
-	}
-
-	announceSuccessfulOperation()
-
-	return nil
 }
 
 func (a *ActionsConfig) ListApplications() error {
@@ -419,38 +301,38 @@ func (a *ActionsConfig) ListApplications() error {
 		return err
 	}
 
-	printApplicationInstances(applicationInstances)
+	printer.PrintApplicationInstances(applicationInstances)
 
 	return nil
 }
 
 func (a *ActionsConfig) GetApplication(applicationName string) error {
-	applicationId, err := getApplicationID(a, applicationName)
+	applicationID, err := converter.GetApplicationID(a.Config, applicationName)
 	if err != nil {
 		return err
 	}
 
-	applicationInstance, err := a.ApiService.GetApplicationInstance(applicationId)
+	applicationInstance, err := a.ApiService.GetApplicationInstance(applicationID)
 	if err != nil {
 		return err
 	}
 
-	printFormattedDetails(applicationInstance)
+	printer.PrintFormattedDetails(applicationInstance)
 
 	return nil
 }
 
 func (a *ActionsConfig) GetService(serviceName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeService, serviceName)
+	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, catalogModels.InstanceTypeService, serviceName)
 	if err != nil {
 		return err
 	}
-	serviceInstance, err := a.ApiService.GetServiceInstance(instanceId)
+	serviceInstance, err := a.ApiService.GetServiceInstance(instanceID)
 	if err != nil {
 		return err
 	}
 
-	printFormattedDetails(serviceInstance)
+	printer.PrintFormattedDetails(serviceInstance)
 
 	return nil
 }
@@ -462,60 +344,18 @@ func (a *ActionsConfig) ListServices() error {
 		return err
 	}
 
-	printServices(services)
+	printer.PrintServices(services)
 
 	return nil
 }
 
 func (a *ActionsConfig) ScaleApplication(applicationName string, replication int) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
+	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, catalogModels.InstanceTypeApplication, applicationName)
 	if err != nil {
 		return err
 	}
 
-	message, err := a.ApiService.ScaleApplicationInstance(instanceId, replication)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) RestartApplication(applicationName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		return err
-	}
-
-	message, err := a.ApiService.RestartApplicationInstance(instanceId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) StartApplication(applicationName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		return err
-	}
-
-	message, err := a.ApiService.StartApplicationInstance(instanceId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(message.Message)
-	return nil
-}
-
-func (a *ActionsConfig) StopApplication(applicationName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		return err
-	}
-
-	message, err := a.ApiService.StopApplicationInstance(instanceId)
+	message, err := a.ApiService.ScaleApplicationInstance(instanceID, replication)
 	if err != nil {
 		return err
 	}
@@ -546,7 +386,7 @@ func (a *ActionsConfig) PushApplication(blob_path string) error {
 		return err
 	}
 
-	if err := convertBindingsList(a, manifest.Bindings); err != nil {
+	if err := converter.ConvertBindingsList(a.Config, manifest.Bindings); err != nil {
 		return err
 	}
 
@@ -555,7 +395,7 @@ func (a *ActionsConfig) PushApplication(blob_path string) error {
 		return err
 	}
 
-	printApplication([]catalogModels.Application{app})
+	printer.PrintApplication([]catalogModels.Application{app})
 	return nil
 }
 
@@ -564,7 +404,7 @@ func (a *ActionsConfig) CompressCwdAndPushAsApplication() error {
 	if err != nil {
 		return err
 	}
-	archivePath, err := createApplicationArchive(folder)
+	archivePath, err := archiver.CreateApplicationArchive(folder)
 	if err != nil {
 		return err
 	}
@@ -580,7 +420,7 @@ func (a *ActionsConfig) CompressCwdAndPushAsApplication() error {
 }
 
 func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
-	instanceId, instanceType, err := convertInstance(a, InstanceTypeBoth, instanceName)
+	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, instanceName)
 	if err != nil {
 		return err
 	}
@@ -591,13 +431,13 @@ func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 
 	logs := make(map[string]string)
 	if instanceType == catalogModels.InstanceTypeApplication {
-		logs, err = a.ApiService.GetApplicationLogs(instanceId)
+		logs, err = a.ApiService.GetApplicationLogs(instanceID)
 		if err != nil {
 			return err
 		}
 	}
 	if instanceType == catalogModels.InstanceTypeService {
-		logs, err = a.ApiService.GetServiceLogs(instanceId)
+		logs, err = a.ApiService.GetServiceLogs(instanceID)
 		if err != nil {
 			return err
 		}
@@ -611,14 +451,14 @@ func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 }
 
 func (a *ActionsConfig) GetInstanceCredentials(instanceName string) error {
-	instanceId, instanceType, err := convertInstance(a, InstanceTypeBoth, instanceName)
+	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, instanceName)
 	if err != nil {
 		return err
 	}
 
 	creds := []containerBrokerModels.ContainerCredenials{}
 	if instanceType == catalogModels.InstanceTypeService {
-		creds, err = a.ApiService.GetInstanceCredentials(instanceId)
+		creds, err = a.ApiService.GetInstanceCredentials(instanceID)
 		if err != nil {
 			return err
 		}
@@ -627,24 +467,9 @@ func (a *ActionsConfig) GetInstanceCredentials(instanceName string) error {
 	}
 
 	for _, cred := range creds {
-		printFormattedDetails(cred)
+		printer.PrintFormattedDetails(cred)
 		fmt.Println()
 	}
-
-	return nil
-}
-
-func (a *ActionsConfig) DeleteApplication(applicationName string) error {
-	instanceId, _, err := convertInstance(a, catalogModels.InstanceTypeApplication, applicationName)
-	if err != nil {
-		return err
-	}
-
-	if err = a.ApiService.DeleteApplicationInstance(instanceId); err != nil {
-		return err
-	}
-
-	announceSuccessfulOperation()
 
 	return nil
 }

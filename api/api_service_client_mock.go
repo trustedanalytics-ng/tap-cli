@@ -287,6 +287,39 @@ func (_mr *_MockTapApiServiceApiRecorder) ListServiceInstances() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListServiceInstances")
 }
 
+func (_m *MockTapApiServiceApi) StartApplicationInstance(applicationId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "StartApplicationInstance", applicationId)
+	ret0, _ := ret[0].(models0.MessageResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) StartApplicationInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "StartApplicationInstance", arg0)
+}
+
+func (_m *MockTapApiServiceApi) StopApplicationInstance(applicationId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "StopApplicationInstance", applicationId)
+	ret0, _ := ret[0].(models0.MessageResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) StopApplicationInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "StopApplicationInstance", arg0)
+}
+
+func (_m *MockTapApiServiceApi) RestartApplicationInstance(applicationId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "RestartApplicationInstance", applicationId)
+	ret0, _ := ret[0].(models0.MessageResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) RestartApplicationInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "RestartApplicationInstance", arg0)
+}
+
 func (_m *MockTapApiServiceApi) ScaleApplicationInstance(applicationId string, replication int) (models0.MessageResponse, error) {
 	ret := _m.ctrl.Call(_m, "ScaleApplicationInstance", applicationId, replication)
 	ret0, _ := ret[0].(models0.MessageResponse)
@@ -298,15 +331,37 @@ func (_mr *_MockTapApiServiceApiRecorder) ScaleApplicationInstance(arg0, arg1 in
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ScaleApplicationInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) ScaleServiceInstance(serviceId string, replication int) (models0.MessageResponse, error) {
-	ret := _m.ctrl.Call(_m, "ScaleServiceInstance", serviceId, replication)
+func (_m *MockTapApiServiceApi) StartServiceInstance(serviceId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "StartServiceInstance", serviceId)
 	ret0, _ := ret[0].(models0.MessageResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockTapApiServiceApiRecorder) ScaleServiceInstance(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "ScaleServiceInstance", arg0, arg1)
+func (_mr *_MockTapApiServiceApiRecorder) StartServiceInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "StartServiceInstance", arg0)
+}
+
+func (_m *MockTapApiServiceApi) StopServiceInstance(serviceId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "StopServiceInstance", serviceId)
+	ret0, _ := ret[0].(models0.MessageResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) StopServiceInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "StopServiceInstance", arg0)
+}
+
+func (_m *MockTapApiServiceApi) RestartServiceInstance(serviceId string) (models0.MessageResponse, error) {
+	ret := _m.ctrl.Call(_m, "RestartServiceInstance", serviceId)
+	ret0, _ := ret[0].(models0.MessageResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockTapApiServiceApiRecorder) RestartServiceInstance(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "RestartServiceInstance", arg0)
 }
 
 func (_m *MockTapApiServiceApi) GetInvitations() ([]string, error) {

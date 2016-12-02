@@ -388,10 +388,6 @@ func (a *ActionsConfig) PushApplication(blob_path string) error {
 		return err
 	}
 
-	if err := converter.ConvertBindingsList(a.Config, manifest.Bindings); err != nil {
-		return err
-	}
-
 	app, err := a.ApiService.CreateApplicationInstance(blob, manifest)
 	if err != nil {
 		return err

@@ -19,7 +19,6 @@ package converter
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
@@ -92,34 +91,6 @@ func GetOfferingID(apiConfig api.Config, serviceName string) (string, error) {
 	}
 
 	return "", fmt.Errorf("service %s not found", serviceName)
-}
-
-func ConvertBindingsList(apiConfig api.Config, bindings []string) error {
-	instances, err := apiConfig.ApiService.ListServiceInstances()
-	if err != nil {
-		return errors.New("cannot fetch service intances: " + err.Error())
-	}
-
-	notFoundIDs := []string{}
-	for i := 0; i < len(bindings); i++ {
-		found := false
-		for _, instance := range instances {
-			if instance.Name == bindings[i] {
-				bindings[i] = instance.Id
-				found = true
-				break
-			}
-		}
-		if !found {
-			notFoundIDs = append(notFoundIDs, bindings[i])
-		}
-	}
-
-	if len(notFoundIDs) != 0 {
-		return errors.New("following service instances don't exist: " + strings.Join(notFoundIDs, ", "))
-	}
-
-	return nil
 }
 
 func GetApplicationID(apiConfig api.Config, applicationName string) (string, error) {

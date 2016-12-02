@@ -18,7 +18,6 @@ package converter
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -140,65 +139,5 @@ func TestGetServiceID(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(serviceID, ShouldEqual, "offering_id_3")
 		})
-	})
-}
-
-func TestConvertBindingsList(t *testing.T) {
-	apiConfig := test.SetApiAndLoginServiceMocks(t)
-
-	fakeInstances := GetFakeServiceInstances()
-
-	Convey("When ListServiceInstances returns error", t, func() {
-		fakeErr := errors.New("Error_msg")
-		apiConfig.ApiService.(*api.MockTapApiServiceApi).
-			EXPECT().
-			ListServiceInstances().
-			Return(nil, fakeErr)
-		sampleBindingList := []string{"instance1"}
-
-		Convey("convertBindingList should return error", func() {
-			err := ConvertBindingsList(apiConfig, sampleBindingList)
-			So(err, ShouldNotBeNil)
-		})
-	})
-
-	Convey(fmt.Sprintf("When ListServiceInstance returns %v", fakeInstances), t, func() {
-		apiConfig.ApiService.(*api.MockTapApiServiceApi).
-			EXPECT().
-			ListServiceInstances().
-			Return(fakeInstances, nil)
-
-		testCases := []struct {
-			bindingList   []string
-			isError       bool
-			convertedList []string
-		}{
-			{[]string{"instance2", "XXXX"}, true, []string{}},
-			{[]string{"instance2", "instance4"}, true, []string{}},
-			{[]string{"", "instance4"}, true, []string{}},
-			{[]string{"instance1", "instance3"}, false, []string{"1", "3"}},
-			{[]string{"instance1", "instance3", "instance2"}, false, []string{"1", "3", "2"}},
-			{[]string{"instance2"}, false, []string{"2"}},
-			{[]string{}, false, []string{}},
-		}
-
-		for _, tc := range testCases {
-			Convey(fmt.Sprintf("convertBindingList should return proper response for %v", tc.bindingList), func() {
-				err := ConvertBindingsList(apiConfig, tc.bindingList)
-
-				if tc.isError {
-					Convey("error should not be nil", func() {
-						So(err, ShouldNotBeNil)
-					})
-				} else {
-					Convey("error should be nil", func() {
-						So(err, ShouldBeNil)
-					})
-					Convey("bindingList should be properly converted", func() {
-						So(tc.bindingList, ShouldResemble, tc.convertedList)
-					})
-				}
-			})
-		}
 	})
 }

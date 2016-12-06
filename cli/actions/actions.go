@@ -262,20 +262,22 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 	return nil
 }
 
+type deletingFunction func(string) (error)
+
 func (a *ActionsConfig) DeleteService(serviceName string) error {
-	return a.deleteInstance(catalogModels.InstanceTypeService, serviceName)
+	return a.deleteInstance(a.ApiService.DeleteServiceInstance, catalogModels.InstanceTypeService, serviceName)
 }
 
 func (a *ActionsConfig) DeleteApplication(applicationName string) error {
-	return a.deleteInstance(catalogModels.InstanceTypeApplication, applicationName)
+	return a.deleteInstance(a.ApiService.DeleteApplicationInstance, catalogModels.InstanceTypeApplication, applicationName)
 }
 
-func (a *ActionsConfig) deleteInstance(instanceType catalogModels.InstanceType, instanceName string) error {
+func (a *ActionsConfig) deleteInstance(df deletingFunction, instanceType catalogModels.InstanceType, instanceName string) error {
 	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, instanceType, instanceName)
 	if err != nil {
 		return err
 	}
-	if err = a.ApiService.DeleteApplicationInstance(instanceID); err != nil {
+	if err = df(instanceID); err != nil {
 		return err
 	}
 	announceSuccessfulOperation()

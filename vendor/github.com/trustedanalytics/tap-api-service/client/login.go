@@ -29,6 +29,7 @@ type TapApiServiceLoginApi interface {
 	Login() (uaa.LoginResponse, int, error)
 	GetApiServiceHealth() error
 	GetLoginCredentials() (Address, Username, Password string)
+	Introduce() error
 }
 
 type TapApiServiceApiBasicAuthConnector struct {
@@ -54,6 +55,10 @@ func NewTapApiServiceLoginApiWithSSLAndBasicAuth(address, username, password, ce
 	return &TapApiServiceApiBasicAuthConnector{Address: address, Username: username, Password: password, Client: client}, nil
 }
 
+func (c *TapApiServiceApiBasicAuthConnector) getAddress(endpointFormat string, args ...interface{}) string {
+	return getAddressCommon(c.Address, endpointFormat, args...)
+}
+
 func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string) brokerHttp.ApiConnector {
 	return brokerHttp.ApiConnector{
 		BasicAuth: &brokerHttp.BasicAuth{c.Username, c.Password},
@@ -70,17 +75,34 @@ func (c *TapApiServiceApiBasicAuthConnector) GetLoginCredentials() (Address, Use
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) Login() (uaa.LoginResponse, int, error) {
-	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v3/login", c.Address))
+	connector := c.getApiBasicAuthConnector(c.getAddress("/login"))
 	result := &uaa.LoginResponse{}
 	status, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, status, err
 }
 
 func (c *TapApiServiceApiBasicAuthConnector) GetApiServiceHealth() error {
-	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/api/v3/healthz", c.Address))
+	connector := c.getApiBasicAuthConnector(fmt.Sprintf("%s/healthz", c.Address))
 	status, _, err := brokerHttp.RestGET(connector.Url, brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
 	if status != http.StatusOK {
 		err = errors.New("Invalid health status: " + string(status))
 	}
 	return err
+}
+
+func (c *TapApiServiceApiBasicAuthConnector) Introduce() error {
+	address := fmt.Sprintf("%s/api/", c.Address)
+	connector := c.getApiBasicAuthConnector(address)
+
+	resp, err := connector.Client.Get(address)
+
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode == http.StatusNotFound || resp.Header.Get("X-Platform") != "TAP" {
+		return ErrNotTapEnvironment
+	}
+
+	return nil
 }

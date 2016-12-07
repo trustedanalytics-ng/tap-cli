@@ -51,9 +51,16 @@ func (a *ActionsConfig) Login() error {
 
 	fmt.Println("Authenticating...")
 
+	err := a.ApiServiceLogin.Introduce()
+	if err != nil {
+		return err
+	}
+
 	loginResp, status, err := a.ApiServiceLogin.Login()
 	if status == http.StatusUnauthorized {
 		return fmt.Errorf("Authentication failed")
+	} else if status == http.StatusNotFound {
+		return fmt.Errorf("CLI <-> API service incompatibility detected. Check your CLI version")
 	} else if err != nil {
 		return fmt.Errorf("Authentication failed: %v", err)
 	}

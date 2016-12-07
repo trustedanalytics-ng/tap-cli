@@ -57,6 +57,20 @@ var expectedCredsFileContent = "{" +
 	"\"expires\":" + strconv.Itoa(expectedUaaRes.ExpiresIn) +
 	"}"
 
+func prepareLoginMock(c ActionsConfig, res uaa_connector.LoginResponse, status int, err error) {
+	c.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
+		EXPECT().
+		Login().
+		Return(res, status, err)
+}
+
+func prepareIntroduceMock(c ActionsConfig, err error) {
+	c.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
+		EXPECT().
+		Introduce().
+		Return(err)
+}
+
 func TestLoginActions(t *testing.T) {
 	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	Convey("Test Login command", t, func() {
@@ -67,31 +81,42 @@ func TestLoginActions(t *testing.T) {
 			Return(url, login, pass)
 
 		Convey("Should fail when user unauthorized", func() {
-			actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
-				EXPECT().
-				Login().
-				Return(expectedUaaRes, http.StatusUnauthorized, errors.New("Authentication failed"))
+			someErr := errors.New("Authentication failed")
+			prepareIntroduceMock(actionsConfig, nil)
+			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusUnauthorized, someErr)
 
 			err := actionsConfig.Login()
 
-			So(err.Error(), ShouldContainSubstring, "Authentication failed")
+			So(err.Error(), ShouldContainSubstring, someErr.Error())
 		})
 		Convey("Should fail when connecting error occurs", func() {
-			loginErrorMsg := "server error"
-			actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
-				EXPECT().
-				Login().
-				Return(expectedUaaRes, http.StatusInternalServerError, errors.New(loginErrorMsg))
+			someErr := errors.New("server error")
+			prepareIntroduceMock(actionsConfig, nil)
+			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusInternalServerError, someErr)
 
 			err := actionsConfig.Login()
 
-			So(err.Error(), ShouldContainSubstring, loginErrorMsg)
+			So(err.Error(), ShouldContainSubstring, someErr.Error())
+		})
+		Convey("Should fail when incompatibility detected", func() {
+			prepareIntroduceMock(actionsConfig, nil)
+			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusNotFound, nil)
+
+			err := actionsConfig.Login()
+
+			So(err.Error(), ShouldContainSubstring, "incompatibility detected")
+		})
+		Convey("Should fail when we do not talk with TAP", func() {
+			someErr := errors.New("anything")
+			prepareIntroduceMock(actionsConfig, someErr)
+
+			err := actionsConfig.Login()
+
+			So(err, ShouldEqual, someErr)
 		})
 		Convey("Should pass when credentials succesfully saved", func() {
-			actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
-				EXPECT().
-				Login().
-				Return(expectedUaaRes, http.StatusOK, nil)
+			prepareIntroduceMock(actionsConfig, nil)
+			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusOK, nil)
 
 			stdout := test.CaptureStdout(func() {
 				actionsConfig.Login()

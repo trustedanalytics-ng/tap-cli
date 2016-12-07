@@ -17,17 +17,12 @@ package client
 
 import (
 	"bytes"
-	"fmt"
-	"mime/multipart"
-)
-
-import (
 	"encoding/json"
-	"io"
-	"net/http"
-
 	"errors"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
+	"net/http"
 
 	"github.com/trustedanalytics/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
@@ -36,7 +31,7 @@ import (
 )
 
 func (c *TapApiServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications", c.Address))
+	connector := c.getApiOAuth2Connector("/applications")
 	result := catalogModels.Application{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
@@ -71,20 +66,20 @@ func (c *TapApiServiceApiOAuth2Connector) CreateApplicationInstance(blob multipa
 }
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteApplicationInstance(instanceId string) error {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s", instanceId)
 	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) ListApplicationInstances() ([]models.ApplicationInstance, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications", c.Address))
+	connector := c.getApiOAuth2Connector("/applications")
 	result := &[]models.ApplicationInstance{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId string, replication int) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s/scale", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s/scale", instanceId)
 	body := models.ScaleApplicationRequest{
 		Replicas: replication,
 	}
@@ -94,21 +89,21 @@ func (c *TapApiServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId st
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s/start", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s/start", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StopApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s/stop", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s/stop", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) RestartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s/restart", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s/restart", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
 	return *result, err
@@ -170,13 +165,13 @@ func (c *TapApiServiceApiOAuth2Connector) createManifestFormFile(manifest models
 }
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteApplication(instanceId string) error {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s", c.Address, instanceId))
+	connector := c.getApiOAuth2Connector("/applications/%s", instanceId)
 	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) GetApplicationInstance(applicationId string) (models.ApplicationInstance, error) {
-	connector := c.getApiOAuth2Connector(fmt.Sprintf("%s/api/v3/applications/%s", c.Address, applicationId))
+	connector := c.getApiOAuth2Connector("/applications/%s", applicationId)
 	result := &models.ApplicationInstance{}
 	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
 	return *result, err

@@ -77,3 +77,13 @@ func (_m *MockTapApiServiceLoginApi) GetLoginCredentials() (string, string, stri
 func (_mr *_MockTapApiServiceLoginApiRecorder) GetLoginCredentials() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetLoginCredentials")
 }
+
+func (_m *MockTapApiServiceLoginApi) Introduce() error {
+	ret := _m.ctrl.Call(_m, "Introduce")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockTapApiServiceLoginApiRecorder) Introduce() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Introduce")
+}

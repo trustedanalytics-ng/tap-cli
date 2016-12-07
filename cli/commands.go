@@ -250,11 +250,9 @@ func loginCommand() cli.Command {
 					return newBasicAuthService(creds.Address, c.Args().First(), c.Args().Get(1)).Login()
 				}
 				return err
-
-			} else {
-				return newBasicAuthService(c.Args().First(), c.Args().Get(1), c.Args().Get(2)).Login()
 			}
 
+			return newBasicAuthService(c.Args().First(), c.Args().Get(1), c.Args().Get(2)).Login()
 		},
 	}
 }
@@ -808,6 +806,7 @@ func getServiceCommand() cli.Command {
 }
 
 func newBasicAuthService(address string, username string, password string) *actions.ActionsConfig {
+	address = trimEndingSlash(address)
 	if !isProcotolSet(address) {
 		address = "https://" + address
 	}
@@ -816,6 +815,10 @@ func newBasicAuthService(address string, username string, password string) *acti
 		panic(err)
 	}
 	return &actions.ActionsConfig{Config: api.Config{ApiService: nil, ApiServiceLogin: apiConnector}}
+}
+
+func trimEndingSlash(str string) string {
+	return strings.TrimSuffix(str, "/")
 }
 
 func isProcotolSet(address string) bool {

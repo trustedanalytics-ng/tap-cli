@@ -72,6 +72,12 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 }
 
 func TestNewBasicAuthService(t *testing.T) {
+	Convey("Should trim ending slash if provided", t, func() {
+		basicAuth := newBasicAuthService("myaddress.com/", "user", "password")
+		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
+
+		So(basicCreds.Address, ShouldEqual, "https://myaddress.com")
+	})
 	Convey("Should add https address if address not provided", t, func() {
 		basicAuth := newBasicAuthService("myaddress.com", "user", "password")
 		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)

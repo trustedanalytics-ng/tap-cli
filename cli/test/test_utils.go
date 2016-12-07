@@ -19,7 +19,6 @@ package test
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"testing"
@@ -37,10 +36,6 @@ func SetApiAndLoginServiceMocks(t *testing.T) api.Config {
 	apiServiceMock := api.NewMockTapApiServiceApi(mockCtrl)
 	apiServiceLoginMock := api.NewMockTapApiServiceLoginApi(mockCtrl)
 	return api.Config{ApiService: apiServiceMock, ApiServiceLogin: apiServiceLoginMock}
-}
-
-func FillCredentialsFile(content string) {
-	ioutil.WriteFile(api.CredsPath, []byte(content), api.PERMISSIONS)
 }
 
 func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {

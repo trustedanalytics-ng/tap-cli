@@ -18,16 +18,18 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/urfave/cli"
 
 	"github.com/trustedanalytics/tap-api-service/client"
-	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/trustedanalytics/tap-cli/cli/test"
 )
+
+func init() {
+	test.SwitchToTestCredentialsFile()
+}
 
 func TestSumFlags(t *testing.T) {
 	testCases := []struct {
@@ -54,7 +56,7 @@ func TestSumFlags(t *testing.T) {
 func TestApiAndLoginServiceSetters(t *testing.T) {
 	Convey("Test OAuth2 login2", t, func() {
 		Convey("Should fail when no credentials.json file", func() {
-			os.Remove(api.CredsPath)
+			test.DeleteTestCredentialsFile()
 
 			So(func() {
 				newOAuth2Service()
@@ -62,7 +64,7 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 		})
 		Convey("Should fail when wrong format in credentials.json file", func() {
 			wrongContent := "@"
-			test.FillCredentialsFile(wrongContent)
+			test.FillCredentialsTestFile(wrongContent)
 
 			So(func() {
 				newOAuth2Service()

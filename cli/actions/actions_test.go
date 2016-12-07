@@ -19,7 +19,6 @@ package actions
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -56,6 +55,10 @@ var expectedCredsFileContent = "{" +
 	"\"type\":\"" + expectedUaaRes.TokenType + "\"," +
 	"\"expires\":" + strconv.Itoa(expectedUaaRes.ExpiresIn) +
 	"}"
+
+func init() {
+	test.SwitchToTestCredentialsFile()
+}
 
 func prepareLoginMock(c ActionsConfig, res uaa_connector.LoginResponse, status int, err error) {
 	c.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
@@ -122,7 +125,7 @@ func TestLoginActions(t *testing.T) {
 				actionsConfig.Login()
 			})
 
-			b, err := ioutil.ReadFile(api.CredsPath)
+			b, err := test.ReadCredentialsTestFile()
 			So(err, ShouldBeNil)
 			So(string(b), ShouldEqual, string(expectedCredsFileContent))
 			So(stdout, ShouldContainSubstring, "Authentication succeeded")
@@ -135,7 +138,7 @@ func TestSendInvitationCommand(t *testing.T) {
 	Convey("Test Login command", t, func() {
 		Convey("Should fail when inviting error occurs", func() {
 			errorMsg := "cannot invite"
-			test.FillCredentialsFile(expectedCredsFileContent)
+			test.FillCredentialsTestFile(expectedCredsFileContent)
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
@@ -148,7 +151,7 @@ func TestSendInvitationCommand(t *testing.T) {
 		})
 
 		Convey("Should pass when user invited", func() {
-			test.FillCredentialsFile(expectedCredsFileContent)
+			test.FillCredentialsTestFile(expectedCredsFileContent)
 
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
@@ -166,7 +169,7 @@ func TestSendInvitationCommand(t *testing.T) {
 
 func TestDeleteUserCommand(t *testing.T) {
 	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
-	test.FillCredentialsFile(expectedCredsFileContent)
+	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	Convey("Test delete-user command", t, func() {
 		errorMsg := "error message"
@@ -199,7 +202,7 @@ func TestDeleteUserCommand(t *testing.T) {
 
 func TestCatalogCommand(t *testing.T) {
 	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
-	test.FillCredentialsFile(expectedCredsFileContent)
+	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	fakeOff1 := test.NewFakeOffering(map[string]string{"name": "OFFERING_1", "offering_id": "offering_id_1", "plan_name": "PLAN_1", "plan_id": "plan_id_1", "desc": "DESC_1", "state": "READY"})
 	fakeOff2 := test.NewFakeOffering(map[string]string{"name": "OFFERING_2", "offering_id": "offering_id_2", "plan_name": "PLAN_2", "plan_id": "plan_id_2", "desc": "DESC_2", "state": "READY"})
@@ -235,7 +238,7 @@ func TestCatalogCommand(t *testing.T) {
 
 func TestListApplicationsCommand(t *testing.T) {
 	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
-	test.FillCredentialsFile(expectedCredsFileContent)
+	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
 	fakeApp1Params := map[string]string{

@@ -12,16 +12,16 @@ import (
 type bindingOperationType string
 
 const (
-	BIND   bindingOperationType = "bind"
-	UNBIND bindingOperationType = "unbind"
+	bind   bindingOperationType = "bind"
+	unbind bindingOperationType = "unbind"
 )
 
 func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) error {
-	return a.changeInstanceBinding(BIND, srcInstanceName, dstInstanceName)
+	return a.changeInstanceBinding(bind, srcInstanceName, dstInstanceName)
 }
 
 func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) error {
-	return a.changeInstanceBinding(UNBIND, srcInstanceName, dstInstanceName)
+	return a.changeInstanceBinding(unbind, srcInstanceName, dstInstanceName)
 }
 
 func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType, srcInstanceName string, dstInstanceName string) error {
@@ -42,11 +42,11 @@ func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType
 		instanceBinding.ServiceId = srcInstanceID
 	}
 
-	if operationType == BIND && dstInstanceType == catalogModels.InstanceTypeApplication {
+	if operationType == bind && dstInstanceType == catalogModels.InstanceTypeApplication {
 		_, err = a.ApiService.BindToApplicationInstance(instanceBinding, dstInstanceID)
-	} else if operationType == BIND && dstInstanceType == catalogModels.InstanceTypeService {
+	} else if operationType == bind && dstInstanceType == catalogModels.InstanceTypeService {
 		_, err = a.ApiService.BindToServiceInstance(instanceBinding, dstInstanceID)
-	} else if operationType == UNBIND {
+	} else if operationType == unbind {
 		err = a.handleUnbindOperation(srcInstanceID, srcInstanceType, dstInstanceType, dstInstanceID)
 	} else {
 		err = errors.New("Cannot " + string(operationType) + " instance of type: " + string(dstInstanceType))
@@ -77,9 +77,16 @@ func (a *ActionsConfig) GetInstanceBindings(instanceName string) error {
 		return err
 	}
 
-	printer.PrintInstancesBindings(bindings)
-
+	printBindings(bindings)
 	return nil
+}
+
+func printBindings(bindings apiServiceModels.InstanceBindings) {
+	printableBindings := []printer.Printable{}
+	for _, resource := range bindings.Resources {
+		printableBindings = append(printableBindings, printer.PrintableResource{InstanceBindingsResource: resource})
+	}
+	printer.PrintTable(printableBindings)
 }
 
 func (a *ActionsConfig) handleUnbindOperation(srcID string, srcType catalogModels.InstanceType, dstType catalogModels.InstanceType, dstID string) error {

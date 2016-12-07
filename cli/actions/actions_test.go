@@ -213,7 +213,7 @@ func TestCatalogCommand(t *testing.T) {
 				Return([]models.Offering{fakeOff1, fakeOff2, fakeOff3}, nil)
 
 			stdout := test.CaptureStdout(func() {
-				actionsConfig.Catalog()
+				actionsConfig.ListOfferings()
 			})
 
 			lines := strings.Split(stdout, "\n")
@@ -447,7 +447,7 @@ func assertSuccessMessage(stdout string) {
 		return
 	}
 
-	So(lines[0], ShouldEqual, SuccessMessage)
+	So(lines[0], ShouldEqual, successMessage)
 }
 
 func GetFakeApplicationInstances() []models.ApplicationInstance {

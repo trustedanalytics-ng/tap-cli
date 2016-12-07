@@ -286,7 +286,7 @@ func catalogCommand() cli.Command {
 				return err
 			}
 
-			return newOAuth2Service().Catalog()
+			return newOAuth2Service().ListOfferings()
 		},
 	}
 }
@@ -308,7 +308,7 @@ func createOfferingCommand() cli.Command {
 				return err
 			}
 
-			return newOAuth2Service().CreateOffer(c.Args().First())
+			return newOAuth2Service().CreateOffering(c.Args().First())
 		},
 	}
 }

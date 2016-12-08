@@ -61,7 +61,7 @@ func (c *TapApiServiceApiBasicAuthConnector) getAddress(endpointFormat string, a
 
 func (c *TapApiServiceApiBasicAuthConnector) getApiBasicAuthConnector(url string) brokerHttp.ApiConnector {
 	return brokerHttp.ApiConnector{
-		BasicAuth: &brokerHttp.BasicAuth{c.Username, c.Password},
+		BasicAuth: &brokerHttp.BasicAuth{User: c.Username, Password: c.Password},
 		Client:    c.Client,
 		Url:       url,
 	}

@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package models
 
-import (
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-)
-
-type Manifest struct {
-	Name      string                   `json:"name"`
-	ImageType catalogModels.ImageType  `json:"type"`
-	Instances int                      `json:"instances"`
-	Bindings  []string                 `json:"bindings"`
-	Metadata  []catalogModels.Metadata `json:"metadata"`
+type VersionsResponse struct {
+	Name          string `json:"name"`
+	Image         string `json:"image"`
+	ImageVersions string `json:"imageVersion"`
+	Signature     string `json:"signature"`
 }

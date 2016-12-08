@@ -15,14 +15,14 @@
  */
 package models
 
-import (
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-)
+type ComponentInfo struct {
+	ComponentInfo Info `json:"info"`
+}
 
-type Manifest struct {
-	Name      string                   `json:"name"`
-	ImageType catalogModels.ImageType  `json:"type"`
-	Instances int                      `json:"instances"`
-	Bindings  []string                 `json:"bindings"`
-	Metadata  []catalogModels.Metadata `json:"metadata"`
+type Info struct {
+	AppInfo App `json:"app"`
+}
+type App struct {
+	Id      string `json:"id"`
+	Version string `json:"version"`
 }

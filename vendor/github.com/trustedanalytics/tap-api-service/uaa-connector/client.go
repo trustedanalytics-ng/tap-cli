@@ -81,7 +81,7 @@ func (u *UaaConnector) Login(username, password string) (*LoginResponse, int, er
 	reqBody := fmt.Sprintf("grant_type=password&response_type=token&client_id=%s&client_secret=%s&username=%s&password=%s",
 		u.ClientId, u.ClientSecret, username, password)
 
-	auth := brokerHttp.BasicAuth{u.ClientId, u.ClientSecret}
+	auth := brokerHttp.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
 	status, resp, err := brokerHttp.RestUrlEncodedPOST(url, reqBody, brokerHttp.GetBasicAuthHeader(&auth), u.Client)
 	if err != nil {
 		return nil, status, err
@@ -103,7 +103,7 @@ func (u *UaaConnector) ValidateOauth2Token(token string) (*TapJWTToken, error) {
 	url := os.Getenv("SSO_CHECK_TOKEN_URI")
 	reqBody := fmt.Sprintf("token=%s", token)
 
-	auth := brokerHttp.BasicAuth{u.ClientId, u.ClientSecret}
+	auth := brokerHttp.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
 	status, resp, err := brokerHttp.RestUrlEncodedPOST(url, reqBody, brokerHttp.GetBasicAuthHeader(&auth), u.Client)
 	if err != nil {
 		return nil, err

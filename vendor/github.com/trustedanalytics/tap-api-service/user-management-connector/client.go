@@ -103,7 +103,7 @@ func (c *UserManagementApiConnector) getApiConnector(url string) brokerHttp.ApiC
 		auth = []string{"", ""}
 	}
 	return brokerHttp.ApiConnector{
-		OAuth2: &brokerHttp.OAuth2{auth[0], auth[1]},
+		OAuth2: &brokerHttp.OAuth2{TokenType: auth[0], Token: auth[1]},
 		Client: c.Client,
 		Url:    url,
 	}
@@ -147,11 +147,8 @@ func (u *UserManagementApiConnector) ResendUserInvitation(email string) (int, er
 		Email: email,
 	}
 	status, err := brokerHttp.PostModel(connector, reqBody, http.StatusOK, "")
-	if err != nil {
-		return status, err
-	}
 
-	return status, nil
+	return status, err
 }
 
 func (u *UserManagementApiConnector) GetInvitations() ([]string, int, error) {

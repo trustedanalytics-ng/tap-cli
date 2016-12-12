@@ -84,28 +84,28 @@ func (c *TapApiServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId st
 		Replicas: replication,
 	}
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, body, http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, body, http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/start", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StopApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/stop", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) RestartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/restart", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusOK, result)
+	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 

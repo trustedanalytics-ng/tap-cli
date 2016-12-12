@@ -263,7 +263,7 @@ func (c *TapApiServiceApiOAuth2Connector) UnbindServiceFromApplicationInstance(s
 }
 
 func (c *TapApiServiceApiOAuth2Connector) UnbindApplicationFromApplicationInstance(srcApplicationId, dstApplicationId string) (int, error) {
-	connector := c.getApiOAuth2Connector("applications/%s/bindings/applications/%s", dstApplicationId, srcApplicationId)
+	connector := c.getApiOAuth2Connector("/applications/%s/bindings/applications/%s", dstApplicationId, srcApplicationId)
 	return brokerHttp.DeleteModelWithBody(connector, "", http.StatusAccepted)
 }
 

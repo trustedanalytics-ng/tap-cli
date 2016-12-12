@@ -72,7 +72,7 @@ func printServices(services []apiServiceModels.ServiceInstance) {
 }
 
 func (a *ActionsConfig) DeleteService(serviceName string) error {
-	return a.deleteInstance(catalogModels.InstanceTypeService, serviceName)
+	return a.deleteInstance(a.ApiService.DeleteServiceInstance, catalogModels.InstanceTypeService, serviceName)
 }
 
 func (a *ActionsConfig) StartService(serviceName string) error {

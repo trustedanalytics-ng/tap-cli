@@ -105,7 +105,7 @@ func printApplications(applications []apiServiceModels.ApplicationInstance) {
 }
 
 func (a *ActionsConfig) DeleteApplication(applicationName string) error {
-	return a.deleteInstance(catalogModels.InstanceTypeApplication, applicationName)
+	return a.deleteInstance(a.ApiService.DeleteApplicationInstance, catalogModels.InstanceTypeApplication, applicationName)
 }
 
 func (a *ActionsConfig) StartApplication(applicationName string) error {

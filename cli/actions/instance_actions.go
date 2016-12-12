@@ -10,13 +10,14 @@ import (
 )
 
 type stateChangingFunction func(string) (containerBrokerModels.MessageResponse, error)
+type deletingFunction func(string) (error)
 
-func (a *ActionsConfig) deleteInstance(instanceType catalogModels.InstanceType, instanceName string) error {
+func (a *ActionsConfig) deleteInstance(df deletingFunction, instanceType catalogModels.InstanceType, instanceName string) error {
 	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, instanceType, instanceName)
 	if err != nil {
 		return err
 	}
-	if err = a.ApiService.DeleteApplicationInstance(instanceID); err != nil {
+	if err = df(instanceID); err != nil {
 		return err
 	}
 	announceSuccessfulOperation()

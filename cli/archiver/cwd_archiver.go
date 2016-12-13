@@ -65,34 +65,58 @@ func walkAndCompress(baseDir string, tw *tar.Writer) filepath.WalkFunc {
 
 		relativePath := strings.TrimPrefix(path, baseDir+"/")
 
-		header, err := tar.FileInfoHeader(info, relativePath)
-		if err != nil {
-			return err
-		}
-		header.Name = relativePath
-
-		err = tw.WriteHeader(header)
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
 		if (info.Mode() & os.ModeSymlink) == 0 {
-			file, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-			defer file.Close()
-			_, err = io.Copy(tw, file)
-			if err != nil {
-				return err
-			}
+			err = saveFileToTar(tw, info, relativePath)
+		} else {
+			err = saveSymlinkToTar(tw, info, relativePath)
+		}
+
+		if err != nil {
+			return err
 		}
 
 		fmt.Printf("Added to archive: %v\n", relativePath)
 		return nil
 	}
+}
+
+func saveFileToTar(tw *tar.Writer, info os.FileInfo, path string) error {
+	header, err := tar.FileInfoHeader(info, path)
+	if err != nil {
+		return err
+	}
+	header.Name = path
+
+	err = tw.WriteHeader(header)
+	if err != nil {
+		return err
+	}
+
+	if info.IsDir() {
+		return nil
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	_, err = io.Copy(tw, file)
+
+	return err
+}
+
+func saveSymlinkToTar(tw *tar.Writer, info os.FileInfo, path string) error {
+	symlink, err := os.Readlink(path)
+	if err != nil {
+		return err
+	}
+
+	header, err := tar.FileInfoHeader(info, symlink)
+	if err != nil {
+		return err
+	}
+	header.Name = path
+
+	return tw.WriteHeader(header)
 }

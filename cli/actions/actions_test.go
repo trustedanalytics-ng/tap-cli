@@ -472,9 +472,9 @@ func GetFakeApplicationInstances() []models.ApplicationInstance {
 
 func GetFakeServiceInstances() []models.ServiceInstance {
 	result := []models.ServiceInstance{}
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "1", Name: "instance1", Type: "SERVICE"}})
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "2", Name: "instance2", Type: "SERVICE"}})
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "3", Name: "instance3", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Id: "1", Name: "instance1", Type: "SERVICE"})
+	result = append(result, models.ServiceInstance{Id: "2", Name: "instance2", Type: "SERVICE"})
+	result = append(result, models.ServiceInstance{Id: "3", Name: "instance3", Type: "SERVICE"})
 
 	return result
 }

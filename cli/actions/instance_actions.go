@@ -10,7 +10,7 @@ import (
 )
 
 type stateChangingFunction func(string) (containerBrokerModels.MessageResponse, error)
-type deletingFunction func(string) (error)
+type deletingFunction func(string) error
 
 func (a *ActionsConfig) deleteInstance(df deletingFunction, instanceType catalogModels.InstanceType, instanceName string) error {
 	instanceID, _, err := converter.FetchInstanceIDandType(a.Config, instanceType, instanceName)

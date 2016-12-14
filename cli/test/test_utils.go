@@ -43,16 +43,14 @@ func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {
 	updatedOn, _ := strconv.Atoi(m["ub"])
 	rep, _ := strconv.Atoi(m["replication"])
 	appInstance := models.ApplicationInstance{
-		Instance: catalogModels.Instance{
-			Id:   m["id"],
-			Name: m["name"],
-			AuditTrail: catalogModels.AuditTrail{
-				CreatedOn:     int64(createdOn),
-				CreatedBy:     m["cb"],
-				LastUpdatedOn: int64(updatedOn),
-				LastUpdateBy:  m["ub"]},
-			State: catalogModels.InstanceState(m["instance_state"]),
-		},
+		Id:   m["id"],
+		Name: m["name"],
+		AuditTrail: catalogModels.AuditTrail{
+			CreatedOn:     int64(createdOn),
+			CreatedBy:     m["cb"],
+			LastUpdatedOn: int64(updatedOn),
+			LastUpdateBy:  m["ub"]},
+		State:            catalogModels.InstanceState(m["instance_state"]),
 		Replication:      rep,
 		ImageState:       catalogModels.ImageState(m["image_state"]),
 		Urls:             []string{m["urls"]},

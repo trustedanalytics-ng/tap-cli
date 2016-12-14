@@ -24,7 +24,7 @@ import (
 
 func TestGetCredentials(t *testing.T) {
 	Convey("Test GetCredentials should return error for wrong credentials path", t, func() {
-		CredsPath= "/notExisting"
+		CredsPath = "/notExisting"
 		c := Config{}
 
 		_, err := c.GetCredentials()

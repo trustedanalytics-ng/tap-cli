@@ -20,14 +20,20 @@ import (
 )
 
 type ApplicationInstance struct {
-	catalogModels.Instance
-	Replication      int                      `json:"replication"`
-	ImageState       catalogModels.ImageState `json:"imageState"`
-	Urls             []string                 `json:"urls"`
-	ImageType        catalogModels.ImageType  `json:"imageType"`
-	Memory           string                   `json:"memory"`
-	DiskQuota        string                   `json:"disk_quota"`
-	RunningInstances int                      `json:"running_instances"`
+	Id               string                           `json:"id"`
+	Name             string                           `json:"name"`
+	Type             catalogModels.InstanceType       `json:"type"`
+	Bindings         []catalogModels.InstanceBindings `json:"bindings"`
+	Metadata         []catalogModels.Metadata         `json:"metadata"`
+	State            catalogModels.InstanceState      `json:"state"`
+	AuditTrail       catalogModels.AuditTrail         `json:"auditTrail"`
+	Replication      int                              `json:"replication"`
+	ImageState       catalogModels.ImageState         `json:"imageState"`
+	Urls             []string                         `json:"urls"`
+	ImageType        catalogModels.ImageType          `json:"imageType"`
+	Memory           string                           `json:"memory"`
+	DiskQuota        string                           `json:"disk_quota"`
+	RunningInstances int                              `json:"running_instances"`
 }
 
 type ScaleApplicationRequest struct {

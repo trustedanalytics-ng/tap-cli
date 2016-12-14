@@ -23,7 +23,6 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/trustedanalytics/tap-api-service/models"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/trustedanalytics/tap-cli/cli/test"
 )
@@ -39,9 +38,9 @@ func getFakeServices() []models.Offering {
 
 func GetFakeServiceInstances() []models.ServiceInstance {
 	result := []models.ServiceInstance{}
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "1", Name: "instance1", Type: "SERVICE"}})
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "2", Name: "instance2", Type: "SERVICE"}})
-	result = append(result, models.ServiceInstance{Instance: catalogModels.Instance{Id: "3", Name: "instance3", Type: "SERVICE"}})
+	result = append(result, models.ServiceInstance{Id: "1", Name: "instance1", Type: "SERVICE"})
+	result = append(result, models.ServiceInstance{Id: "2", Name: "instance2", Type: "SERVICE"})
+	result = append(result, models.ServiceInstance{Id: "3", Name: "instance3", Type: "SERVICE"})
 
 	return result
 }

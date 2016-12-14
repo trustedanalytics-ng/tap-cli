@@ -7,6 +7,7 @@ import (
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/cli/converter"
 	"github.com/trustedanalytics/tap-cli/cli/printer"
+	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 )
 
 func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string, envs map[string]string) error {
@@ -85,6 +86,30 @@ func (a *ActionsConfig) RestartService(serviceName string) error {
 
 func (a *ActionsConfig) StopService(serviceName string) error {
 	return a.changeState(a.ApiService.StopServiceInstance, catalogModels.InstanceTypeService, serviceName)
+}
+
+func (a *ActionsConfig) GetServiceCredentials(instanceName string) error {
+	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, instanceName)
+	if err != nil {
+		return err
+	}
+
+	creds := []containerBrokerModels.ContainerCredenials{}
+	if instanceType == catalogModels.InstanceTypeService {
+		creds, err = a.ApiService.GetInstanceCredentials(instanceID)
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("%q is not a service\n", instanceName)
+	}
+
+	for _, cred := range creds {
+		printer.PrintFormattedJSON(cred)
+		fmt.Println()
+	}
+
+	return nil
 }
 
 func (a *ActionsConfig) ExposeService(serviceID string, shouldExpose bool) error {

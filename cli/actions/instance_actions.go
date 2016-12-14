@@ -5,7 +5,6 @@ import (
 
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 	"github.com/trustedanalytics/tap-cli/cli/converter"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
 	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
 )
 
@@ -50,30 +49,6 @@ func (a *ActionsConfig) GetInstanceLogs(instanceName string) error {
 
 	for container, log := range logs {
 		fmt.Printf("%s:\n\n%s\n", container, log)
-	}
-
-	return nil
-}
-
-func (a *ActionsConfig) GetInstanceCredentials(instanceName string) error {
-	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, instanceName)
-	if err != nil {
-		return err
-	}
-
-	creds := []containerBrokerModels.ContainerCredenials{}
-	if instanceType == catalogModels.InstanceTypeService {
-		creds, err = a.ApiService.GetInstanceCredentials(instanceID)
-		if err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("%q is not a service\n", instanceName)
-	}
-
-	for _, cred := range creds {
-		printer.PrintFormattedJSON(cred)
-		fmt.Println()
 	}
 
 	return nil

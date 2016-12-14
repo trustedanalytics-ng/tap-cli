@@ -17,68 +17,20 @@
 package cli
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli"
 
-	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics/tap-cli/commands"
 )
-
-const defaultLogLevel = logger.LevelCritical
-
-func getCommands() []cli.Command {
-	return []cli.Command{
-		loginCommand(),
-		targetCommand(),
-		catalogCommand(),
-		createOfferingCommand(),
-		deleteOfferingCommand(),
-		createServiceCommand(),
-		deleteServiceCommand(),
-		startServiceCommand(),
-		stopServiceCommand(),
-		restartServiceCommand(),
-		exposeServiceCommand(),
-		listInstanceBindingsCommand(),
-		bindInstanceCommand(),
-		unbindInstanceCommand(),
-		pushApplicationCommand(),
-		listApplicationsCommand(),
-		getApplicationCommand(),
-		listServicesCommand(),
-		getServiceCommand(),
-		scaleApplicationCommand(),
-		startApplicationCommand(),
-		stopApplicationCommand(),
-		restartApplicationCommand(),
-		getInstanceLogsCommand(),
-		getInstanceCredentialsCommand(),
-		deleteApplicationCommand(),
-		sendInvitationCommand(),
-		resendInvitationCommand(),
-		listUsersCommand(),
-		listInvitationsCommand(),
-		deleteInvitationCommand(),
-		deleteUserCommand(),
-		changeCurrentUserPasswordCommand(),
-	}
-}
 
 func Run() error {
 	app := cli.NewApp()
 	app.Name = "TAP CLI"
 	app.Usage = "client for managing TAP"
 	app.Version = "0.8.0"
-	app.Commands = getCommands()
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "verbosity,v",
-			Value: defaultLogLevel,
-			Usage: fmt.Sprintf("logger verbosity [%s,%s,%s,%s,%s,%s]", logger.LevelCritical, logger.LevelError,
-				logger.LevelWarning, logger.LevelNotice, logger.LevelInfo, logger.LevelDebug),
-		},
-	}
+	app.Commands = commands.GetCommands()
+	app.Flags = commands.GetCommonFlags()
 
 	//override version flag to change its shortcut from v to V (reserved for verbosity global flag)
 	cli.VersionFlag = cli.BoolFlag{

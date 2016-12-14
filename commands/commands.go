@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cli
+package commands
 
 import (
 	"errors"
@@ -32,15 +32,56 @@ import (
 	"github.com/trustedanalytics/tap-go-common/logger"
 )
 
+const DefaultLogLevel = logger.LevelCritical
+
 var loggerVerbosity string
 
-func getCommonFlags() []cli.Flag {
+func GetCommands() []cli.Command {
+	return []cli.Command{
+		loginCommand(),
+		targetCommand(),
+		catalogCommand(),
+		createOfferingCommand(),
+		deleteOfferingCommand(),
+		createServiceCommand(),
+		deleteServiceCommand(),
+		startServiceCommand(),
+		stopServiceCommand(),
+		restartServiceCommand(),
+		exposeServiceCommand(),
+		listInstanceBindingsCommand(),
+		bindInstanceCommand(),
+		unbindInstanceCommand(),
+		pushApplicationCommand(),
+		listApplicationsCommand(),
+		getApplicationCommand(),
+		listServicesCommand(),
+		getServiceCommand(),
+		scaleApplicationCommand(),
+		startApplicationCommand(),
+		stopApplicationCommand(),
+		restartApplicationCommand(),
+		getInstanceLogsCommand(),
+		getInstanceCredentialsCommand(),
+		deleteApplicationCommand(),
+		sendInvitationCommand(),
+		resendInvitationCommand(),
+		listUsersCommand(),
+		listInvitationsCommand(),
+		deleteInvitationCommand(),
+		deleteUserCommand(),
+		changeCurrentUserPasswordCommand(),
+	}
+}
+
+func GetCommonFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
 			Name: "verbosity,v",
-			Usage: fmt.Sprintf("logger verbosity [%s,%s,%s,%s,%s,%s] (default: %q)", logger.LevelCritical, logger.LevelError,
-				logger.LevelWarning, logger.LevelNotice, logger.LevelInfo, logger.LevelDebug, defaultLogLevel),
+			Usage: fmt.Sprintf("logger verbosity [%s,%s,%s,%s,%s,%s]", logger.LevelCritical, logger.LevelError,
+				logger.LevelWarning, logger.LevelNotice, logger.LevelInfo, logger.LevelDebug),
 			Destination: &loggerVerbosity,
+			Value: DefaultLogLevel,
 		},
 	}
 }
@@ -91,7 +132,7 @@ func sendInvitationCommand() cli.Command {
 		Name:      "invite",
 		Usage:     "invite new user to TAP",
 		ArgsUsage: "<email>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -112,7 +153,7 @@ func resendInvitationCommand() cli.Command {
 		Name:      "reinvite",
 		Usage:     "resend invitation for user",
 		ArgsUsage: "<email>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -132,7 +173,7 @@ func listUsersCommand() cli.Command {
 	return cli.Command{
 		Name:  "users",
 		Usage: "list platform users",
-		Flags: getCommonFlags(),
+		Flags: GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -148,7 +189,7 @@ func listInvitationsCommand() cli.Command {
 		Name:    "invitations",
 		Usage:   "list pending invitations",
 		Aliases: []string{"invs"},
-		Flags:   getCommonFlags(),
+		Flags:   GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -165,7 +206,7 @@ func deleteInvitationCommand() cli.Command {
 		Usage:     "delete invitation",
 		Aliases:   []string{"di"},
 		ArgsUsage: "<email>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -187,7 +228,7 @@ func deleteUserCommand() cli.Command {
 		Usage:     "delete user from TAP",
 		Aliases:   []string{"du"},
 		ArgsUsage: "<email>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -208,7 +249,7 @@ func changeCurrentUserPasswordCommand() cli.Command {
 		Name:      "chpasswd",
 		Usage:     "change password of currently logged user",
 		ArgsUsage: "<currentPassword> <newPassword>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -229,7 +270,7 @@ func loginCommand() cli.Command {
 		Name:      "login",
 		Usage:     "login to TAP. You can omitt address if it was set as target previously",
 		ArgsUsage: "[<address>] <username> <password>",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -262,7 +303,7 @@ func targetCommand() cli.Command {
 		Name:    "target",
 		Aliases: []string{"t"},
 		Usage:   "print actual credentials",
-		Flags:   getCommonFlags(),
+		Flags:   GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -278,7 +319,7 @@ func catalogCommand() cli.Command {
 		Name:    "catalog",
 		Aliases: []string{"o"},
 		Usage:   "list available offerings",
-		Flags:   getCommonFlags(),
+		Flags:   GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -295,7 +336,7 @@ func createOfferingCommand() cli.Command {
 		Aliases:   []string{"co"},
 		ArgsUsage: "<path to json with service definition>",
 		Usage:     "create new offering",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -317,7 +358,7 @@ func deleteOfferingCommand() cli.Command {
 		ArgsUsage: "<offering_custom_name>",
 		Aliases:   []string{"do"},
 		Usage:     "delete offering",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -340,7 +381,7 @@ func createServiceCommand() cli.Command {
 		ArgsUsage: "<service_name> <plan_name> <custom_name>",
 		Aliases:   []string{"cs"},
 		Usage:     "create instance of service",
-		Flags: sumFlags(getCommonFlags(),
+		Flags: sumFlags(GetCommonFlags(),
 			[]cli.Flag{
 				cli.StringSliceFlag{
 					Name:  "env, e",
@@ -375,7 +416,7 @@ func deleteServiceCommand() cli.Command {
 		ArgsUsage: "<service_custom_name>",
 		Aliases:   []string{"ds"},
 		Usage:     "delete instance of service",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -395,7 +436,7 @@ func restartServiceCommand() cli.Command {
 		Name:      "service-restart",
 		ArgsUsage: "<service_custom_name>",
 		Usage:     "restart service",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -416,7 +457,7 @@ func startServiceCommand() cli.Command {
 		Name:      "service-start",
 		ArgsUsage: "<service_custom_name>",
 		Usage:     "start service",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -437,7 +478,7 @@ func stopServiceCommand() cli.Command {
 		Name:      "service-stop",
 		ArgsUsage: "<service_custom_name>",
 		Usage:     "stop all service instances",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -459,7 +500,7 @@ func exposeServiceCommand() cli.Command {
 		ArgsUsage: "<service_custom_name>, <should_expose>",
 		Aliases:   []string{"expose"},
 		Usage:     "expose service ports",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -486,7 +527,7 @@ func bindInstanceCommand() cli.Command {
 		ArgsUsage: "<src_instance_name>, <dst_instance_name>",
 		Aliases:   []string{"bind"},
 		Usage:     "bind instance to another",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -508,7 +549,7 @@ func unbindInstanceCommand() cli.Command {
 		ArgsUsage: "<src_instance_name>, <dst_instance_name>",
 		Aliases:   []string{"unbind"},
 		Usage:     "unbind instance from another",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -529,7 +570,7 @@ func listInstanceBindingsCommand() cli.Command {
 		Name:      "bindings",
 		ArgsUsage: "<instanceName>",
 		Usage:     "list bindings",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -551,7 +592,7 @@ func listApplicationsCommand() cli.Command {
 		ArgsUsage: "",
 		Aliases:   []string{"apps"},
 		Usage:     "list applications",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -568,7 +609,7 @@ func pushApplicationCommand() cli.Command {
 		ArgsUsage: "(archive_path)",
 		Usage: "create application from archive provided or from compressed current directory by default,\n" +
 			"\tmanifest should be in current working directory",
-		Flags: getCommonFlags(),
+		Flags: GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -594,7 +635,7 @@ func listServicesCommand() cli.Command {
 		ArgsUsage: "",
 		Aliases:   []string{"svcs"},
 		Usage:     "list all service instances",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -611,7 +652,7 @@ func scaleApplicationCommand() cli.Command {
 		ArgsUsage: "<applicationName> <instances>",
 		Aliases:   []string{"sc"},
 		Usage:     "scale application",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -637,7 +678,7 @@ func restartApplicationCommand() cli.Command {
 		Name:      "restart",
 		ArgsUsage: "<applicationName>",
 		Usage:     "restart application",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -658,7 +699,7 @@ func startApplicationCommand() cli.Command {
 		Name:      "start",
 		ArgsUsage: "<applicationName>",
 		Usage:     "start application with single instance",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -679,7 +720,7 @@ func stopApplicationCommand() cli.Command {
 		Name:      "stop",
 		ArgsUsage: "<applicationName>",
 		Usage:     "stop all application instances",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -701,7 +742,7 @@ func deleteApplicationCommand() cli.Command {
 		ArgsUsage: "<applicationName>",
 		Aliases:   []string{"d"},
 		Usage:     "delete application",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -723,7 +764,7 @@ func getInstanceLogsCommand() cli.Command {
 		ArgsUsage: "<instanceName>",
 		Aliases:   []string{"log"},
 		Usage:     "get logs for all containers in instance",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -745,7 +786,7 @@ func getInstanceCredentialsCommand() cli.Command {
 		ArgsUsage: "<instanceName>",
 		Aliases:   []string{"creds"},
 		Usage:     "get credentials for all containers in service instance",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -767,7 +808,7 @@ func getApplicationCommand() cli.Command {
 		ArgsUsage: "<applicationName>",
 		Aliases:   []string{"a"},
 		Usage:     "application instance details",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
@@ -789,7 +830,7 @@ func getServiceCommand() cli.Command {
 		ArgsUsage: "<serviceName>",
 		Aliases:   []string{"s"},
 		Usage:     "service instance details",
-		Flags:     getCommonFlags(),
+		Flags:     GetCommonFlags(),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err

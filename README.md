@@ -11,7 +11,8 @@ There are no requirements for binary app.
 
 ## Compilation
 * clone this repo
-* in dir of repo just cloned, invoke: `make build_anywhere(_linux/_osx/_win32)`
+* in dir of repo just cloned, invoke: `make build_anywhere(_linux/_osx/_win32)` if you don't want to bother with setting golang workspace.
+* alternatively when you have golang workspace and GOPATH set use `make build` *(will be much faster on 2nd and next builds)*
 * binaries are available in ./application/
 
 `make build_anywhere` will compile binaries for all platforms, `make build_anywhere_linux` for Linux, etc.

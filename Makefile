@@ -17,7 +17,7 @@ APP_DIR_LIST=$(shell go list ./... | grep -v /vendor/)
 
 build: verify_gopath
 	go fmt $(APP_DIR_LIST)
-	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
+	CGO_ENABLED=0 go install -v -tags netgo .
 	mkdir -p application && cp -f $(GOBIN)/tap-cli ./application/tap
 
 verify_gopath:

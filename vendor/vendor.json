@@ -15,6 +15,12 @@
 			"revisionTime": "2016-01-21T18:51:14Z"
 		},
 		{
+			"checksumSHA1": "lJDwzzEBuS9sjxVOSsq7+rvw+cA=",
+			"path": "github.com/howeyc/gopass",
+			"revision": "f5387c492211eb133053880d23dfae62aa14123d",
+			"revisionTime": "2016-10-03T13:09:00Z"
+		},
+		{
 			"checksumSHA1": "tewA7jXVGCw1zb5mA0BDecWi4iQ=",
 			"path": "github.com/jtolds/gls",
 			"revision": "8ddce2a84170772b95dd5d576c48d517b22cac63",
@@ -183,6 +189,18 @@
 			"path": "github.com/urfave/cli",
 			"revision": "3a5216227e14699bf7810b2573db60bf4b3f71b5",
 			"revisionTime": "2016-07-12T17:14:36Z"
+		},
+		{
+			"checksumSHA1": "HpfYVaB8VI/Q4dS6I78I1iWaIT4=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "abc3c1b02083efdbef727c8631a865ad7d8d8b19",
+			"revisionTime": "2016-12-18T21:06:48Z"
+		},
+		{
+			"checksumSHA1": "uTQtOqR0ePMMcvuvAIksiIZxhqU=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "d75a52659825e75fff6158388dddc6a5b04f9ba5",
+			"revisionTime": "2016-12-14T18:38:57Z"
 		},
 		{
 			"checksumSHA1": "qWsc5MUHWAxLoxr56aAyxzAGOG4=",

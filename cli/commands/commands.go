@@ -31,13 +31,15 @@ import (
 )
 
 const DefaultLogLevel = logger.LevelCritical
+const requiredFlagMissingExitCode = 3
+const errorReadingPassword = 4
 
 var loggerVerbosity string
 
 func GetCommands() []cli.Command {
 	return []cli.Command{
 		loginCommand(),
-		targetCommand(),
+		TapInfoCommand,
 		listOfferings(),
 		createOfferingCommand(),
 		deleteOfferingCommand(),
@@ -102,6 +104,15 @@ func sumFlags(a []cli.Flag, b []cli.Flag) []cli.Flag {
 	res = append(res, a...)
 	res = append(res, b...)
 	return res
+}
+
+func checkRequiredStringFlag(flag cli.StringFlag, ctx *cli.Context) {
+	value := *flag.Destination
+	if value == "" {
+		fmt.Println("\nMISSING PARAMETER: '", flag.Name, "'\n\nCommand usage:")
+		cli.ShowCommandHelp(ctx, ctx.Command.Name)
+		cli.OsExiter(requiredFlagMissingExitCode)
+	}
 }
 
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {

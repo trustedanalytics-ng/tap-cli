@@ -16,9 +16,9 @@ GOBIN=$(GOPATH)/bin
 APP_DIR_LIST=$(shell go list ./... | grep -v /vendor/)
 
 build: verify_gopath
-	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
-	cp $(GOPATH)/bin/tap-cli ./application/tap
+	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
+	mkdir -p application && cp -f $(GOBIN)/tap-cli ./application/tap
 
 verify_gopath:
 	@if [ -z "$(GOPATH)" ] || [ "$(GOPATH)" = "" ]; then\
@@ -37,7 +37,7 @@ deps_fetch_specific: bin/govendor
 
 deps_update_tap: verify_gopath
 	$(GOBIN)/govendor update github.com/trustedanalytics/...
-	rm -Rf vendor/github.com/trustedanalytics/tap-cli
+	$(GOBIN)/govendor remove github.com/trustedanalytics/tap-cli/...
 	@echo "Done"
 
 bin/govendor: verify_gopath

@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package models
 
-import "time"
-
-var (
-	ProcessorsIntervalSec time.Duration = 10 * time.Second
-
-	ProcessorsTries  = 12
-	WaitForDepsTries = ProcessorsTries + 2
-
-	ProcessorsTotalDuration time.Duration = ProcessorsIntervalSec * time.Duration(ProcessorsTries)
-)
+type StateStability struct {
+	Stable  bool   `json:"stable"`
+	Message string `json:"message"`
+}

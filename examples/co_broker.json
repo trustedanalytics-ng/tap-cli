@@ -1,7 +1,8 @@
 {
   "broker_name": "example-broker",
   "template": {
-    "body": {
+    "body": [
+      {
       "componentType": "broker",
       "persistentVolumeClaims": null,
       "deployments": [
@@ -163,7 +164,8 @@
           }
         }
       ]
-    },
+      }
+    ],
     "hooks": {
       "provision": {
         "kind": "Pod",

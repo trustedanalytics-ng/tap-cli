@@ -1,6 +1,7 @@
 {
   "template": {
-    "body": {
+    "body": [
+      {
       "componentType": "instance",
       "persistentVolumeClaims": null,
       "deployments": [
@@ -185,7 +186,8 @@
           }
         }
       ]
-    },
+      }
+    ],
     "hooks": null
   },
   "services": [{

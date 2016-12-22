@@ -34,6 +34,14 @@ type ServiceInstance struct {
 	ServicePlanName string                           `json:"planName"`
 }
 
+type ServiceInstanceRequest struct {
+	Name       string                           `json:"name"`
+	Type       catalogModels.InstanceType       `json:"type"`
+	OfferingId string                           `json:"offeringId"`
+	Bindings   []catalogModels.InstanceBindings `json:"bindings"`
+	Metadata   []catalogModels.Metadata         `json:"metadata"`
+}
+
 func FilterServiceInstancesByName(services []ServiceInstance, serviceName string) []ServiceInstance {
 	serviceName = strings.ToUpper(serviceName)
 	return filterServiceInstanceItems(services, func(service ServiceInstance) bool {

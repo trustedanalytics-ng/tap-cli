@@ -46,7 +46,7 @@ type TapApiServiceApi interface {
 
 	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error)
 	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
-	CreateServiceInstance(instance models.Instance) (containerBrokerModels.MessageResponse, error)
+	CreateServiceInstance(instance models.ServiceInstanceRequest) (containerBrokerModels.MessageResponse, error)
 
 	DeleteOffering(serviceId string) error
 	DeleteServiceInstance(instanceId string) error
@@ -126,7 +126,7 @@ func (c *TapApiServiceApiOAuth2Connector) getApiOAuth2Connector(endpointFormat s
 	}
 }
 
-func (c *TapApiServiceApiOAuth2Connector) CreateServiceInstance(instance models.Instance) (containerBrokerModels.MessageResponse, error) {
+func (c *TapApiServiceApiOAuth2Connector) CreateServiceInstance(instance models.ServiceInstanceRequest) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/services")
 	result := &containerBrokerModels.MessageResponse{}
 	_, err := brokerHttp.PostModel(connector, instance, http.StatusAccepted, result)

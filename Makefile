@@ -54,35 +54,41 @@ mock_update:
 test: verify_gopath
 	go test --cover $(APP_DIR_LIST)
 
-prepare_dirs:
-	mkdir -p ./temp/src/github.com/trustedanalytics/tap-cli
+prepare_temp:
+	mkdir -p temp/src/github.com/trustedanalytics/tap-cli
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tap-cli
+	mkdir -p application
+
+clear_temp:
+	rm -Rf ./temp
 
 build_anywhere:
-	$(MAKE) prepare_dirs build_anywhere_linux
-	$(MAKE) prepare_dirs build_anywhere_win32
-	$(MAKE) prepare_dirs build_anywhere_osx
+	$(MAKE) build_anywhere_linux
+	$(MAKE) build_anywhere_win32
+	$(MAKE) build_anywhere_osx
 
-build_anywhere_linux: prepare_dirs
-	$(eval GOPATH=$(shell cd ./temp; pwd))
-	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tap-cli/... | grep -v /vendor/))
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -tags netgo $(APP_DIR_LIST)
-	mkdir -p application && rm -f application/tap-cli-linux-amd64.elf
-	cp ./tap-cli ./application/tap-linux-amd64.elf
-	cp ./tap-cli ./application/tap
-	rm -Rf ./temp
+build_anywhere_linux:
+	$(MAKE) build_anywhere_linux64
+	$(MAKE) build_anywhere_linux32
 
-build_anywhere_win32: prepare_dirs
-	$(eval GOPATH=$(shell cd ./temp; pwd))
-	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tap-cli/... | grep -v /vendor/))
-	mkdir -p application
-	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -o ./application/tap.exe -tags netgo $(APP_DIR_LIST)
-	rm -Rf ./temp
+build_anywhere_linux64:
+	$(call build,linux,amd64,tap-linux64)
+	ln -sf tap-linux64 application/tap
 
-build_anywhere_osx: prepare_dirs
-	$(eval GOPATH=$(shell cd ./temp; pwd))
+build_anywhere_linux32:
+	$(call build,linux,386,tap-linux32)
+
+build_anywhere_win32:
+	$(call build,windows,386,tap-windows32.exe)
+
+build_anywhere_osx:
+	$(call build,darwin,amd64,tap-macosx64.osx)
+
+define build
+	$(MAKE) prepare_temp
+	$(eval GOPATH=$(shell readlink -f temp))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tap-cli/... | grep -v /vendor/))
-	mkdir -p application
-	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ./application/tap.osx -tags netgo $(APP_DIR_LIST)
-	rm -Rf ./temp
+	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=$(1) GOARCH=$(2) go build -o ./application/$(3) -tags netgo $(APP_DIR_LIST)
+	$(MAKE) clear_temp
+endef

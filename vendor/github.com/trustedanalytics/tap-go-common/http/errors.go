@@ -30,6 +30,7 @@ const (
 	ConflictError       string = "conflict"
 	EmptyField          string = "is empty!"
 	CannotUnmarshal     string = "cannot unmarshal"
+	CanNotBeChanged     string = "can not be changed!"
 )
 
 func translateHttpErrorStatus(status int) int {
@@ -43,8 +44,8 @@ func translateHttpErrorStatus(status int) int {
 func IsBadRequestError(err error) bool {
 	return isErrorTypeStringInErrorMessage(EmptyField, err) ||
 		isErrorTypeStringInErrorMessage(ConflictCompareEtcd, err) ||
-		isErrorTypeStringInErrorMessage(CannotUnmarshal, err)
-
+		isErrorTypeStringInErrorMessage(CannotUnmarshal, err) ||
+		isErrorTypeStringInErrorMessage(CanNotBeChanged, err)
 }
 
 func IsNotFoundError(err error) bool {
@@ -74,7 +75,7 @@ func isErrorTypeStringInErrorMessage(errorType string, err error) bool {
 
 		// assure errorTypeString string is not part of another word
 		runeBefore, _ := utf8.DecodeLastRuneInString(errorMessage[:index])
-		runeAfter, _ := utf8.DecodeRuneInString(errorMessage[index+errorTypeStringLen:])
+		runeAfter, _ := utf8.DecodeRuneInString(errorMessage[index + errorTypeStringLen:])
 		if (runeBefore == utf8.RuneError || unicode.IsSpace(runeBefore)) && (runeAfter == utf8.RuneError || unicode.IsSpace(runeAfter)) {
 			return true
 		}

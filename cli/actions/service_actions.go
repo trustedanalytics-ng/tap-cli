@@ -17,9 +17,9 @@ func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName 
 	}
 
 	//TODO DPNG-11398: this should be move to api-service
-	instanceBody := apiServiceModels.Instance{}
+	instanceBody := apiServiceModels.ServiceInstanceRequest{}
 	instanceBody.Type = catalogModels.InstanceTypeService
-	instanceBody.ClassId = serviceID
+	instanceBody.OfferingId = serviceID
 	planMeta := catalogModels.Metadata{Id: catalogModels.OFFERING_PLAN_ID, Value: planID}
 	instanceBody.Metadata = append(instanceBody.Metadata, planMeta)
 	instanceBody.Name = customName

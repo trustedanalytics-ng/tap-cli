@@ -43,7 +43,7 @@
                 "containers": [
                   {
                     "name": "fake-broker",
-                    "image": "127.0.0.1:30000/fake-broker",
+                    "image": "$repository_uri/fake-broker",
                     "ports": [
                       {
                         "containerPort": 80,
@@ -183,7 +183,7 @@
           "containers": [
             {
               "name": "$short_instance_id-provision",
-              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
+              "image": "$repository_uri/tap-base-cf-broker-connector:curl-latest",
               "env": [
                 {
                   "name": "ACTION",
@@ -269,7 +269,7 @@
           "containers": [
             {
               "name": "$short_instance_id-bind",
-              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
+              "image": "$repository_uri/tap-base-cf-broker-connector:curl-latest",
               "env": [
                 {
                   "name": "ACTION",
@@ -335,7 +335,7 @@
           "containers": [
             {
               "name": "$short_instance_id-unbind",
-              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
+              "image": "$repository_uri/tap-base-cf-broker-connector:curl-latest",
               "env": [
                 {
                   "name": "ACTION",
@@ -397,7 +397,7 @@
           "containers": [
             {
               "name": "$short_instance_id-deprovision",
-              "image": "127.0.0.1:30000/tap-base-cf-broker-connector:curl-latest",
+              "image": "$repository_uri/tap-base-cf-broker-connector:curl-latest",
               "env": [
                 {
                   "name": "ACTION",

@@ -39,7 +39,7 @@
               "containers": [
                 {
                   "name": "app",
-                  "image": "127.0.0.1:30000/$gen_image_id",
+                  "image": "$repository_uri/$gen_image_id",
                   "ports": [
                     {
                       "containerPort": 80,

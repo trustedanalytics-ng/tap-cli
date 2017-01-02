@@ -43,7 +43,7 @@
                 "containers": [
                   {
                     "name": "k-nats",
-                    "image": "127.0.0.1:30000/nats:0.8.1",
+                    "image": "$repository_uri/nats:0.8.1",
                     "ports": [
                       {
                         "containerPort": 4222,

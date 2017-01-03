@@ -20,7 +20,7 @@ There are no requirements for binary app.
 
 ## Usage
 ```
-./tap
+./tap help
 NAME:
    TAP CLI - client for managing TAP
 
@@ -35,19 +35,10 @@ COMMANDS:
      info                     prints info about current api and user
      offering                 offering context commands
      service                  service context commands
+     application              application context commands
      bindings                 list bindings
      bind-instance, bind      bind instance to another
      unbind-instance, unbind  unbind instance from another
-     push                     create application from archive provided or from compressed current directory by default,
-                              manifest should be in current working directory
-     applications, apps       list applications
-     application, a           application instance details
-     scale, sc                scale application
-     start                    start application with single instance
-     stop                     stop all application instances
-     restart                  restart application
-     logs, log                get logs for all containers in instance
-     delete, d                delete application
      invite                   invite new user to TAP
      reinvite                 resend invitation for user
      users                    list platform users
@@ -121,15 +112,11 @@ OPTIONS:
 
 ### Authentication flow
 ```
-./tap login api.exampledomain.com admin password
+./tap login --api api.exampledomain.com --username admin --password password
 Authenticating...
 Authentication succeeded
 
-#If you omit address you will be logged to previously set target
-
-./tap login admin password
-
-./tap target
+./tap
 +-------------------------+----------+
 |           API           | USERNAME |
 +-------------------------+----------+
@@ -175,7 +162,7 @@ tar czvf python-application.tar.gz ./*
 #### Push application 
 
 ```
-./tap push python-application.tar.gz
+./tap application push --archive-path python-application.tar.gz
 ```
 
 
@@ -211,5 +198,36 @@ tar czvf java-application.tar.gz ./*
 #### Push application 
 
 ```
-./tap push java-application.tar.gz
+./tap application push --archive-path java-application.tar.gz
+```
+
+### Context help
+```
+./tap application help
+NAME:
+   TAP CLI application - application context commands
+
+USAGE:
+   TAP CLI application [global options] command [command options] [arguments...]
+
+VERSION:
+   0.8.0
+
+COMMANDS:
+     list     list applications
+     info     application instance details
+     push     create application from compressed current directory (by default) or from indicated tar archive,
+              manifest should be in current working directory
+     delete   delete application
+     start    start application
+     stop     stop application
+     restart  restart application
+     scale    scale application
+     logs     get logs for all containers in instance
+
+GLOBAL OPTIONS:
+   --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
+   --help, -h                   show help
+
+
 ```

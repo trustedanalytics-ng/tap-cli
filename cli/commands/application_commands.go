@@ -24,179 +24,139 @@ import (
 	"github.com/urfave/cli"
 )
 
-func listApplicationsCommand() cli.Command {
-	return cli.Command{
-		Name:      "applications",
-		ArgsUsage: "",
-		Aliases:   []string{"apps"},
-		Usage:     "list applications",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+func applicationCommand() TapCommand {
 
+	var applicationName string
+	var applicationNameFlag = cli.StringFlag{
+		Name:        "name",
+		Usage:       "`applicationName`",
+		Destination: &applicationName,
+	}
+
+	const manifestFileName = "manifest.json"
+
+	var archivePath string
+	var archivePathFlag = cli.StringFlag{
+		Name:        "archive-path",
+		Usage:       "`archivePath`",
+		Destination: &archivePath,
+	}
+
+	var replicas string
+	var replicasFlag = cli.StringFlag{ //TODO IntFlag
+		Name:        "replicas",
+		Usage:       "`numberOfReplicas`",
+		Destination: &replicas,
+	}
+
+	var listApplicationsCommand = TapCommand{
+		Name:  "list",
+		Usage: "list applications",
+		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().ListApplications()
 		},
 	}
-}
 
-func getApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "application",
-		ArgsUsage: "<applicationName>",
-		Aliases:   []string{"a"},
-		Usage:     "application instance details",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().GetApplication(c.Args().First())
+	var getApplicationCommand = TapCommand{
+		Name:          "info",
+		Usage:         "application instance details",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetApplication(applicationName)
 		},
 	}
-}
 
-func pushApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "push",
-		ArgsUsage: "(archive_path)",
-		Usage: "create application from archive provided or from compressed current directory by default,\n" +
+	var pushApplicationCommand = TapCommand{
+		Name: "push",
+		Usage: "create application from compressed current directory (by default) or from indicated tar archive,\n" +
 			"\tmanifest should be in current working directory",
-		Flags: GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
+		OptionalFlags: []cli.Flag{archivePathFlag},
+		MainAction: func(c *cli.Context) error {
+			if _, err := os.Stat(manifestFileName); os.IsNotExist(err) {
+				return fmt.Errorf(manifestFileName + " does not exist: create one with metadata about your application")
 			}
-
-			if _, err := os.Stat("manifest.json"); os.IsNotExist(err) {
-				return fmt.Errorf("manifest.json does not exist: create one with metadata about your application")
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
+			if "" == archivePath {
 				return newOAuth2Service().CompressCwdAndPushAsApplication()
 			}
-
-			return newOAuth2Service().PushApplication(c.Args().First())
+			return newOAuth2Service().PushApplication(archivePath)
 		},
 	}
-}
 
-func deleteApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "delete",
-		ArgsUsage: "<applicationName>",
-		Aliases:   []string{"d"},
-		Usage:     "delete application",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().DeleteApplication(c.Args().First())
+	var deleteApplicationCommand = TapCommand{
+		Name:          "delete",
+		Usage:         "delete application",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().DeleteApplication(applicationName)
 		},
 	}
-}
 
-func startApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "start",
-		ArgsUsage: "<applicationName>",
-		Usage:     "start application with single instance",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().StartApplication(c.Args().First())
+	var startApplicationCommand = TapCommand{
+		Name:          "start",
+		Usage:         "start application",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().StartApplication(applicationName)
 		},
 	}
-}
 
-func stopApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "stop",
-		ArgsUsage: "<applicationName>",
-		Usage:     "stop all application instances",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().StopApplication(c.Args().First())
+	var stopApplicationCommand = TapCommand{
+		Name:          "stop",
+		Usage:         "stop application",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().StopApplication(applicationName)
 		},
 	}
-}
 
-func restartApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "restart",
-		ArgsUsage: "<applicationName>",
-		Usage:     "restart application",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().RestartApplication(c.Args().First())
+	var restartApplicationCommand = TapCommand{
+		Name:          "restart",
+		Usage:         "restart application",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().RestartApplication(applicationName)
 		},
 	}
-}
 
-func scaleApplicationCommand() cli.Command {
-	return cli.Command{
-		Name:      "scale",
-		ArgsUsage: "<applicationName> <instances>",
-		Aliases:   []string{"sc"},
-		Usage:     "scale application",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 2)
-			if err != nil {
-				return err
-			}
-
-			i, errr := strconv.Atoi(c.Args().Get(1))
+	var scaleApplicationCommand = TapCommand{
+		Name:          "scale",
+		Usage:         "scale application",
+		RequiredFlags: []cli.Flag{applicationNameFlag, replicasFlag},
+		MainAction: func(c *cli.Context) error {
+			i, errr := strconv.Atoi(replicas)
 			if errr != nil {
 				return cli.NewExitError(errr.Error(), -1)
 			}
+			return newOAuth2Service().ScaleApplication(applicationName, i)
+		},
+	}
 
-			return newOAuth2Service().ScaleApplication(c.Args().First(), i)
+	var getInstanceLogsCommand = TapCommand{
+		Name:          "logs",
+		Usage:         "get logs for all containers in instance",
+		RequiredFlags: []cli.Flag{applicationNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetInstanceLogs(applicationName)
+		},
+	}
+
+	return TapCommand{
+		Name:  "application",
+		Usage: "application context commands",
+		Subcommands: []TapCommand{
+			listApplicationsCommand,
+			getApplicationCommand,
+			pushApplicationCommand,
+			deleteApplicationCommand,
+			startApplicationCommand,
+			stopApplicationCommand,
+			restartApplicationCommand,
+			scaleApplicationCommand,
+			getInstanceLogsCommand,
+		},
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
 		},
 	}
 }

@@ -31,15 +31,12 @@ VERSION:
    0.8.0
 
 COMMANDS:
-     login                    login to TAP
-     logout                   logout of TAP (Dan's guess)
-     target, t                print actual credentials
-     catalog, o               list available catalog offerings
-     create-offering, co      create new catalog offering
-     delete-offering, do      delete catalog offering
+     login                    login to TAP. If you don't provide password you'll be promped for it.
+     info                     prints info about current api and user
+     offering                 offering context commands
      create-service, cs       create instance of service
      delete-service, ds       delete instance of service
-     service-start            service start
+     service-start            start service
      service-stop             stop all service instances
      service-restart          restart service
      expose-service, expose   expose service ports
@@ -49,9 +46,9 @@ COMMANDS:
      push                     create application from archive provided or from compressed current directory by default,
                               manifest should be in current working directory
      applications, apps       list applications
-     application, a           list application instance details
+     application, a           application instance details
      services, svcs           list all service instances
-     service, s               list service instance details
+     service, s               service instance details
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances
@@ -60,18 +57,41 @@ COMMANDS:
      credentials, creds       get credentials for all containers in service instance
      delete, d                delete application
      invite                   invite new user to TAP
-     reinvite                 resend invitation to user
+     reinvite                 resend invitation for user
      users                    list platform users
      invitations, invs        list pending invitations
      delete-invitation, di    delete invitation
      delete-user, du          delete user from TAP
      chpasswd                 change password of currently logged user
-     help, h                  show a list of commands or help for one command
+     help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
    --help, -h                   show help
    --version, -V                print the version
+```
+
+## Offerings
+
+### Context info
+```
+./tap offering
+NAME:
+   TAP CLI offering - offering context commands
+
+USAGE:
+   TAP CLI offering command [command options] [arguments...]
+
+COMMANDS:
+     info    show information about specific offering
+     list    list available offerings
+     create  create new offering
+     delete  delete offering
+
+OPTIONS:
+   --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
+   --help, -h                   show help
+
 ```
 
 ## Examples

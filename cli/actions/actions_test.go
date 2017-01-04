@@ -26,6 +26,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/golang/mock/gomock"
 	"github.com/trustedanalytics/tap-api-service/models"
 	"github.com/trustedanalytics/tap-api-service/uaa-connector"
 	"github.com/trustedanalytics/tap-api-service/user-management-connector"
@@ -74,9 +75,15 @@ func prepareIntroduceMock(c ActionsConfig, err error) {
 		Return(err)
 }
 
+func setupActionsTest(t *testing.T) (ActionsConfig, *gomock.Controller) {
+	config, mockCtrl := test.SetApiAndLoginServiceMocks(t)
+	actionsConfig := ActionsConfig{config}
+	return actionsConfig, mockCtrl
+}
+
 func TestLoginActions(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	Convey("Test Login command", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
 
 		actionsConfig.ApiServiceLogin.(*api.MockTapApiServiceLoginApi).
 			EXPECT().
@@ -130,12 +137,17 @@ func TestLoginActions(t *testing.T) {
 			So(string(b), ShouldEqual, string(expectedCredsFileContent))
 			So(stdout, ShouldContainSubstring, "Authentication succeeded")
 		})
+
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestSendInvitationCommand(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	Convey("Test Login command", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
+
 		Convey("Should fail when inviting error occurs", func() {
 			errorMsg := "cannot invite"
 			test.FillCredentialsTestFile(expectedCredsFileContent)
@@ -164,14 +176,18 @@ func TestSendInvitationCommand(t *testing.T) {
 
 			So(stdout, ShouldContainSubstring, fmt.Sprintf("User %q successfully invited", login))
 		})
+
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestDeleteUserCommand(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	Convey("Test delete-user command", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
 		errorMsg := "error message"
 
 		Convey("Should fail when no user exists", func() {
@@ -197,11 +213,14 @@ func TestDeleteUserCommand(t *testing.T) {
 
 			So(stdout, ShouldContainSubstring, fmt.Sprintf("User %q successfully removed\n", login))
 		})
+
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestCatalogCommand(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	fakeOff1 := test.NewFakeOffering(map[string]string{"name": "OFFERING_1", "offering_id": "offering_id_1", "plan_name": "PLAN_1", "plan_id": "plan_id_1", "desc": "DESC_1", "state": "READY"})
@@ -209,6 +228,8 @@ func TestCatalogCommand(t *testing.T) {
 	fakeOff3 := test.NewFakeOffering(map[string]string{"name": "OFFERING_3", "offering_id": "offering_id_3", "plan_name": "PLAN_3", "plan_id": "plan_id_3", "desc": "DESC_3", "state": "READY"})
 
 	Convey("Test catalog command", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
+
 		Convey("Should pretty print offerings list", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
@@ -233,11 +254,14 @@ func TestCatalogCommand(t *testing.T) {
 				So(lines[5], ShouldContainSubstring, val)
 			}
 		})
+
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestListApplicationsCommand(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
 	test.FillCredentialsTestFile(expectedCredsFileContent)
 
 	header := []string{"NAME", "IMAGE STATE", "STATE", "REPLICATION", "MEMORY", "DISK", "URLS", "CREATED BY", "CREATE", "UPDATED BY", "UPDATE", "MESSAGE"}
@@ -287,6 +311,8 @@ func TestListApplicationsCommand(t *testing.T) {
 	fakeApp2 := test.NewFakeAppInstance(fakeApp2Params)
 	fakeApp3 := test.NewFakeAppInstance(fakeApp3Params)
 	Convey("Test list applications command", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
+
 		Convey("Should pretty print applications list", func() {
 			actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 				EXPECT().
@@ -315,16 +341,20 @@ func TestListApplicationsCommand(t *testing.T) {
 				So(lines[5], ShouldContainSubstring, val)
 			}
 		})
+
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestUnbindInstance(t *testing.T) {
-	actionsConfig := ActionsConfig{test.SetApiAndLoginServiceMocks(t)}
-
 	fakeApplications := GetFakeApplicationInstances()
 	fakeServices := GetFakeServiceInstances()
 
 	Convey("Testing UnbindInstance", t, func() {
+		actionsConfig, mockCtrl := setupActionsTest(t)
+
 		actionsConfig.ApiService.(*api.MockTapApiServiceApi).
 			EXPECT().
 			ListApplicationInstances().
@@ -438,6 +468,10 @@ func TestUnbindInstance(t *testing.T) {
 					So(err, ShouldNotBeNil)
 				})
 			})
+		})
+
+		Reset(func() {
+			mockCtrl.Finish()
 		})
 	})
 

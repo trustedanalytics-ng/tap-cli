@@ -45,9 +45,7 @@ func GetCommands() []cli.Command {
 	return []cli.Command{
 		loginCommand().ToCliCommand(),
 		TapInfoCommand().ToCliCommand(),
-		listOfferings(),
-		createOfferingCommand(),
-		deleteOfferingCommand(),
+		offeringCommands().ToCliCommand(),
 		createServiceCommand(),
 		deleteServiceCommand(),
 		startServiceCommand(),

@@ -46,11 +46,10 @@ func GetFakeServiceInstances() []models.ServiceInstance {
 }
 
 func TestConvertFunction(t *testing.T) {
-	apiConfig := test.SetApiAndLoginServiceMocks(t)
-
-	fakeServices := getFakeServices()
-
 	Convey("Test convert method", t, func() {
+		apiConfig, mockCtrl := test.SetApiAndLoginServiceMocks(t)
+		fakeServices := getFakeServices()
+
 		Convey("Should fail when GetOfferings return err", func() {
 			fakeErr := errors.New("Error_msg")
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).
@@ -97,15 +96,17 @@ func TestConvertFunction(t *testing.T) {
 			So(serviceID, ShouldEqual, "offering_id_3")
 			So(planID, ShouldEqual, "plan_id_3")
 		})
+		Reset(func() {
+			mockCtrl.Finish()
+		})
 	})
 }
 
 func TestGetServiceID(t *testing.T) {
-	apiConfig := test.SetApiAndLoginServiceMocks(t)
-
-	fakeServices := getFakeServices()
-
 	Convey("Test getServiceID", t, func() {
+		apiConfig, mockCtrl := test.SetApiAndLoginServiceMocks(t)
+		fakeServices := getFakeServices()
+		
 		Convey("Should fail when GetOfferings returns error", func() {
 			fakeErr := errors.New("Error_msg")
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).
@@ -137,6 +138,9 @@ func TestGetServiceID(t *testing.T) {
 
 			So(err, ShouldBeNil)
 			So(serviceID, ShouldEqual, "offering_id_3")
+		})
+		Reset(func() {
+			mockCtrl.Finish()
 		})
 	})
 }

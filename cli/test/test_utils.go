@@ -30,12 +30,11 @@ import (
 	"github.com/trustedanalytics/tap-cli/api"
 )
 
-func SetApiAndLoginServiceMocks(t *testing.T) api.Config {
+func SetApiAndLoginServiceMocks(t *testing.T) (api.Config, *gomock.Controller) {
 	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
 	apiServiceMock := api.NewMockTapApiServiceApi(mockCtrl)
 	apiServiceLoginMock := api.NewMockTapApiServiceLoginApi(mockCtrl)
-	return api.Config{ApiService: apiServiceMock, ApiServiceLogin: apiServiceLoginMock}
+	return api.Config{ApiService: apiServiceMock, ApiServiceLogin: apiServiceLoginMock}, mockCtrl
 }
 
 func NewFakeAppInstance(m map[string]string) models.ApplicationInstance {

@@ -52,7 +52,7 @@ mock_update:
 	./add_license.sh
 
 test: verify_gopath
-	go test --cover $(APP_DIR_LIST)
+	CGO_ENABLED=0 go test --cover -tags netgo $(APP_DIR_LIST)
 
 prepare_temp:
 	mkdir -p temp/src/github.com/trustedanalytics/tap-cli

@@ -31,15 +31,20 @@ import (
 )
 
 const DefaultLogLevel = logger.LevelCritical
-const requiredFlagMissingExitCode = 3
-const errorReadingPassword = 4
+const (
+	requiredFlagMissingExitCode = 3
+	errorReadingPassword        = 4
+	flagDestinationNil          = 5
+)
 
 var loggerVerbosity string
 
 func GetCommands() []cli.Command {
+	//TODO: toCommands(TapCommand{ ... }) at the end of DPNG-11890
+
 	return []cli.Command{
-		loginCommand(),
-		TapInfoCommand,
+		loginCommand().ToCliCommand(),
+		TapInfoCommand().ToCliCommand(),
 		listOfferings(),
 		createOfferingCommand(),
 		deleteOfferingCommand(),
@@ -107,6 +112,10 @@ func sumFlags(a []cli.Flag, b []cli.Flag) []cli.Flag {
 }
 
 func checkRequiredStringFlag(flag cli.StringFlag, ctx *cli.Context) {
+	if flag.Destination == nil {
+		fmt.Println(flag.Name + " Destination not set. This is a bug in the application. Please contact your administrator.")
+		cli.OsExiter(flagDestinationNil)
+	}
 	value := *flag.Destination
 	if value == "" {
 		fmt.Println("\nMISSING PARAMETER: '", flag.Name, "'\n\nCommand usage:")

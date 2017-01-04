@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2016 Intel Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package commands
 
 import (
@@ -11,19 +27,17 @@ import (
 	"github.com/urfave/cli"
 )
 
-var TapInfoCommand = cli.Command{
-	Name:  "[info]",
-	Usage: "prints info about current api and user",
-	Flags: GetCommonFlags(),
-	Action: func(c *cli.Context) error {
-		if err := handleCommonFlags(c); err != nil {
-			return err
-		}
-		return newOAuth2Service().Target()
-	},
+func TapInfoCommand() TapCommand {
+	return TapCommand{
+		Name:  "info",
+		Usage: "prints info about current api and user",
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().Target()
+		},
+	}
 }
 
-func loginCommand() cli.Command {
+func loginCommand() TapCommand {
 
 	var apiUrl string
 	var apiFlag = cli.StringFlag{
@@ -31,11 +45,13 @@ func loginCommand() cli.Command {
 		Usage:       "TAP `API` you would like to use",
 		Destination: &apiUrl,
 	}
+
 	var username string
 	var usernameFlag = cli.StringFlag{
 		Name:        "username",
 		Destination: &username,
 	}
+
 	var password string
 	var passwordFlag = cli.StringFlag{
 		Name:        "password",
@@ -43,17 +59,12 @@ func loginCommand() cli.Command {
 		Destination: &password,
 	}
 
-	return cli.Command{
-		Name:      "login",
-		Usage:     "login to TAP. If you don't provide password you'll be promped for it.",
-		ArgsUsage: "--" + apiFlag.Name + "=<api address> --" + usernameFlag.Name + "=<username> [--" + passwordFlag.Name + "=<password>]",
-		Flags:     sumFlags([]cli.Flag{apiFlag, usernameFlag, passwordFlag}, GetCommonFlags()),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-			checkRequiredStringFlag(apiFlag, c)
-			checkRequiredStringFlag(usernameFlag, c)
+	return TapCommand{
+		Name:          "login",
+		Usage:         "login to TAP. If you don't provide password you'll be promped for it.",
+		OptionalFlags: []cli.Flag{passwordFlag},
+		RequiredFlags: []cli.Flag{apiFlag, usernameFlag},
+		MainAction: func(c *cli.Context) error {
 			if password == "" {
 				password = promptForPassword()
 			}

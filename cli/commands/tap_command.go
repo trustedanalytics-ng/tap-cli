@@ -82,6 +82,9 @@ func extractFlagUse(flag cli.Flag) string {
 	//this returns string in a form: "--api API     TAP API you would like to use" (used in OPTIONS section)
 	//I parse this string to comply to placeholders names used in this section
 	splitted := strings.Split(stringifiedFlag, "\t")
+	if _, ok := flag.(cli.BoolFlag); ok {
+		return splitted[0]
+	}
 	splitted = strings.SplitN(splitted[0], " ", 2)
 	return splitted[0] + "=<" + splitted[1] + ">"
 }

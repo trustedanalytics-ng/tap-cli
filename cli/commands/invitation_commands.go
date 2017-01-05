@@ -29,7 +29,7 @@ func invitationsCommand() TapCommand {
 	confirmed := false
 	var confirmationFlag = cli.BoolFlag{
 		Name:        "yes",
-		Usage:       "`u`se with caution when want to suppress removal confirmation",
+		Usage:       "use with caution when want to suppress removal confirmation",
 		Destination: &confirmed,
 	}
 

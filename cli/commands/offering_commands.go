@@ -18,53 +18,14 @@ package commands
 
 import "github.com/urfave/cli"
 
-//catalog -> offering
-func offeringCommands() TapCommand {
-	return TapCommand{
-		Name:  "offering",
-		Usage: "offering context commands",
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
-		Subcommands: []TapCommand{
-			infoOfferingCommand(),
-			listOfferingsCommand(),
-			createOfferingCommand(),
-			deleteOfferingCommand(),
-		},
-	}
-}
-
-func infoOfferingCommand() TapCommand {
+func offeringCommand() TapCommand {
 	var name string
 	var nameFlag = cli.StringFlag{
 		Name:        "name",
-		Usage:       "`name of offering` you would like to display",
+		Usage:       "`name of offering`",
 		Destination: &name,
 	}
 
-	return TapCommand{
-		Name:          "info",
-		Usage:         "show information about specific offering",
-		RequiredFlags: []cli.Flag{nameFlag},
-		MainAction: func(c *cli.Context) error {
-			return newOAuth2Service().GetOffering(name)
-		},
-	}
-}
-
-func listOfferingsCommand() TapCommand {
-	return TapCommand{
-		Name:  "list",
-		Usage: "list available offerings",
-		MainAction: func(c *cli.Context) error {
-			return newOAuth2Service().ListOfferings()
-		},
-	}
-}
-
-func createOfferingCommand() TapCommand {
 	var manifestPath string
 	var manifestFlag = cli.StringFlag{
 		Name:        "manifest",
@@ -73,7 +34,31 @@ func createOfferingCommand() TapCommand {
 		Destination: &manifestPath,
 	}
 
-	return TapCommand{
+	confirmed := false
+	var confirmationFlag = cli.BoolFlag{
+		Name:        "yes",
+		Usage:       "use with caution when want to suppress removal confirmation",
+		Destination: &confirmed,
+	}
+
+	var infoOfferingCommand = TapCommand{
+		Name:          "info",
+		Usage:         "show information about specific offering",
+		RequiredFlags: []cli.Flag{nameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetOffering(name)
+		},
+	}
+
+	var listOfferingsCommand = TapCommand{
+		Name:  "list",
+		Usage: "list available offerings",
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().ListOfferings()
+		},
+	}
+
+	var createOfferingCommand = TapCommand{
 		Name:          "create",
 		Usage:         "create new offering",
 		RequiredFlags: []cli.Flag{manifestFlag},
@@ -81,22 +66,33 @@ func createOfferingCommand() TapCommand {
 			return newOAuth2Service().CreateOffering(manifestPath)
 		},
 	}
-}
 
-func deleteOfferingCommand() TapCommand {
-	var name string
-	var nameFlag = cli.StringFlag{
-		Name:        "name",
-		Usage:       "`name of offering` you would like to delete",
-		Destination: &name,
-	}
-
-	return TapCommand{
+	var deleteOfferingCommand = TapCommand{
 		Name:          "delete",
 		Usage:         "delete offering",
 		RequiredFlags: []cli.Flag{nameFlag},
+		OptionalFlags: []cli.Flag{confirmationFlag},
 		MainAction: func(c *cli.Context) error {
+			if !confirmed {
+				err := removalConfirmationPrompt("offering " + name)
+				cli.HandleExitCoder(err)
+			}
 			return newOAuth2Service().DeleteOffering(name)
+		},
+	}
+
+	return TapCommand{
+		Name:  "offering",
+		Usage: "offering context commands",
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
+		},
+		Subcommands: []TapCommand{
+			infoOfferingCommand,
+			listOfferingsCommand,
+			createOfferingCommand,
+			deleteOfferingCommand,
 		},
 	}
 }

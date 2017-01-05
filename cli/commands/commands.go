@@ -17,13 +17,13 @@
 package commands
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/urfave/cli"
 
-	"bufio"
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/trustedanalytics/tap-cli/cli/actions"
@@ -46,7 +46,7 @@ func GetCommands() []cli.Command {
 	return []cli.Command{
 		loginCommand().ToCliCommand(),
 		TapInfoCommand().ToCliCommand(),
-		offeringCommands().ToCliCommand(),
+		offeringCommand().ToCliCommand(),
 		serviceCommand().ToCliCommand(),
 		listInstanceBindingsCommand(),
 		bindInstanceCommand(),

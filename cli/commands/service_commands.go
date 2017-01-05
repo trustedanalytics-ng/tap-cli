@@ -50,9 +50,16 @@ func serviceCommand() TapCommand {
 		Value: &envs,
 	}
 
+	confirmed := false
+	var confirmationFlag = cli.BoolFlag{
+		Name:        "yes",
+		Usage:       "use with caution when want to suppress removal confirmation",
+		Destination: &confirmed,
+	}
+
 	var listServiceCommand = TapCommand{
-		Name:       "list",
-		Usage:      "list services",
+		Name:  "list",
+		Usage: "list services",
 		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().ListServices()
 		},
@@ -85,7 +92,12 @@ func serviceCommand() TapCommand {
 		Name:          "delete",
 		Usage:         "delete service instance",
 		RequiredFlags: []cli.Flag{serviceNameFlag},
+		OptionalFlags: []cli.Flag{confirmationFlag},
 		MainAction: func(c *cli.Context) error {
+			if !confirmed {
+				err := removalConfirmationPrompt("service instance " + serviceName)
+				cli.HandleExitCoder(err)
+			}
 			return newOAuth2Service().DeleteService(serviceName)
 		},
 	}
@@ -127,8 +139,8 @@ func serviceCommand() TapCommand {
 	}
 
 	var serviceLogsCommand = TapCommand{
-		Name:          "logs",
-		Usage:         "service instances's logs",
+		Name:        "logs",
+		Usage:       "service instances's logs",
 		Subcommands: []TapCommand{serviceLogsShowCommand},
 		MainAction: func(c *cli.Context) error {
 			cli.ShowCommandHelp(c, c.Command.Name)
@@ -146,8 +158,8 @@ func serviceCommand() TapCommand {
 	}
 
 	var serviceCredentialsCommand = TapCommand{
-		Name:          "credentials",
-		Usage:         "service instances's credentials",
+		Name:        "credentials",
+		Usage:       "service instances's credentials",
 		Subcommands: []TapCommand{serviceCredentialsShowCommand},
 		MainAction: func(c *cli.Context) error {
 			cli.ShowCommandHelp(c, c.Command.Name)

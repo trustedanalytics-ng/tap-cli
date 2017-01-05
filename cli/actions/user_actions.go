@@ -28,7 +28,7 @@ func (a *ActionsConfig) ChangeCurrentUserPassword(currentPassword, newPassword s
 		fmt.Println("Changing user password failed")
 		return err
 	}
-	fmt.Println("User password successfully changed")
+	fmt.Println("User password successfully changed.\nPlease remember to login again now.")
 	return nil
 }
 

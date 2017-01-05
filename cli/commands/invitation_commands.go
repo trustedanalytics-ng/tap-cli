@@ -18,82 +18,73 @@ package commands
 
 import "github.com/urfave/cli"
 
-func listInvitationsCommand() cli.Command {
-	return cli.Command{
-		Name:    "invitations",
-		Usage:   "list pending invitations",
-		Aliases: []string{"invs"},
-		Flags:   GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+func invitationsCommand() TapCommand {
+	var email string
+	var emailFlag = cli.StringFlag{
+		Name:        "email",
+		Usage:       "`user email`",
+		Destination: &email,
+	}
 
+	confirmed := false
+	var confirmationFlag = cli.BoolFlag{
+		Name:        "yes",
+		Usage:       "`u`se with caution when want to suppress removal confirmation",
+		Destination: &confirmed,
+	}
+
+	var listInvitationsCommand = TapCommand{
+		Name:  "list",
+		Usage: "list pending invitations",
+		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().ListInvitations()
 		},
 	}
-}
 
-func sendInvitationCommand() cli.Command {
-	return cli.Command{
-		Name:      "invite",
-		Usage:     "invite new user to TAP",
-		ArgsUsage: "<email>",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().SendInvitation(c.Args().First())
+	var sendInvitationCommand = TapCommand{
+		Name:          "send",
+		Usage:         "invite new user to TAP",
+		RequiredFlags: []cli.Flag{emailFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().SendInvitation(email)
 		},
 	}
-}
 
-func deleteInvitationCommand() cli.Command {
-	return cli.Command{
-		Name:      "delete-invitation",
-		Usage:     "delete invitation",
-		Aliases:   []string{"di"},
-		ArgsUsage: "<email>",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
+	var deleteInvitationCommand = TapCommand{
+		Name:          "delete",
+		Usage:         "delete invitation for given `email`",
+		RequiredFlags: []cli.Flag{emailFlag},
+		OptionalFlags: []cli.Flag{confirmationFlag},
+		MainAction: func(c *cli.Context) error {
+			if !confirmed {
+				err := removalConfirmationPrompt("invitation for " + email)
+				cli.HandleExitCoder(err)
 			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().DeleteInvitation(c.Args().First())
+			return newOAuth2Service().DeleteInvitation(email)
 		},
 	}
-}
 
-func resendInvitationCommand() cli.Command {
-	return cli.Command{
-		Name:      "reinvite",
-		Usage:     "resend invitation for user",
-		ArgsUsage: "<email>",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+	var resendInvitationCommand = TapCommand{
+		Name:          "resend",
+		Usage:         "resend invitation for user",
+		RequiredFlags: []cli.Flag{emailFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().ResendInvitation(email)
+		},
+	}
 
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().ResendInvitation(c.Args().First())
+	return TapCommand{
+		Name:  "invitation",
+		Usage: "user invitation context commands",
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
+		},
+		Subcommands: []TapCommand{
+			listInvitationsCommand,
+			sendInvitationCommand,
+			resendInvitationCommand,
+			deleteInvitationCommand,
 		},
 	}
 }

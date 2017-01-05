@@ -23,6 +23,7 @@ import (
 
 	"github.com/urfave/cli"
 
+	"bufio"
 	"github.com/trustedanalytics/tap-api-service/client"
 	"github.com/trustedanalytics/tap-cli/api"
 	"github.com/trustedanalytics/tap-cli/cli/actions"
@@ -59,13 +60,7 @@ func GetCommands() []cli.Command {
 		restartApplicationCommand(),
 		getInstanceLogsCommand(),
 		deleteApplicationCommand(),
-		sendInvitationCommand(),
-		resendInvitationCommand(),
-		listUsersCommand(),
-		listInvitationsCommand(),
-		deleteInvitationCommand(),
-		deleteUserCommand(),
-		changeCurrentUserPasswordCommand(),
+		userCommand().ToCliCommand(),
 	}
 }
 
@@ -133,6 +128,16 @@ func validateAndSplitEnvFlags(envs cli.StringSlice) (map[string]string, *cli.Exi
 		result[key] = value
 	}
 	return result, nil
+}
+
+func removalConfirmationPrompt(resourceName string) error {
+	fmt.Printf("Are you sure you want to delete %s? [y/N]: ", resourceName)
+	text, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	text = strings.TrimSpace(strings.ToLower(text))
+	if text != "y" && text != "yes" {
+		return cli.NewExitError("Canceled", -1)
+	}
+	return nil
 }
 
 func newOAuth2Service() *actions.ActionsConfig {

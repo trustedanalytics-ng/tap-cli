@@ -36,7 +36,7 @@ func (a *ActionsConfig) ResendInvitation(email string) error {
 		fmt.Printf("Resending invitation to email %s failed\n", email)
 		return err
 	}
-	fmt.Printf("User %q successfully invited\n", email)
+	fmt.Printf("User %q successfully reinvited\n", email)
 	return nil
 }
 

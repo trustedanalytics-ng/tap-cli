@@ -66,23 +66,23 @@ func loginCommand() TapCommand {
 		RequiredFlags: []cli.Flag{apiFlag, usernameFlag},
 		MainAction: func(c *cli.Context) error {
 			if password == "" {
-				password = promptForPassword()
+				password = promptForSensitive("Password")
 			}
 			return newBasicAuthService(apiUrl, username, password).Login()
 		},
 	}
 }
 
-func promptForPassword() string {
-	fmt.Print("Password: ")
+func promptForSensitive(name string) string {
+	fmt.Printf("%s: ", name)
 	pass, err := gopass.GetPasswd()
 	if err != nil {
-		fmt.Println("Error reading password: ", err)
+		fmt.Printf("Error reading %s: %s\n", name, err)
 		cli.OsExiter(errorReadingPassword)
 	}
 	password := string(pass)
 	if password == "" {
-		fmt.Println("Password cannot be empty")
+		fmt.Printf("%s cannot be empty\n", name)
 		cli.OsExiter(errorReadingPassword)
 	}
 	return password

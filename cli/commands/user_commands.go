@@ -18,60 +18,84 @@ package commands
 
 import "github.com/urfave/cli"
 
-func listUsersCommand() cli.Command {
-	return cli.Command{
-		Name:  "users",
-		Usage: "list platform users",
-		Flags: GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+func userCommand() TapCommand {
+	var username string
+	var usernameFlag = cli.StringFlag{
+		Name:        "name",
+		Usage:       "`username`",
+		Destination: &username,
+	}
 
+	var currentPass string
+	var currentPassFlag = cli.StringFlag{
+		Name:        "current",
+		Usage:       "`current password`",
+		Destination: &currentPass,
+	}
+
+	var newPass string
+	var newPassFlag = cli.StringFlag{
+		Name:        "new",
+		Usage:       "`new password`",
+		Destination: &newPass,
+	}
+
+	confirmed := false
+	var confirmationFlag = cli.BoolFlag{
+		Name:        "yes",
+		Usage:       "`u`se with caution when want to suppress removal confirmation",
+		Destination: &confirmed,
+	}
+
+	var listUsersCommand = TapCommand{
+		Name:  "list",
+		Usage: "list platform users",
+		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().ListUsers()
 		},
 	}
-}
 
-func deleteUserCommand() cli.Command {
-	return cli.Command{
-		Name:      "delete-user",
-		Usage:     "delete user from TAP",
-		Aliases:   []string{"du"},
-		ArgsUsage: "<email>",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
+	var deleteUserCommand = TapCommand{
+		Name:          "delete",
+		Usage:         "delete user from TAP",
+		OptionalFlags: []cli.Flag{confirmationFlag},
+		RequiredFlags: []cli.Flag{usernameFlag},
+		MainAction: func(c *cli.Context) error {
+			if !confirmed {
+				err := removalConfirmationPrompt("user " + username)
+				cli.HandleExitCoder(err)
 			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().DeleteUser(c.Args().First())
+			return newOAuth2Service().DeleteUser(username)
 		},
 	}
-}
 
-func changeCurrentUserPasswordCommand() cli.Command {
-	return cli.Command{
-		Name:      "chpasswd",
-		Usage:     "change password of currently logged user",
-		ArgsUsage: "<currentPassword> <newPassword>",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
+	var changeCurrentUserPasswordCommand = TapCommand{
+		Name:          "passwd",
+		Usage:         "change password of currently logged user",
+		OptionalFlags: []cli.Flag{currentPassFlag, newPassFlag},
+		MainAction: func(c *cli.Context) error {
+			if currentPass == "" {
+				currentPass = promptForSensitive("Current Password")
 			}
-
-			err := validateArgs(c, 2)
-			if err != nil {
-				return err
+			if newPass == "" {
+				newPass = promptForSensitive("New Password")
 			}
+			return newOAuth2Service().ChangeCurrentUserPassword(currentPass, newPass)
+		},
+	}
 
-			return newOAuth2Service().ChangeCurrentUserPassword(c.Args().First(), c.Args().Get(1))
+	return TapCommand{
+		Name:  "user",
+		Usage: "user context commands",
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
+		},
+		Subcommands: []TapCommand{
+			listUsersCommand,
+			deleteUserCommand,
+			changeCurrentUserPasswordCommand,
+			invitationsCommand(),
 		},
 	}
 }

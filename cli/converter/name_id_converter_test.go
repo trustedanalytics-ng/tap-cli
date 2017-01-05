@@ -106,7 +106,7 @@ func TestGetServiceID(t *testing.T) {
 	Convey("Test getServiceID", t, func() {
 		apiConfig, mockCtrl := test.SetApiAndLoginServiceMocks(t)
 		fakeServices := getFakeServices()
-		
+
 		Convey("Should fail when GetOfferings returns error", func() {
 			fakeErr := errors.New("Error_msg")
 			apiConfig.ApiService.(*api.MockTapApiServiceApi).

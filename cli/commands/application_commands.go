@@ -19,7 +19,6 @@ package commands
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/urfave/cli"
 )
@@ -29,7 +28,7 @@ func applicationCommand() TapCommand {
 	var applicationName string
 	var applicationNameFlag = cli.StringFlag{
 		Name:        "name",
-		Usage:       "`applicationName`",
+		Usage:       "`application name`",
 		Destination: &applicationName,
 	}
 
@@ -38,14 +37,14 @@ func applicationCommand() TapCommand {
 	var archivePath string
 	var archivePathFlag = cli.StringFlag{
 		Name:        "archive-path",
-		Usage:       "`archivePath`",
+		Usage:       "`path to archive with application`",
 		Destination: &archivePath,
 	}
 
-	var replicas string
-	var replicasFlag = cli.StringFlag{ //TODO IntFlag
+	var replicas int
+	var replicasFlag = cli.IntFlag{
 		Name:        "replicas",
-		Usage:       "`numberOfReplicas`",
+		Usage:       "`number of replicas`",
 		Destination: &replicas,
 	}
 
@@ -123,11 +122,7 @@ func applicationCommand() TapCommand {
 		Usage:         "scale application",
 		RequiredFlags: []cli.Flag{applicationNameFlag, replicasFlag},
 		MainAction: func(c *cli.Context) error {
-			i, errr := strconv.Atoi(replicas)
-			if errr != nil {
-				return cli.NewExitError(errr.Error(), -1)
-			}
-			return newOAuth2Service().ScaleApplication(applicationName, i)
+			return newOAuth2Service().ScaleApplication(applicationName, replicas)
 		},
 	}
 

@@ -34,12 +34,7 @@ COMMANDS:
      login                    login to TAP. If you don't provide password you'll be promped for it.
      info                     prints info about current api and user
      offering                 offering context commands
-     create-service, cs       create instance of service
-     delete-service, ds       delete instance of service
-     service-start            start service
-     service-stop             stop all service instances
-     service-restart          restart service
-     expose-service, expose   expose service ports
+     service                  service context commands
      bindings                 list bindings
      bind-instance, bind      bind instance to another
      unbind-instance, unbind  unbind instance from another
@@ -47,14 +42,11 @@ COMMANDS:
                               manifest should be in current working directory
      applications, apps       list applications
      application, a           application instance details
-     services, svcs           list all service instances
-     service, s               service instance details
      scale, sc                scale application
      start                    start application with single instance
      stop                     stop all application instances
      restart                  restart application
      logs, log                get logs for all containers in instance
-     credentials, creds       get credentials for all containers in service instance
      delete, d                delete application
      invite                   invite new user to TAP
      reinvite                 resend invitation for user
@@ -91,6 +83,37 @@ COMMANDS:
 OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
    --help, -h                   show help
+
+```
+
+## Services
+
+### Context info
+```
+./tap service
+NAME:
+   TAP CLI service - service context commands
+
+USAGE:
+   TAP CLI service command [command options] [arguments...]
+
+COMMANDS:
+     list         list services
+     info         service instance details
+     create       create new service instance
+     delete       delete service instance
+     start        start service instance
+     stop         stop service instance
+     restart      restart service instance
+     logs         service instances's logs
+     credentials  service instances's credentials
+     expose       expose service instance under externally available URL
+     unexpose     unexpose service instance and remove externally available URL
+
+OPTIONS:
+   --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
+   --help, -h                   show help
+
 
 ```
 

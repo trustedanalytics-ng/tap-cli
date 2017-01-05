@@ -17,216 +17,181 @@
 package commands
 
 import (
-	"errors"
-	"strconv"
-
 	"github.com/urfave/cli"
 )
 
-func listServicesCommand() cli.Command {
-	return cli.Command{
-		Name:      "services",
-		ArgsUsage: "",
-		Aliases:   []string{"svcs"},
-		Usage:     "list all service instances",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+func serviceCommand() TapCommand {
 
+	var serviceName string
+	var serviceNameFlag = cli.StringFlag{
+		Name:        "name",
+		Usage:       "`serviceName`",
+		Destination: &serviceName,
+	}
+
+	var offeringName string
+	var offeringNameFlag = cli.StringFlag{
+		Name:        "offering",
+		Usage:       "`offeringName`",
+		Destination: &offeringName,
+	}
+
+	var planName string
+	var planNameFlag = cli.StringFlag{
+		Name:        "plan",
+		Usage:       "`planName`",
+		Destination: &planName,
+	}
+
+	var envs cli.StringSlice
+	var envsFlag = cli.StringSliceFlag{
+		Name:  "envs",
+		Usage: "pass envs in format: `NAME=VALUE` this flag can be used multiple times",
+		Value: &envs,
+	}
+
+	var listServiceCommand = TapCommand{
+		Name:       "list",
+		Usage:      "list services",
+		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().ListServices()
 		},
 	}
-}
 
-func getServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "service",
-		ArgsUsage: "<serviceName>",
-		Aliases:   []string{"s"},
-		Usage:     "service instance details",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().GetService(c.Args().First())
+	var serviceInfoCommand = TapCommand{
+		Name:          "info",
+		Usage:         "service instance details",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetService(serviceName)
 		},
 	}
-}
 
-func createServiceCommand() cli.Command {
-	envsFlag := cli.StringSlice{}
-	return cli.Command{
-		Name:      "create-service",
-		ArgsUsage: "<service_name> <plan_name> <custom_name>",
-		Aliases:   []string{"cs"},
-		Usage:     "create instance of service",
-		Flags: sumFlags(GetCommonFlags(),
-			[]cli.Flag{
-				cli.StringSliceFlag{
-					Name:  "env, e",
-					Usage: "pass envs in format: `NAME=VALUE` this flag can be used multiple times",
-					Value: &envsFlag,
-				},
-			},
-		),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 3)
+	var createServiceCommand = TapCommand{
+		Name:          "create",
+		Usage:         "create new service instance",
+		RequiredFlags: []cli.Flag{serviceNameFlag, offeringNameFlag, planNameFlag},
+		OptionalFlags: []cli.Flag{envsFlag},
+		MainAction: func(c *cli.Context) error {
+			splitEnvs, err := validateAndSplitEnvFlags(envs)
 			if err != nil {
 				return err
 			}
-
-			envs, err := validateAndSplitEnvFlags(envsFlag)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().CreateServiceInstance(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2), envs)
+			return newOAuth2Service().CreateServiceInstance(offeringName, planName, serviceName, splitEnvs)
 		},
 	}
-}
 
-func deleteServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "delete-service",
-		ArgsUsage: "<service_custom_name>",
-		Aliases:   []string{"ds"},
-		Usage:     "delete instance of service",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-			return newOAuth2Service().DeleteService(c.Args().Get(0))
+	var deleteServiceCommand = TapCommand{
+		Name:          "delete",
+		Usage:         "delete service instance",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().DeleteService(serviceName)
 		},
 	}
-}
 
-func startServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "service-start",
-		ArgsUsage: "<service_custom_name>",
-		Usage:     "start service",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().StartService(c.Args().First())
+	var startServiceCommand = TapCommand{
+		Name:          "start",
+		Usage:         "start service instance",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().StartService(serviceName)
 		},
 	}
-}
 
-func stopServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "service-stop",
-		ArgsUsage: "<service_custom_name>",
-		Usage:     "stop all service instances",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().StopService(c.Args().First())
+	var stopServiceCommand = TapCommand{
+		Name:          "stop",
+		Usage:         "stop service instance",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().StopService(serviceName)
 		},
 	}
-}
 
-func restartServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "service-restart",
-		ArgsUsage: "<service_custom_name>",
-		Usage:     "restart service",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().RestartService(c.Args().First())
+	var restartServiceCommand = TapCommand{
+		Name:          "restart",
+		Usage:         "restart service instance",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().RestartService(serviceName)
 		},
 	}
-}
 
-func getServiceCredentialsCommand() cli.Command {
-	return cli.Command{
-		Name:      "credentials",
-		ArgsUsage: "<instanceName>",
-		Aliases:   []string{"creds"},
-		Usage:     "get credentials for all containers in service instance",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
-
-			err := validateArgs(c, 1)
-			if err != nil {
-				return err
-			}
-
-			return newOAuth2Service().GetServiceCredentials(c.Args().First())
+	var serviceLogsShowCommand = TapCommand{
+		Name:          "show",
+		Usage:         "show service instances's logs",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetInstanceLogs(serviceName)
 		},
 	}
-}
 
-func exposeServiceCommand() cli.Command {
-	return cli.Command{
-		Name:      "expose-service",
-		ArgsUsage: "<service_custom_name>, <should_expose>",
-		Aliases:   []string{"expose"},
-		Usage:     "expose service ports",
-		Flags:     GetCommonFlags(),
-		Action: func(c *cli.Context) error {
-			if err := handleCommonFlags(c); err != nil {
-				return err
-			}
+	var serviceLogsCommand = TapCommand{
+		Name:          "logs",
+		Usage:         "service instances's logs",
+		Subcommands: []TapCommand{serviceLogsShowCommand},
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
+		},
+	}
 
-			err := validateArgs(c, 2)
-			if err != nil {
-				return err
-			}
+	var serviceCredentialsShowCommand = TapCommand{
+		Name:          "show",
+		Usage:         "show service instances's credentials",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().GetServiceCredentials(serviceName)
+		},
+	}
 
-			exposed, parseErr := strconv.ParseBool(c.Args().Get(1))
-			if parseErr != nil {
-				return errors.New("exposed argument has to be a boolean value: true/false")
-			}
+	var serviceCredentialsCommand = TapCommand{
+		Name:          "credentials",
+		Usage:         "service instances's credentials",
+		Subcommands: []TapCommand{serviceCredentialsShowCommand},
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
+		},
+	}
 
-			return newOAuth2Service().ExposeService(c.Args().First(), exposed)
+	var exposeServiceCommand = TapCommand{
+		Name:          "expose",
+		Usage:         "expose service instance under externally available URL",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().ExposeService(serviceName, true)
+		},
+	}
+
+	var unexposeServiceCommand = TapCommand{
+		Name:          "unexpose",
+		Usage:         "unexpose service instance and remove externally available URL",
+		RequiredFlags: []cli.Flag{serviceNameFlag},
+		MainAction: func(c *cli.Context) error {
+			return newOAuth2Service().ExposeService(serviceName, false)
+		},
+	}
+
+	return TapCommand{
+		Name:  "service",
+		Usage: "service context commands",
+		Subcommands: []TapCommand{
+			listServiceCommand,
+			serviceInfoCommand,
+			createServiceCommand,
+			deleteServiceCommand,
+			startServiceCommand,
+			stopServiceCommand,
+			restartServiceCommand,
+			serviceLogsCommand,
+			serviceCredentialsCommand,
+			exposeServiceCommand,
+			unexposeServiceCommand,
+		},
+		MainAction: func(c *cli.Context) error {
+			cli.ShowCommandHelp(c, c.Command.Name)
+			return nil
 		},
 	}
 }

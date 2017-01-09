@@ -6,7 +6,7 @@
 There are no requirements for binary app.
 
 ### Compilation
-* git (for pulling repo only) 
+* git (for pulling repo only)
 * go >= 1.6
 
 ## Compilation
@@ -39,19 +39,15 @@ COMMANDS:
      bindings                 list bindings
      bind-instance, bind      bind instance to another
      unbind-instance, unbind  unbind instance from another
-     invite                   invite new user to TAP
-     reinvite                 resend invitation for user
-     users                    list platform users
-     invitations, invs        list pending invitations
-     delete-invitation, di    delete invitation
-     delete-user, du          delete user from TAP
-     chpasswd                 change password of currently logged user
+     user                     user context commands
      help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
    --help, -h                   show help
    --version, -V                print the version
+
+
 ```
 
 ## Offerings
@@ -108,6 +104,28 @@ OPTIONS:
 
 ```
 
+##Users
+
+###Context info
+```tap-cli user
+NAME:
+   TAP CLI user - user context commands
+
+USAGE:
+   TAP CLI user command [command options] [arguments...]
+
+COMMANDS:
+     list        list platform users
+     delete      delete user from TAP
+     passwd      change password of currently logged user
+     invitation  user invitation context commands
+
+OPTIONS:
+   --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
+   --help, -h                   show help
+```
+
+
 ## Examples
 
 ### Authentication flow
@@ -159,7 +177,7 @@ tar czvf python-application.tar.gz ./*
 }
 
 ```
-#### Push application 
+#### Push application
 
 ```
 ./tap application push --archive-path python-application.tar.gz
@@ -168,14 +186,14 @@ tar czvf python-application.tar.gz ./*
 
 ### Application preparation *Java*
 
-Build jar and prepare all dependencies 
+Build jar and prepare all dependencies
 
 #### Prepare run.sh script which will start an application:
 
 ```
 #!/usr/bin/env bash
 
-exec java -jar java-application-0.1.0.jar 
+exec java -jar java-application-0.1.0.jar
 ```
 
 #### Create an archive containing all files loosely:
@@ -195,7 +213,7 @@ tar czvf java-application.tar.gz ./*
 ```
 
 
-#### Push application 
+#### Push application
 
 ```
 ./tap application push --archive-path java-application.tar.gz

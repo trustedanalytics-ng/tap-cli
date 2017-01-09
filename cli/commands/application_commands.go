@@ -48,6 +48,13 @@ func applicationCommand() TapCommand {
 		Destination: &replicas,
 	}
 
+	confirmed := false
+	var confirmationFlag = cli.BoolFlag{
+		Name:        "yes",
+		Usage:       "use with caution when want to suppress removal confirmation",
+		Destination: &confirmed,
+	}
+
 	var listApplicationsCommand = TapCommand{
 		Name:  "list",
 		Usage: "list applications",
@@ -85,7 +92,12 @@ func applicationCommand() TapCommand {
 		Name:          "delete",
 		Usage:         "delete application",
 		RequiredFlags: []cli.Flag{applicationNameFlag},
+		OptionalFlags: []cli.Flag{confirmationFlag},
 		MainAction: func(c *cli.Context) error {
+			if !confirmed {
+				err := removalConfirmationPrompt("application " + applicationName)
+				cli.HandleExitCoder(err)
+			}
 			return newOAuth2Service().DeleteApplication(applicationName)
 		},
 	}

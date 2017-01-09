@@ -31,7 +31,15 @@ func Run() error {
 	app.Version = "0.8.0"
 	app.Commands = commands.GetCommands()
 	app.Flags = commands.GetCommonFlags()
-	app.Action = commands.TapInfoCommand().ToCliCommand().Action
+	app.Action = func(c *cli.Context) error {
+		if len(c.Args()) > 0 {
+			commands.UnrecognizedCommand(c.Args()[0])
+		} else {
+			commands.TapInfoCommand().MainAction(c)
+		}
+		commands.PrintHelpMsg()
+		return nil
+	}
 
 	//override version flag to change its shortcut from v to V (reserved for verbosity global flag)
 	cli.VersionFlag = cli.BoolFlag{

@@ -80,15 +80,10 @@ func (a *ActionsConfig) Target() error {
 		return err
 	}
 	printCredentials(creds)
-	printHelpMsg()
 	return nil
 }
 
 func printCredentials(creds api.Credentials) {
 	printableCredentials := []printer.Printable{printer.PrintableCredentials{Credentials: creds}}
 	printer.PrintTable(printableCredentials)
-}
-
-func printHelpMsg() {
-	fmt.Println("\tIf you need help use 'help' command.")
 }

@@ -101,6 +101,14 @@ func checkRequiredStringFlag(flag cli.StringFlag, ctx *cli.Context) {
 	}
 }
 
+func UnrecognizedCommand(command string) {
+	fmt.Println("\nUNRECOGNIZED COMMAND: '" + command + "'")
+}
+
+func PrintHelpMsg() {
+	fmt.Println("\tIf you need help use 'help' command.")
+}
+
 func validateArgs(c *cli.Context, mustCount int) *cli.ExitError {
 	if c.NArg() != mustCount {
 		return cli.NewExitError("not enough args: \n"+c.Command.Name+" "+c.Command.ArgsUsage, 1)

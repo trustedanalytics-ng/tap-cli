@@ -35,11 +35,11 @@ type ServiceInstance struct {
 }
 
 type ServiceInstanceRequest struct {
-	Name       string                           `json:"name"`
-	Type       catalogModels.InstanceType       `json:"type"`
-	OfferingId string                           `json:"offeringId"`
+	Name       string                           `json:"name" validate:"nonzero"`
+	Type       catalogModels.InstanceType       `json:"type" validate:"nonzero"`
+	OfferingId string                           `json:"offeringId" validate:"nonzero"`
 	Bindings   []catalogModels.InstanceBindings `json:"bindings"`
-	Metadata   []catalogModels.Metadata         `json:"metadata"`
+	Metadata   []catalogModels.Metadata         `json:"metadata" validate:"nonzero"`
 }
 
 func FilterServiceInstancesByName(services []ServiceInstance, serviceName string) []ServiceInstance {

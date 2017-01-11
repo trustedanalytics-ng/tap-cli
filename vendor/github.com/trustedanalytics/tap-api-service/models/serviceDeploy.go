@@ -22,6 +22,6 @@ import (
 
 type ServiceDeploy struct {
 	BrokerName string                               `json:"broker_name"`
-	Template   templateRepositoryModels.RawTemplate `json:"template"`
-	Services   []catalogModels.Service              `json:"services"`
+	Template   templateRepositoryModels.RawTemplate `json:"template" validate:"nonzero"`
+	Services   []catalogModels.Service              `json:"services" validate:"nonzero"`
 }

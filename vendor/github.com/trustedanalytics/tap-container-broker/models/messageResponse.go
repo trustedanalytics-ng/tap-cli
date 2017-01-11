@@ -24,6 +24,7 @@ const (
 	DeployResponseStatusInvalidConfiguration DeployResponseStatus = "invalid configuration"
 	DeployResponseStatusInvalidState         DeployResponseStatus = "invalid state"
 	DeployResponseStatusUnrecoverableError   DeployResponseStatus = "unrecoverable error"
+	DeployResponseStatusServiceNotFound      DeployResponseStatus = "service not found"
 )
 
 type MessageResponse struct {

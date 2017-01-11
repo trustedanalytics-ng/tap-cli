@@ -37,5 +37,5 @@ type ApplicationInstance struct {
 }
 
 type ScaleApplicationRequest struct {
-	Replicas int `json:"replicas"`
+	Replicas int `json:"replicas" validate:"min=0"`
 }

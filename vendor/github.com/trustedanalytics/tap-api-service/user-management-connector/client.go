@@ -29,12 +29,12 @@ const (
 )
 
 type InvitationRequest struct {
-	Email string `json:"email"`
+	Email string `json:"email" validate:"nonzero"`
 }
 
 type ChangePasswordRequest struct {
-	CurrentPasswd string `json:"current_password"`
-	NewPasswd     string `json:"new_password"`
+	CurrentPasswd string `json:"current_password" validate:"nonzero"`
+	NewPasswd     string `json:"new_password" validate:"nonzero"`
 }
 
 type ChangePasswordUaaRequest struct {
@@ -57,6 +57,10 @@ type UaaUser struct {
 	Username string `json:"username"`
 }
 
+type UserManagementFactory interface {
+	GetConfiguredUserManagementConnector(authorization string) UserManagementApi
+}
+
 type UserManagementApi interface {
 	InviteUser(email string) (*InvitationResponse, int, error)
 	ResendUserInvitation(email string) (int, error)
@@ -64,6 +68,7 @@ type UserManagementApi interface {
 	DeleteUser(email string) (int, error)
 	GetInvitations() ([]string, int, error)
 	GetUsers() ([]UaaUser, int, error)
+	DeleteUserInvitation(email string) (int, error)
 }
 
 type UserManagementApiConnectorFactory struct {
@@ -77,7 +82,7 @@ type UserManagementApiConnector struct {
 	Client        *http.Client
 }
 
-func (c *UserManagementApiConnectorFactory) GetConfiguredUserManagementConnector(authorization string) *UserManagementApiConnector {
+func (c *UserManagementApiConnectorFactory) GetConfiguredUserManagementConnector(authorization string) UserManagementApi {
 	return &UserManagementApiConnector{c.Address, authorization, c.Client}
 }
 

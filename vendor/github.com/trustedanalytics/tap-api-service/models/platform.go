@@ -16,22 +16,21 @@
 package models
 
 type PlatformInfo struct {
-	ApiEndpoint        string            `json:"api_endpoint"`
-	CliVersion         string            `json:"cli_version"`
-	CliUrl             string            `json:"cli_url"`
-	PlatformVersion    string            `json:"platform_version"`
-	PlatformComponents []ExtendedVersion `json:"platform_components"`
-	CoreOrganization   string            `json:"core_organization"`
-	ExternalTools      ExternalTools     `json:"external_tools"`
-	CdhVersion         string            `json:"cdh_version"`
-	K8sVersion         string            `json:"k8s_version"`
+	ApiEndpoint      string        `json:"api_endpoint"`
+	CliVersion       string        `json:"cli_version"`
+	CliUrl           string        `json:"cli_url"`
+	PlatformVersion  string        `json:"platform_version"`
+	CoreOrganization string        `json:"core_organization"`
+	ExternalTools    ExternalTools `json:"external_tools"`
+	CdhVersion       string        `json:"cdh_version"`
+	K8sVersion       string        `json:"k8s_version"`
 }
 
 type ExternalTools struct {
 	Visualizations []PlatformTool `json:"visualizations"`
 }
 
-type ExtendedVersion struct {
+type PlatformComponents struct {
 	Name          string `json:"name"`
 	ImageVersions string `json:"imageVersion"`
 	Signature     string `json:"signature"`

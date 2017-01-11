@@ -20,18 +20,19 @@ import (
 )
 
 type Offering struct {
-	Name          string                   `json:"name"`
-	DisplayName   string                   `json:"displayName"`
-	Provider      string                   `json:"provider"`
-	Url           string                   `json:"url"`
-	Description   string                   `json:"description"`
-	Version       string                   `json:"version"`
-	Bindable      bool                     `json:"bindable"`
-	Id            string                   `json:"id"`
-	Tags          []string                 `json:"tags"`
-	State         string                   `json:"state"`
-	OfferingPlans []OfferingPlan           `json:"offeringPlans"`
-	Metadata      []catalogModels.Metadata `json:"metadata"`
+	Name           string                   `json:"name"`
+	DisplayName    string                   `json:"displayName"`
+	Provider       string                   `json:"provider"`
+	Url            string                   `json:"url"`
+	Description    string                   `json:"description"`
+	Version        string                   `json:"version"`
+	Bindable       bool                     `json:"bindable"`
+	Id             string                   `json:"id"`
+	Tags           []string                 `json:"tags"`
+	State          string                   `json:"state"`
+	OfferingPlans  []OfferingPlan           `json:"offeringPlans"`
+	Metadata       []catalogModels.Metadata `json:"metadata"`
+	BrokerInstance ServiceInstance          `json:"broker_instance"`
 }
 
 type OfferingPlan struct {

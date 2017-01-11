@@ -16,13 +16,31 @@
 
 package models
 
-import "time"
+import (
+	"log"
+	"os"
+	"strconv"
+	"time"
+)
 
 var (
-	ProcessorsIntervalSec time.Duration = 10 * time.Second
+	ProcessorsTries              = getEnvValueOrDefault("PROCESSORS_TRIES", 12)
+	ProcessorsServiceBrokerTries = getEnvValueOrDefault("PROCESSORS_SERVICE_BROKER_TRIES", 60)
+	WaitForDepsTries             = ProcessorsTries + 2
 
-	ProcessorsTries  = 12
-	WaitForDepsTries = ProcessorsTries + 2
-
-	ProcessorsTotalDuration time.Duration = ProcessorsIntervalSec * time.Duration(ProcessorsTries)
+	ProcessorsIntervalSec         = time.Second * time.Duration(getEnvValueOrDefault("PROCESSORS_INTERVAL_SEC", 10))
+	UpdateDeploymentTimeout       = time.Second * time.Duration(getEnvValueOrDefault("UPDATE_DEPLOYMENT_TIMEOUT", 30))
+	WaitForScaledReplicasTimeout  = time.Second * time.Duration(getEnvValueOrDefault("WAIT_FOR_SCALED_REPLICAS_TIMEOUT", 60))
+	WaitForScaledReplicasInterval = time.Second * time.Duration(getEnvValueOrDefault("WAIT_FOR_SCALED_REPLICAS_INTERVAL", 5))
 )
+
+func getEnvValueOrDefault(envName string, defaultValue int) int {
+	if value := os.Getenv(envName); value != "" {
+		intValue, err := strconv.Atoi(value)
+		if err != nil {
+			log.Fatalf("Can't parse env %s value: %s", envName, value)
+		}
+		return intValue
+	}
+	return defaultValue
+}

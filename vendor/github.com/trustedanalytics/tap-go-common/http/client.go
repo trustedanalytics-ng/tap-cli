@@ -49,10 +49,7 @@ func GetHttpClientWithCertAndCa(certPem, keyPem, caPem string) (*http.Client, *h
 	}
 	tlsConfig.BuildNameToCertificate()
 
-	transport := &http.Transport{
-		TLSClientConfig:     tlsConfig,
-		MaxIdleConnsPerHost: MaxIdleConnectionPerHost,
-	}
+	transport := prepareTransportWithProxy(tlsConfig, MaxIdleConnectionPerHost)
 
 	client := &http.Client{Transport: transport}
 
@@ -80,10 +77,7 @@ func GetHttpClientWithCertAndCaFromFile(certPemFile, keyPemFile, caPemFile strin
 	}
 	tlsConfig.BuildNameToCertificate()
 
-	transport := &http.Transport{
-		TLSClientConfig:     tlsConfig,
-		MaxIdleConnsPerHost: MaxIdleConnectionPerHost,
-	}
+	transport := prepareTransportWithProxy(tlsConfig, MaxIdleConnectionPerHost)
 
 	client := &http.Client{Transport: transport}
 
@@ -101,10 +95,7 @@ func GetHttpClientWithCa(caPem string) (*http.Client, *http.Transport, error) {
 	}
 	tlsConfig.BuildNameToCertificate()
 
-	transport := &http.Transport{
-		TLSClientConfig:     tlsConfig,
-		MaxIdleConnsPerHost: MaxIdleConnectionPerHost,
-	}
+	transport := prepareTransportWithProxy(tlsConfig, MaxIdleConnectionPerHost)
 
 	client := &http.Client{Transport: transport, Timeout: time.Duration(30 * time.Minute)}
 	return client, transport, nil
@@ -120,10 +111,7 @@ func GetHttpClientWithCustomConnectionLimit(maxIdleConnectionPerHost int) (*http
 	}
 	tlsConfig.BuildNameToCertificate()
 
-	transport := &http.Transport{
-		TLSClientConfig:     tlsConfig,
-		MaxIdleConnsPerHost: maxIdleConnectionPerHost,
-	}
+	transport := prepareTransportWithProxy(tlsConfig, maxIdleConnectionPerHost)
 
 	client := &http.Client{Transport: transport, Timeout: time.Duration(30 * time.Minute)}
 	return client, transport, nil
@@ -139,6 +127,14 @@ func IsInsecureSkipVerifyEnabled() bool {
 		logger.Panic("Can't read INSECURE_SKIP_VERIFY env!", err)
 	}
 	return insecureSkipVerify
+}
+
+func prepareTransportWithProxy(tlsConfig *tls.Config, maxIdleConnectionPerHost int) *http.Transport {
+	return &http.Transport{
+		Proxy:               http.ProxyFromEnvironment,
+		TLSClientConfig:     tlsConfig,
+		MaxIdleConnsPerHost: maxIdleConnectionPerHost,
+	}
 }
 
 func getCertKeyAndCa(cert, key, ca string) (tls.Certificate, *x509.CertPool, error) {

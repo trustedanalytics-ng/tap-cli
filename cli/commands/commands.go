@@ -81,10 +81,11 @@ func handleCommonFlags(c *cli.Context) error {
 	return nil
 }
 
-func sumFlags(a []cli.Flag, b []cli.Flag) []cli.Flag {
+func sumFlags(flags ...[]cli.Flag) []cli.Flag {
 	res := []cli.Flag{}
-	res = append(res, a...)
-	res = append(res, b...)
+	for _, flag := range flags {
+		res = append(res, flag...)
+	}
 	return res
 }
 
@@ -95,7 +96,7 @@ func checkRequiredStringFlag(flag cli.StringFlag, ctx *cli.Context) {
 	}
 	value := *flag.Destination
 	if value == "" {
-		fmt.Println("\nMISSING PARAMETER: '", flag.Name, "'\n\nCommand usage:")
+		fmt.Println("\nMISSING PARAMETER: '--" + flag.Name + "'\n\nCommand usage:")
 		cli.ShowCommandHelp(ctx, ctx.Command.Name)
 		cli.OsExiter(requiredFlagMissingExitCode)
 	}

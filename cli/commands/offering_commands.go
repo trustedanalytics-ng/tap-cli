@@ -84,15 +84,12 @@ func offeringCommand() TapCommand {
 	return TapCommand{
 		Name:  "offering",
 		Usage: "offering context commands",
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
 		Subcommands: []TapCommand{
 			infoOfferingCommand,
 			listOfferingsCommand,
 			createOfferingCommand,
 			deleteOfferingCommand,
 		},
+		DefaultSubcommand: &infoOfferingCommand,
 	}
 }

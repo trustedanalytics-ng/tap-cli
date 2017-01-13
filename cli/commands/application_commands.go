@@ -138,13 +138,20 @@ func applicationCommand() TapCommand {
 		},
 	}
 
-	var getInstanceLogsCommand = TapCommand{
-		Name:          "logs",
-		Usage:         "get logs for all containers in instance",
+	var applicationLogsShowCommand = TapCommand{
+		Name:          "show",
+		Usage:         "show application logs",
 		RequiredFlags: []cli.Flag{applicationNameFlag},
 		MainAction: func(c *cli.Context) error {
 			return newOAuth2Service().GetInstanceLogs(applicationName)
 		},
+	}
+
+	var getInstanceLogsCommand = TapCommand{
+		Name:              "logs",
+		Usage:             "get logs for all containers in instance",
+		Subcommands:       []TapCommand{applicationLogsShowCommand},
+		DefaultSubcommand: &applicationLogsShowCommand,
 	}
 
 	return TapCommand{
@@ -161,9 +168,6 @@ func applicationCommand() TapCommand {
 			scaleApplicationCommand,
 			getInstanceLogsCommand,
 		},
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
+		DefaultSubcommand: &getApplicationCommand,
 	}
 }

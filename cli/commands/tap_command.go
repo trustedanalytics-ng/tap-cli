@@ -23,35 +23,52 @@ import (
 )
 
 type TapCommand struct {
-	Name          string
-	Usage         string
-	Aliases       []string
-	Subcommands   []TapCommand
-	MainAction    func(c *cli.Context) error
-	OptionalFlags []cli.Flag
-	RequiredFlags []cli.Flag
+	Name              string
+	Usage             string
+	Aliases           []string
+	Subcommands       []TapCommand
+	DefaultSubcommand *TapCommand
+	MainAction        func(c *cli.Context) error
+	OptionalFlags     []cli.Flag
+	RequiredFlags     []cli.Flag
 }
 
 func (tc TapCommand) ToCliCommand() cli.Command {
+	requiredFlags := tc.RequiredFlags
+	optionalFlags := tc.OptionalFlags
+	if tc.DefaultSubcommand != nil {
+		requiredFlags = tc.DefaultSubcommand.RequiredFlags
+		optionalFlags = tc.DefaultSubcommand.OptionalFlags
+	}
+
 	return cli.Command{
 		Name:        tc.Name,
+		HelpName:    tc.Name,
 		Usage:       tc.Usage,
 		Aliases:     tc.Aliases,
-		Subcommands: toCommands(tc.Subcommands),
-		ArgsUsage:   getArgsUsage(tc.RequiredFlags, tc.OptionalFlags),
-		Flags:       sumFlags(sumFlags(tc.RequiredFlags, tc.OptionalFlags), GetCommonFlags()),
+		Subcommands: toCommands(tc.Subcommands, tc.DefaultSubcommand),
+		ArgsUsage:   getArgsUsage(requiredFlags, optionalFlags),
+		Flags:       sumFlags(requiredFlags, optionalFlags, GetCommonFlags()),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
 			}
-			for _, rf := range tc.RequiredFlags {
+			for _, rf := range requiredFlags {
 				flag, ok := rf.(cli.StringFlag)
 				if ok {
 					checkRequiredStringFlag(flag, c)
 				}
 				//TODO: Add support for other types of flags
 			}
-			if tc.MainAction == nil {
+			if tc.DefaultSubcommand != nil {
+				// A this moment there should be only command parameters. If user tried to enter
+				// a command, it should be already parsed as one of the subcommands.
+				if c.NArg() > 0 && !strings.HasPrefix(c.Args()[0], "--") {
+					cli.ShowCommandHelp(c, tc.DefaultSubcommand.Name)
+					return nil
+				}
+				return tc.DefaultSubcommand.MainAction(c)
+			} else if tc.MainAction == nil {
 				return nil
 			}
 			return tc.MainAction(c)
@@ -89,10 +106,13 @@ func extractFlagUse(flag cli.Flag) string {
 	return splitted[0] + "=<" + splitted[1] + ">"
 }
 
-func toCommands(tapCommands []TapCommand) (commands []cli.Command) {
+func toCommands(tapCommands []TapCommand, defaultCommand *TapCommand) (commands []cli.Command) {
 	commands = make([]cli.Command, len(tapCommands))
 	for i, tc := range tapCommands {
 		commands[i] = tc.ToCliCommand()
+		if defaultCommand != nil && tc.Name == defaultCommand.Name {
+			commands[i].HelpName = "[" + tc.Name + "]"
+		}
 	}
 	return
 }

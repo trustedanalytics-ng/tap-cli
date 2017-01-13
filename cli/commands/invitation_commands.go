@@ -76,15 +76,12 @@ func invitationsCommand() TapCommand {
 	return TapCommand{
 		Name:  "invitation",
 		Usage: "user invitation context commands",
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
 		Subcommands: []TapCommand{
 			listInvitationsCommand,
 			sendInvitationCommand,
 			resendInvitationCommand,
 			deleteInvitationCommand,
 		},
+		DefaultSubcommand: &listInvitationsCommand,
 	}
 }

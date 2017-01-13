@@ -139,13 +139,10 @@ func serviceCommand() TapCommand {
 	}
 
 	var serviceLogsCommand = TapCommand{
-		Name:        "logs",
-		Usage:       "service instances's logs",
-		Subcommands: []TapCommand{serviceLogsShowCommand},
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
+		Name:              "logs",
+		Usage:             "service instances's logs",
+		Subcommands:       []TapCommand{serviceLogsShowCommand},
+		DefaultSubcommand: &serviceLogsShowCommand,
 	}
 
 	var serviceCredentialsShowCommand = TapCommand{
@@ -158,13 +155,10 @@ func serviceCommand() TapCommand {
 	}
 
 	var serviceCredentialsCommand = TapCommand{
-		Name:        "credentials",
-		Usage:       "service instances's credentials",
-		Subcommands: []TapCommand{serviceCredentialsShowCommand},
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
+		Name:              "credentials",
+		Usage:             "service instances's credentials",
+		Subcommands:       []TapCommand{serviceCredentialsShowCommand},
+		DefaultSubcommand: &serviceCredentialsShowCommand,
 	}
 
 	var exposeServiceCommand = TapCommand{
@@ -201,9 +195,6 @@ func serviceCommand() TapCommand {
 			exposeServiceCommand,
 			unexposeServiceCommand,
 		},
-		MainAction: func(c *cli.Context) error {
-			cli.ShowCommandHelp(c, c.Command.Name)
-			return nil
-		},
+		DefaultSubcommand: &serviceInfoCommand,
 	}
 }

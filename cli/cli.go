@@ -25,12 +25,26 @@ import (
 )
 
 func Run() error {
+	cli.AppHelpTemplate = AppHelpTemplate
+	cli.CommandHelpTemplate = CommandHelpTemplate
+	cli.SubcommandHelpTemplate = SubcommandHelpTemplate
+
 	app := cli.NewApp()
 	app.Name = "TAP CLI"
 	app.Usage = "client for managing TAP"
 	app.Version = "0.8.0"
 	app.Commands = commands.GetCommands()
 	app.Flags = commands.GetCommonFlags()
+
+	// Set up the default command
+	infoCommandName := commands.TapInfoCommand().Name
+	for i, _ := range app.Commands {
+		if app.Commands[i].Name == infoCommandName {
+			app.Commands[i].HelpName = "[" + app.Commands[i].Name + "]"
+			break
+		}
+	}
+
 	app.Action = func(c *cli.Context) error {
 		if len(c.Args()) > 0 {
 			commands.UnrecognizedCommand(c.Args()[0])

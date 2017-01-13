@@ -246,14 +246,14 @@ func (c *TapApiServiceApiOAuth2Connector) GetServiceBindings(serviceId string) (
 func (c *TapApiServiceApiOAuth2Connector) BindToApplicationInstance(bindingRequest models.InstanceBindingRequest, applicationId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/bindings", applicationId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusOK, result)
+	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) BindToServiceInstance(bindingRequest models.InstanceBindingRequest, serviceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/services/%s/bindings", serviceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusOK, result)
+	_, err := brokerHttp.PostModel(connector, bindingRequest, http.StatusAccepted, result)
 	return *result, err
 }
 

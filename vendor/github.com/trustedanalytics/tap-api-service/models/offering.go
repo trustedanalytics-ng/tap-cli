@@ -16,7 +16,10 @@
 package models
 
 import (
+	"encoding/json"
+
 	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	templateModels "github.com/trustedanalytics/tap-template-repository/model"
 )
 
 type Offering struct {
@@ -42,4 +45,31 @@ type OfferingPlan struct {
 	OfferingId  string `json:"offeringId"`
 	Id          string `json:"id"`
 	Active      bool   `json:"active"`
+}
+
+func ConvertRawTemplateToTemplate(rawTemplate templateModels.RawTemplate) (templateModels.Template, error) {
+	result := templateModels.Template{}
+
+	type simpleKubernetesBody struct {
+		Type templateModels.ComponentType `json:"componentType"`
+	}
+
+	for key, val := range rawTemplate {
+		if key == "body" {
+			body, err := json.Marshal(val)
+			if err != nil {
+				return result, err
+			}
+
+			components := []simpleKubernetesBody{}
+			if err = json.Unmarshal(body, &components); err != nil {
+				return result, err
+			}
+
+			for _, component := range components {
+				result.Body = append(result.Body, templateModels.KubernetesComponent{Type: component.Type})
+			}
+		}
+	}
+	return result, nil
 }

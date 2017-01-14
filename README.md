@@ -36,9 +36,6 @@ COMMANDS:
      offering                 offering context commands
      service                  service context commands
      application              application context commands
-     bindings                 list bindings
-     bind-instance, bind      bind instance to another
-     unbind-instance, unbind  unbind instance from another
      user                     user context commands
      help, h                  Shows a list of commands or help for one command
 
@@ -96,6 +93,7 @@ COMMANDS:
      credentials  service instances's credentials
      expose       expose service instance under externally available URL
      unexpose     unexpose service instance and remove externally available URL
+     binding      binding context commands
 
 OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")
@@ -242,6 +240,7 @@ COMMANDS:
      restart  restart application
      scale    scale application
      logs     get logs for all containers in instance
+     binding      binding context commands
 
 GLOBAL OPTIONS:
    --verbosity value, -v value  logger verbosity [CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG] (default: "CRITICAL")

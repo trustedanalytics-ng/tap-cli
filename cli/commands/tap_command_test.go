@@ -183,11 +183,11 @@ func TestToCliCommand(t *testing.T) {
 			So(err.Error(), ShouldEqual, errorMessage)
 		})
 
-		Convey("Should check flag value and", func() {
+		Convey("Should check String flag value and", func() {
 			cli.OsExiter = mockExiter
 			var flagDestination string
 			testFlag := cli.StringFlag{
-				Name:        "test-flag-name",
+				Name:        "test-string-flag-name",
 				Destination: &flagDestination,
 			}
 			Convey("throw error if value is unspecified", func() {
@@ -215,6 +215,39 @@ func TestToCliCommand(t *testing.T) {
 				}.ToCliCommand()
 
 				So(func() { executeCommandActionWithFlag(testCommand, testFlag) }, ShouldNotPanic)
+			})
+
+			Reset(func() {
+				cli.OsExiter = os.Exit
+			})
+		})
+
+		Convey("Should check int flag value and", func() {
+			cli.OsExiter = mockExiter
+			var flagDestination int
+			testFlag := cli.IntFlag{
+				Name:        "test-int-flag-name",
+				Destination: &flagDestination,
+			}
+
+			Convey("work OK if default Value is specified", func() {
+				testFlag.Value = 5
+
+				testCommand := TapCommand{
+					RequiredFlags: []cli.Flag{testFlag},
+				}.ToCliCommand()
+
+				So(func() { executeCommandActionWithFlag(testCommand, testFlag) }, ShouldNotPanic)
+			})
+
+			Convey("throw error if default Value is set to 0 (unsupported case)", func() {
+				testFlag.Value = 0
+
+				testCommand := TapCommand{
+					RequiredFlags: []cli.Flag{testFlag},
+				}.ToCliCommand()
+
+				So(func() { executeCommandActionWithFlag(testCommand, testFlag) }, ShouldPanicWith, requiredFlagMissingExitCode)
 			})
 
 			Reset(func() {

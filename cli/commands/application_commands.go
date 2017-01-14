@@ -21,6 +21,8 @@ import (
 	"os"
 
 	"github.com/urfave/cli"
+
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
 
 func applicationCommand() TapCommand {
@@ -167,6 +169,7 @@ func applicationCommand() TapCommand {
 			restartApplicationCommand,
 			scaleApplicationCommand,
 			getInstanceLogsCommand,
+			bindingCommands(catalogModels.InstanceTypeApplication),
 		},
 		DefaultSubcommand: &getApplicationCommand,
 	}

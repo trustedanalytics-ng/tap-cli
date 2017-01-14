@@ -33,27 +33,27 @@ import (
 
 const DefaultLogLevel = logger.LevelCritical
 const (
-	requiredFlagMissingExitCode = 3
-	errorReadingPassword        = 4
-	flagDestinationNil          = 5
+	requiredFlagMissingExitCode    = 3
+	errorReadingPassword           = 4
+	flagDestinationNil             = 5
+	onlyOneFlagInAlternative       = 6
+	alternativeFlagMissingExitCode = 7
+	alternativeFlagTooManyExitCode = 8
+	flagTypeNotSupported           = 9
 )
 
 var loggerVerbosity string
 
 func GetCommands() []cli.Command {
-	//TODO: toCommands(TapCommand{ ... }) at the end of DPNG-11890
-
-	return []cli.Command{
-		loginCommand().ToCliCommand(),
-		TapInfoCommand().ToCliCommand(),
-		offeringCommand().ToCliCommand(),
-		serviceCommand().ToCliCommand(),
-		applicationCommand().ToCliCommand(),
-		listInstanceBindingsCommand(),
-		bindInstanceCommand(),
-		unbindInstanceCommand(),
-		userCommand().ToCliCommand(),
-	}
+	defaultInfoCommand := TapInfoCommand()
+	return toCommands([]TapCommand{
+		loginCommand(),
+		defaultInfoCommand,
+		offeringCommand(),
+		serviceCommand(),
+		applicationCommand(),
+		userCommand(),
+	}, &defaultInfoCommand)
 }
 
 func GetCommonFlags() []cli.Flag {
@@ -89,17 +89,54 @@ func sumFlags(flags ...[]cli.Flag) []cli.Flag {
 	return res
 }
 
-func checkRequiredStringFlag(flag cli.StringFlag, ctx *cli.Context) {
-	if flag.Destination == nil {
-		fmt.Println(flag.Name + " Destination not set. This is a bug in the application. Please contact your administrator.")
-		cli.OsExiter(flagDestinationNil)
+func checkIfRequiredFlagExists(c *cli.Context, flag cli.Flag) (string, bool) {
+	sFlag, ok := flag.(cli.StringFlag)
+	if ok {
+		if sFlag.Destination == nil {
+			printMissingDestinationForFlagError(sFlag.Name)
+		}
+		if c.IsSet(sFlag.Name) {
+			return sFlag.Name, true
+		}
+		// checking for default
+		if sFlag.Value != "" {
+			return sFlag.Name, true
+		}
+		return sFlag.Name, false
 	}
-	value := *flag.Destination
-	if value == "" {
-		fmt.Println("\nMISSING PARAMETER: '--" + flag.Name + "'\n\nCommand usage:")
-		cli.ShowCommandHelp(ctx, ctx.Command.Name)
-		cli.OsExiter(requiredFlagMissingExitCode)
+
+	bFlag, ok := flag.(cli.BoolFlag)
+	if ok {
+		if bFlag.Destination == nil {
+			printMissingDestinationForFlagError(bFlag.Name)
+		}
+		// bool Flag cannot have default values
+		return bFlag.Name, c.IsSet(bFlag.Name)
 	}
+
+	iFlag, ok := flag.(cli.IntFlag)
+	if ok {
+		if iFlag.Destination == nil {
+			printMissingDestinationForFlagError(iFlag.Name)
+		}
+		if c.IsSet(iFlag.Name) {
+			return iFlag.Name, true
+		}
+		// checking for default. Int Flag cannot by set to 0 by default.
+		if iFlag.Value != 0 {
+			return iFlag.Name, true
+		}
+		return iFlag.Name, false
+	}
+
+	printApplicationBugInfo("Flag type not supported.")
+	cli.OsExiter(flagTypeNotSupported)
+	return "", false
+}
+
+func printMissingDestinationForFlagError(flagName string) {
+	printApplicationBugInfo(flagName + " Destination not set.")
+	cli.OsExiter(flagDestinationNil)
 }
 
 func UnrecognizedCommand(command string) {
@@ -159,4 +196,8 @@ func newOAuth2Service() *actions.ActionsConfig {
 
 	a.ApiService = apiConnector
 	return a
+}
+
+func printApplicationBugInfo(msg string) {
+	fmt.Println(msg + " This is a bug in the application. Please contact your administrator.")
 }

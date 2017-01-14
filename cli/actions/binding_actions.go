@@ -32,21 +32,26 @@ const (
 	unbind bindingOperationType = "unbind"
 )
 
-func (a *ActionsConfig) BindInstance(srcInstanceName, dstInstanceName string) error {
-	return a.changeInstanceBinding(bind, srcInstanceName, dstInstanceName)
+type BindableInstance struct {
+	Name string
+	Type catalogModels.InstanceType
 }
 
-func (a *ActionsConfig) UnbindInstance(srcInstanceName, dstInstanceName string) error {
-	return a.changeInstanceBinding(unbind, srcInstanceName, dstInstanceName)
+func (a *ActionsConfig) BindInstance(srcInstance, dstInstance BindableInstance) error {
+	return a.changeInstanceBinding(bind, srcInstance, dstInstance)
 }
 
-func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType, srcInstanceName string, dstInstanceName string) error {
-	srcInstanceID, srcInstanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, srcInstanceName)
+func (a *ActionsConfig) UnbindInstance(srcInstance, dstInstance BindableInstance) error {
+	return a.changeInstanceBinding(unbind, srcInstance, dstInstance)
+}
+
+func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType, srcInstance, dstInstance BindableInstance) error {
+	srcInstanceID, srcInstanceType, err := converter.FetchInstanceIDandType(a.Config, srcInstance.Type, srcInstance.Name)
 	if err != nil {
 		return err
 	}
 
-	dstInstanceID, dstInstanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, dstInstanceName)
+	dstInstanceID, dstInstanceType, err := converter.FetchInstanceIDandType(a.Config, dstInstance.Type, dstInstance.Name)
 	if err != nil {
 		return err
 	}
@@ -77,8 +82,8 @@ func (a *ActionsConfig) changeInstanceBinding(operationType bindingOperationType
 	return nil
 }
 
-func (a *ActionsConfig) GetInstanceBindings(instanceName string) error {
-	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, converter.InstanceTypeBoth, instanceName)
+func (a *ActionsConfig) GetInstanceBindings(instance BindableInstance) error {
+	instanceID, instanceType, err := converter.FetchInstanceIDandType(a.Config, instance.Type, instance.Name)
 	if err != nil {
 		return err
 	}

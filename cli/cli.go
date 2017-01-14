@@ -36,15 +36,6 @@ func Run() error {
 	app.Commands = commands.GetCommands()
 	app.Flags = commands.GetCommonFlags()
 
-	// Set up the default command
-	infoCommandName := commands.TapInfoCommand().Name
-	for i, _ := range app.Commands {
-		if app.Commands[i].Name == infoCommandName {
-			app.Commands[i].HelpName = "[" + app.Commands[i].Name + "]"
-			break
-		}
-	}
-
 	app.Action = func(c *cli.Context) error {
 		if len(c.Args()) > 0 {
 			commands.UnrecognizedCommand(c.Args()[0])

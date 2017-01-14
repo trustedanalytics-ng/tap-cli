@@ -18,6 +18,8 @@ package commands
 
 import (
 	"github.com/urfave/cli"
+
+	catalogModels "github.com/trustedanalytics/tap-catalog/models"
 )
 
 func serviceCommand() TapCommand {
@@ -194,6 +196,7 @@ func serviceCommand() TapCommand {
 			serviceCredentialsCommand,
 			exposeServiceCommand,
 			unexposeServiceCommand,
+			bindingCommands(catalogModels.InstanceTypeService),
 		},
 		DefaultSubcommand: &serviceInfoCommand,
 	}

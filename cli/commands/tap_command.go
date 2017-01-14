@@ -17,6 +17,7 @@
 package commands
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -29,6 +30,7 @@ type TapCommand struct {
 	Subcommands       []TapCommand
 	DefaultSubcommand *TapCommand
 	MainAction        func(c *cli.Context) error
+	AlternativeFlags  []cli.Flag
 	OptionalFlags     []cli.Flag
 	RequiredFlags     []cli.Flag
 }
@@ -36,9 +38,11 @@ type TapCommand struct {
 func (tc TapCommand) ToCliCommand() cli.Command {
 	requiredFlags := tc.RequiredFlags
 	optionalFlags := tc.OptionalFlags
+	alternativeFlags := tc.AlternativeFlags
 	if tc.DefaultSubcommand != nil {
 		requiredFlags = tc.DefaultSubcommand.RequiredFlags
 		optionalFlags = tc.DefaultSubcommand.OptionalFlags
+		alternativeFlags = tc.DefaultSubcommand.AlternativeFlags
 	}
 
 	return cli.Command{
@@ -47,19 +51,27 @@ func (tc TapCommand) ToCliCommand() cli.Command {
 		Usage:       tc.Usage,
 		Aliases:     tc.Aliases,
 		Subcommands: toCommands(tc.Subcommands, tc.DefaultSubcommand),
-		ArgsUsage:   getArgsUsage(requiredFlags, optionalFlags),
-		Flags:       sumFlags(requiredFlags, optionalFlags, GetCommonFlags()),
+		ArgsUsage:   getArgsUsage(requiredFlags, alternativeFlags, optionalFlags),
+		Flags:       sumFlags(requiredFlags, optionalFlags, alternativeFlags, GetCommonFlags()),
 		Action: func(c *cli.Context) error {
 			if err := handleCommonFlags(c); err != nil {
 				return err
 			}
 			for _, rf := range requiredFlags {
-				flag, ok := rf.(cli.StringFlag)
-				if ok {
-					checkRequiredStringFlag(flag, c)
+				if name, exists := checkIfRequiredFlagExists(c, rf); !exists {
+					fmt.Println("\nMISSING PARAMETER: '--" + name + "'\n\nCommand usage:")
+					cli.ShowCommandHelp(c, c.Command.Name)
+					cli.OsExiter(requiredFlagMissingExitCode)
 				}
-				//TODO: Add support for other types of flags
 			}
+
+			if len(tc.AlternativeFlags) == 1 {
+				printApplicationBugInfo("Only one alternative flag specified.")
+				cli.OsExiter(onlyOneFlagInAlternative)
+			} else if len(tc.AlternativeFlags) > 1 {
+				handleAlternativeFlags(c, tc.AlternativeFlags)
+			}
+
 			if tc.DefaultSubcommand != nil {
 				// A this moment there should be only command parameters. If user tried to enter
 				// a command, it should be already parsed as one of the subcommands.
@@ -76,22 +88,56 @@ func (tc TapCommand) ToCliCommand() cli.Command {
 	}
 }
 
-func getArgsUsage(required, optional []cli.Flag) (argUsageString string) {
-	argUsageString = argsUsageFromFlags(required)
-	if len(optional) > 0 {
-		if len(required) > 0 {
-			argUsageString += " "
+func handleAlternativeFlags(c *cli.Context, alternativeFlags []cli.Flag) {
+	amount := 0
+	allFlags := []string{}
+	specifiedFlags := []string{}
+	for _, af := range alternativeFlags {
+		name, exists := checkIfRequiredFlagExists(c, af)
+		if exists {
+			amount++
+			specifiedFlags = append(specifiedFlags, name)
 		}
-		argUsageString += "[" + argsUsageFromFlags(optional) + "]"
+		allFlags = append(allFlags, name)
 	}
-	return
+
+	if amount == 0 {
+		fmt.Println("\nMISSING PARAMETER. You need to specify one of alternative flags (" + strings.Join(allFlags, " OR ") + ") \n\nCommand usage:") //tc.AlternativeFlags
+		cli.ShowCommandHelp(c, c.Command.Name)
+		cli.OsExiter(alternativeFlagMissingExitCode)
+	}
+	if amount != 1 {
+		fmt.Println("\nWRONG PARAMETER. Cannot use more then one alternative flags (" + strings.Join(specifiedFlags, " AND ") + ") in the same time\n\nCommand usage:") //tc.AlternativeFlags
+		cli.ShowCommandHelp(c, c.Command.Name)
+		cli.OsExiter(alternativeFlagTooManyExitCode)
+	}
 }
 
-func argsUsageFromFlags(flags []cli.Flag) (argsUsage string) {
-	for _, f := range flags {
-		argsUsage += extractFlagUse(f) + " "
+func getArgsUsage(required, alternative, optional []cli.Flag) string {
+	argUsage := []string{}
+	requiredArgUsage := argsUsageFromFlags(required, " ")
+	if len(required) > 0 {
+		argUsage = append(argUsage, requiredArgUsage)
 	}
-	return strings.TrimSuffix(argsUsage, " ")
+
+	alternativeArgUsage := argsUsageFromFlags(alternative, "|")
+	if len(alternative) > 0 {
+		argUsage = append(argUsage, alternativeArgUsage)
+	}
+
+	optionalArgUsage := "[" + argsUsageFromFlags(optional, " ") + "]"
+	if len(optional) > 0 {
+		argUsage = append(argUsage, optionalArgUsage)
+	}
+
+	return strings.Join(argUsage, " ")
+}
+
+func argsUsageFromFlags(flags []cli.Flag, separator string) (argsUsage string) {
+	for _, f := range flags {
+		argsUsage += extractFlagUse(f) + separator
+	}
+	return strings.TrimSuffix(argsUsage, separator)
 }
 
 func extractFlagUse(flag cli.Flag) string {

@@ -61,7 +61,7 @@ func loginCommand() TapCommand {
 
 	return TapCommand{
 		Name:          "login",
-		Usage:         "login to TAP. If you don't provide password you'll be promped for it.",
+		Usage:         "login to TAP. If you don't provide password you'll be prompted for it.",
 		OptionalFlags: []cli.Flag{passwordFlag},
 		RequiredFlags: []cli.Flag{apiFlag, usernameFlag},
 		MainAction: func(c *cli.Context) error {

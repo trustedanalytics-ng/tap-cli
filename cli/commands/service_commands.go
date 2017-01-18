@@ -46,9 +46,9 @@ func serviceCommand() TapCommand {
 	}
 
 	var envs cli.StringSlice
-	var envsFlag = cli.StringSliceFlag{
-		Name:  "envs",
-		Usage: "pass envs in format: `NAME=VALUE` this flag can be used multiple times",
+	var envFlag = cli.StringSliceFlag{
+		Name:  "env",
+		Usage: "pass env in format: `NAME=VALUE` this flag can be used multiple times",
 		Value: &envs,
 	}
 
@@ -80,7 +80,7 @@ func serviceCommand() TapCommand {
 		Name:          "create",
 		Usage:         "create new service instance",
 		RequiredFlags: []cli.Flag{serviceNameFlag, offeringNameFlag, planNameFlag},
-		OptionalFlags: []cli.Flag{envsFlag},
+		OptionalFlags: []cli.Flag{envFlag},
 		MainAction: func(c *cli.Context) error {
 			splitEnvs, err := validateAndSplitEnvFlags(envs)
 			if err != nil {

@@ -18,9 +18,9 @@ package models
 
 import (
 	"log"
-	"os"
-	"strconv"
 	"time"
+
+	"github.com/trustedanalytics/tap-go-common/util"
 )
 
 var (
@@ -34,13 +34,10 @@ var (
 	WaitForScaledReplicasInterval = time.Second * time.Duration(getEnvValueOrDefault("WAIT_FOR_SCALED_REPLICAS_INTERVAL", 5))
 )
 
-func getEnvValueOrDefault(envName string, defaultValue int) int {
-	if value := os.Getenv(envName); value != "" {
-		intValue, err := strconv.Atoi(value)
-		if err != nil {
-			log.Fatalf("Can't parse env %s value: %s", envName, value)
-		}
-		return intValue
+func getEnvValueOrDefault(envName string, defaultValue int32) int32 {
+	value, err := util.GetInt32EnvValueOrDefault(envName, defaultValue)
+	if err != nil {
+		log.Fatalf("Can't parse env %s value: %v", envName, value)
 	}
-	return defaultValue
+	return value
 }

@@ -133,7 +133,10 @@ func (pb PrintableResource) Headers() []string {
 	return []string{"binding name", "binding id"}
 }
 func (pb PrintableResource) StandarizedData() []string {
-	return []string{pb.ServiceInstanceName, pb.ServiceInstanceGuid}
+	if pb.AppInstanceName != "" {
+		return []string{pb.AppInstanceName, pb.AppGUID}
+	}
+	return []string{pb.ServiceInstanceName, pb.ServiceInstanceGUID}
 }
 
 func getLastMessageMark(metadata []catalogModels.Metadata) string {

@@ -17,16 +17,15 @@
 package user_management_connector
 
 import (
-	"net/http"
-
 	"fmt"
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	"net/http"
 	"strings"
+
+	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	"github.com/trustedanalytics/tap-go-common/util"
 )
 
-const (
-	DEFAULT_ORG string = "00000000-0000-0000-0000-000000000000"
-)
+var defaultOrg string = util.GetEnvValueOrDefault("DEFAULT_ORG", "00000000-0000-0000-0000-000000000000")
 
 type InvitationRequest struct {
 	Email string `json:"email" validate:"nonzero"`
@@ -83,7 +82,11 @@ type UserManagementApiConnector struct {
 }
 
 func (c *UserManagementApiConnectorFactory) GetConfiguredUserManagementConnector(authorization string) UserManagementApi {
-	return &UserManagementApiConnector{c.Address, authorization, c.Client}
+	return &UserManagementApiConnector{
+		Address:       c.Address,
+		Authorization: authorization,
+		Client:        c.Client,
+	}
 }
 
 func NewUserManagementConnectorFactory(address string) (*UserManagementApiConnectorFactory, error) {
@@ -184,7 +187,7 @@ func (u *UserManagementApiConnector) invitationExists(email string) bool {
 }
 
 func (u *UserManagementApiConnector) GetUsers() ([]UaaUser, int, error) {
-	connector := u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users", u.Address, DEFAULT_ORG))
+	connector := u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users", u.Address, defaultOrg))
 
 	users := []UaaUser{}
 	status, err := brokerHttp.GetModel(connector, http.StatusOK, &users)
@@ -228,7 +231,7 @@ func (u *UserManagementApiConnector) DeleteUser(email string) (int, error) {
 	connector := u.getApiConnector(fmt.Sprintf("%s/rest/invitations/%s", u.Address, email))
 
 	if uid := u.getUserUUID(email); uid != "" {
-		connector = u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users/%s", u.Address, DEFAULT_ORG, uid))
+		connector = u.getApiConnector(fmt.Sprintf("%s/rest/orgs/%s/users/%s", u.Address, defaultOrg, uid))
 		status, err := brokerHttp.DeleteModel(connector, http.StatusOK)
 		if err != nil {
 			return status, err

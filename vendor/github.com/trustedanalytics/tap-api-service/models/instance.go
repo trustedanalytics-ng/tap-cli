@@ -41,8 +41,9 @@ type InstanceBindingRequest struct {
 }
 
 type InstanceBindingsEntity struct {
-	AppGuid             string `json:"app_guid"`
-	ServiceInstanceGuid string `json:"service_instance_guid"`
+	AppGUID             string `json:"app_guid"`
+	AppInstanceName     string `json:"app_instance_name"`
+	ServiceInstanceGUID string `json:"service_instance_guid"`
 	ServiceInstanceName string `json:"service_instance_name"`
 }
 

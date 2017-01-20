@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Intel Corporation
+ * Copyright (c) 2017 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,25 @@
  */
 package models
 
-type Template struct {
-	Id         string        `json:"templateId"`
-	State      TemplateState `json:"state"`
-	AuditTrail AuditTrail    `json:"auditTrail"`
-}
-
-type TemplateState string
-
-const (
-	TemplateStateInProgress  TemplateState = "IN_PROGRESS"
-	TemplateStateReady       TemplateState = "READY"
-	TemplateStateUnavailable TemplateState = "UNAVAILABLE"
+import (
+	"errors"
+	"fmt"
+	"regexp"
 )
 
-func (template *Template) ValidateTemplateStructCreate() error {
-	if template.Id != "" {
-		return GetIdFieldHasToBeEmptyError()
+const (
+	RegexpProperSystemEnvName = "^[A-Za-z_][A-Za-z0-9_]*$"
+	RegexpDnsLabelLowercase   = "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+	IdFieldHasToBeEmptyMsg    = "Id field has to be empty!"
+)
+
+func CheckIfMatchingRegexp(content, regexpRule string) error {
+	if ok, _ := regexp.MatchString(regexpRule, content); !ok {
+		return fmt.Errorf("content: %s doesn't match regexp: %s !", content, regexpRule)
 	}
 	return nil
+}
+
+func GetIdFieldHasToBeEmptyError() error {
+	return errors.New(IdFieldHasToBeEmptyMsg)
 }

@@ -39,3 +39,11 @@ type ApplicationInstance struct {
 type ScaleApplicationRequest struct {
 	Replicas int `json:"replicas" validate:"min=0"`
 }
+
+type CreateOfferingFromApplicationRequest struct {
+	ApplicationId       string   `json:"applicationId"`
+	OfferingName        string   `json:"offeringName"`
+	OfferingDisplayName string   `json:"offeringDisplayName"`
+	Description         string   `json:"description"`
+	Tags                []string `json:"tags"`
+}

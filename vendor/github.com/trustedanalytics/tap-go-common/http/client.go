@@ -105,9 +105,17 @@ func GetHttpClient() (*http.Client, *http.Transport, error) {
 	return GetHttpClientWithCustomConnectionLimit(MaxIdleConnectionPerHost)
 }
 
+func GetHttpClientWithCustomSSLValidation(skipSSLValidation bool) (*http.Client, *http.Transport, error) {
+	return GetHttpClientWithCustomConnectionLimitAndSSLValidation(MaxIdleConnectionPerHost, skipSSLValidation)
+}
+
 func GetHttpClientWithCustomConnectionLimit(maxIdleConnectionPerHost int) (*http.Client, *http.Transport, error) {
+	return GetHttpClientWithCustomConnectionLimitAndSSLValidation(maxIdleConnectionPerHost, false)
+}
+
+func GetHttpClientWithCustomConnectionLimitAndSSLValidation(maxIdleConnectionPerHost int, skipSSLValidation bool) (*http.Client, *http.Transport, error) {
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify: IsInsecureSkipVerifyEnabled(),
+		InsecureSkipVerify: IsInsecureSkipVerifyEnabled() || skipSSLValidation,
 	}
 	tlsConfig.BuildNameToCertificate()
 

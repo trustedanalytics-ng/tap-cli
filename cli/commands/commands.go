@@ -189,7 +189,7 @@ func newOAuth2Service() *actions.ActionsConfig {
 		panic(err.Error())
 	}
 
-	apiConnector, err := client.NewTapApiServiceApiWithOAuth2(creds.Address, creds.TokenType, creds.Token)
+	apiConnector, err := client.NewTapApiServiceApiWithOAuth2AndCustomSSLValidation(creds.Address, creds.TokenType, creds.Token, creds.SkipSSLValidation)
 	if err != nil {
 		panic(err.Error())
 	}

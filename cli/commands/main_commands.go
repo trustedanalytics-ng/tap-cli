@@ -59,16 +59,23 @@ func loginCommand() TapCommand {
 		Destination: &password,
 	}
 
+	var skipSSLValidation bool
+	var skipSSLValidationFlag = cli.BoolFlag{
+		Name:        "skip-ssl-validation",
+		Usage:       "When specified, the SSL certificate of the API service will not be validated",
+		Destination: &skipSSLValidation,
+	}
+
 	return TapCommand{
 		Name:          "login",
 		Usage:         "login to TAP. If you don't provide password you'll be prompted for it.",
-		OptionalFlags: []cli.Flag{passwordFlag},
+		OptionalFlags: []cli.Flag{passwordFlag, skipSSLValidationFlag},
 		RequiredFlags: []cli.Flag{apiFlag, usernameFlag},
 		MainAction: func(c *cli.Context) error {
 			if password == "" {
 				password = promptForSensitive("Password")
 			}
-			return newBasicAuthService(apiUrl, username, password).Login()
+			return newBasicAuthService(apiUrl, username, password, skipSSLValidation).Login(skipSSLValidation)
 		},
 	}
 }
@@ -88,12 +95,12 @@ func promptForSensitive(name string) string {
 	return password
 }
 
-func newBasicAuthService(address string, username string, password string) *actions.ActionsConfig {
+func newBasicAuthService(address string, username string, password string, skipSSLValidation bool) *actions.ActionsConfig {
 	address = trimEndingSlash(address)
 	if !isProcotolSet(address) {
 		address = "https://" + address
 	}
-	apiConnector, err := client.NewTapApiServiceLoginApiWithBasicAuth(address, username, password)
+	apiConnector, err := client.NewTapApiServiceLoginApiWithSSLValidationAndBasicAuth(address, username, password, skipSSLValidation)
 	if err != nil {
 		panic(err)
 	}

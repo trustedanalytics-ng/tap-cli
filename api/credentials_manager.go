@@ -29,11 +29,12 @@ var CredsPath string = cliConfigDir + "/credentials.json"
 const PERMISSIONS os.FileMode = 0744
 
 type Credentials struct {
-	Address   string `json:"address"`
-	Username  string `json:"username"`
-	Token     string `json:"token"`
-	TokenType string `json:"type"`
-	ExpiresIn int    `json:"expires"`
+	Address           string `json:"address"`
+	Username          string `json:"username"`
+	Token             string `json:"token"`
+	TokenType         string `json:"type"`
+	ExpiresIn         int    `json:"expires"`
+	SkipSSLValidation bool   `json:"skip-ssl-validation"`
 }
 
 func (c *Config) GetCredentials() (Credentials, error) {

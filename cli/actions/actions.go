@@ -36,11 +36,12 @@ func announceSuccessfulOperation() {
 	fmt.Println(successMessage)
 }
 
-func (a *ActionsConfig) Login() error {
+func (a *ActionsConfig) Login(skipSSLValidation bool) error {
 	address, username, _ := a.ApiServiceLogin.GetLoginCredentials()
 	creds := api.Credentials{}
 	creds.Address = address
 	creds.Username = username
+	creds.SkipSSLValidation = skipSSLValidation
 
 	fmt.Println("Authenticating...")
 

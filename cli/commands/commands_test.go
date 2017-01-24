@@ -75,28 +75,26 @@ func TestApiAndLoginServiceSetters(t *testing.T) {
 
 func TestNewBasicAuthService(t *testing.T) {
 	Convey("Should trim ending slash if provided", t, func() {
-		basicAuth := newBasicAuthService("myaddress.com/", "user", "password")
+		basicAuth := newBasicAuthService("myaddress.com/", "user", "password", false)
 		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 		So(basicCreds.Address, ShouldEqual, "https://myaddress.com")
 	})
 	Convey("Should add https address if address not provided", t, func() {
-		basicAuth := newBasicAuthService("myaddress.com", "user", "password")
+		basicAuth := newBasicAuthService("myaddress.com", "user", "password", false)
 		basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 		So(basicCreds.Address, ShouldEqual, "https://myaddress.com")
 	})
 	Convey("Should not add https", t, func() {
 		Convey("when there is http:// ", func() {
-
-			basicAuth := newBasicAuthService("http://myaddress.com", "user", "password")
+			basicAuth := newBasicAuthService("http://myaddress.com", "user", "password", false)
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 			So(basicCreds.Address, ShouldEqual, "http://myaddress.com")
 		})
 		Convey("when there is ftp:// ", func() {
-
-			basicAuth := newBasicAuthService("ftp://myaddress.com", "user", "password")
+			basicAuth := newBasicAuthService("ftp://myaddress.com", "user", "password", false)
 			basicCreds := basicAuth.ApiServiceLogin.(*client.TapApiServiceApiBasicAuthConnector)
 
 			So(basicCreds.Address, ShouldEqual, "ftp://myaddress.com")

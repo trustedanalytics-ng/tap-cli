@@ -81,10 +81,10 @@
 			"revisionTime": "2016-03-29T19:32:22Z"
 		},
 		{
-			"checksumSHA1": "k/YUviWzpZoBcbI6+FKTwI7i+BU=",
+			"checksumSHA1": "CGem+i522h2C4N9v6lWCvPh1iJ8=",
 			"path": "github.com/trustedanalytics/tap-api-service/client",
-			"revision": "ffd2284fe66ebda42a7065899cc167528ca90105",
-			"revisionTime": "2017-01-19T13:55:49Z"
+			"revision": "74e771f89b38797d611b80aef4780e87bffbac25",
+			"revisionTime": "2017-01-23T15:09:19Z"
 		},
 		{
 			"checksumSHA1": "p8Ss5pJnUk9jHub0oSRLehwwmys=",
@@ -119,10 +119,10 @@
 			"revisionTime": "2017-01-20T10:06:47Z"
 		},
 		{
-			"checksumSHA1": "MI4EYdMtd2n7Z4/UoYjzcrk5Zuw=",
+			"checksumSHA1": "KVaicddPJrZDXxHoOuS0lXswaaI=",
 			"path": "github.com/trustedanalytics/tap-go-common/http",
-			"revision": "8f636f8f67cc939172c4b393e2adedf52a7b8c7a",
-			"revisionTime": "2017-01-20T09:28:37Z"
+			"revision": "4b4897f57f9cdf909f0204667ef0c73d2c4fb1e6",
+			"revisionTime": "2017-01-23T14:37:31Z"
 		},
 		{
 			"checksumSHA1": "O4sIfCHeupMT91S+wt73AAfH4bQ=",

@@ -40,6 +40,7 @@ import (
 var url string = "fake_url"
 var login string = "fake_admin"
 var pass string = "fake_password"
+var skipSSLValidation bool = false
 
 var expectedUaaRes = uaa_connector.LoginResponse{
 	AccessToken:  "fake_access_token",
@@ -55,7 +56,8 @@ var expectedCredsFileContent = "{" +
 	"\"username\":\"" + login + "\"," +
 	"\"token\":\"" + expectedUaaRes.AccessToken + "\"," +
 	"\"type\":\"" + expectedUaaRes.TokenType + "\"," +
-	"\"expires\":" + strconv.Itoa(expectedUaaRes.ExpiresIn) +
+	"\"expires\":" + strconv.Itoa(expectedUaaRes.ExpiresIn) + "," +
+	"\"skip-ssl-validation\":" + strconv.FormatBool(skipSSLValidation) +
 	"}"
 
 func init() {
@@ -96,7 +98,7 @@ func TestLoginActions(t *testing.T) {
 			prepareIntroduceMock(actionsConfig, nil)
 			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusUnauthorized, someErr)
 
-			err := actionsConfig.Login()
+			err := actionsConfig.Login(skipSSLValidation)
 
 			So(err.Error(), ShouldContainSubstring, someErr.Error())
 		})
@@ -105,7 +107,7 @@ func TestLoginActions(t *testing.T) {
 			prepareIntroduceMock(actionsConfig, nil)
 			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusInternalServerError, someErr)
 
-			err := actionsConfig.Login()
+			err := actionsConfig.Login(skipSSLValidation)
 
 			So(err.Error(), ShouldContainSubstring, someErr.Error())
 		})
@@ -113,7 +115,7 @@ func TestLoginActions(t *testing.T) {
 			prepareIntroduceMock(actionsConfig, nil)
 			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusNotFound, nil)
 
-			err := actionsConfig.Login()
+			err := actionsConfig.Login(skipSSLValidation)
 
 			So(err.Error(), ShouldContainSubstring, "incompatibility detected")
 		})
@@ -121,7 +123,7 @@ func TestLoginActions(t *testing.T) {
 			someErr := errors.New("anything")
 			prepareIntroduceMock(actionsConfig, someErr)
 
-			err := actionsConfig.Login()
+			err := actionsConfig.Login(skipSSLValidation)
 
 			So(err, ShouldEqual, someErr)
 		})
@@ -130,7 +132,7 @@ func TestLoginActions(t *testing.T) {
 			prepareLoginMock(actionsConfig, expectedUaaRes, http.StatusOK, nil)
 
 			stdout := test.CaptureStdout(func() {
-				actionsConfig.Login()
+				actionsConfig.Login(skipSSLValidation)
 			})
 
 			b, err := test.ReadCredentialsTestFile()

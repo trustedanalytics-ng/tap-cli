@@ -40,7 +40,11 @@ type TapApiServiceApiBasicAuthConnector struct {
 }
 
 func NewTapApiServiceLoginApiWithBasicAuth(address, username, password string) (TapApiServiceLoginApi, error) {
-	client, _, err := brokerHttp.GetHttpClient()
+	return NewTapApiServiceLoginApiWithSSLValidationAndBasicAuth(address, username, password, false)
+}
+
+func NewTapApiServiceLoginApiWithSSLValidationAndBasicAuth(address, username, password string, skipSSLValidation bool) (TapApiServiceLoginApi, error) {
+	client, _, err := brokerHttp.GetHttpClientWithCustomSSLValidation(skipSSLValidation)
 	if err != nil {
 		return nil, err
 	}

@@ -88,10 +88,14 @@ func SetLoggerLevel(level string) error {
 	return commonLogger.SetLoggerLevel(logger, level)
 }
 
-func NewTapApiServiceApiWithOAuth2(address, tokenType, token string) (tapApiServiceApi TapApiServiceApi, err error) {
-	client, _, err := brokerHttp.GetHttpClient()
+func NewTapApiServiceApiWithOAuth2(address, tokenType, token string) (TapApiServiceApi, error) {
+	return NewTapApiServiceApiWithOAuth2AndCustomSSLValidation(address, tokenType, token, false)
+}
+
+func NewTapApiServiceApiWithOAuth2AndCustomSSLValidation(address, tokenType, token string, skipSSLValidation bool) (tapApiServiceApi TapApiServiceApi, err error) {
+	client, _, err := brokerHttp.GetHttpClientWithCustomSSLValidation(skipSSLValidation)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	tapApiServiceApi = &TapApiServiceApiOAuth2Connector{

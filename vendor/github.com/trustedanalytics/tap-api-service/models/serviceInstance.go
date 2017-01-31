@@ -36,7 +36,7 @@ type ServiceInstance struct {
 
 type ServiceInstanceRequest struct {
 	Name       string                           `json:"name" validate:"nonzero"`
-	Type       catalogModels.InstanceType       `json:"type" validate:"nonzero"`
+	Type       catalogModels.InstanceType       `json:"type" validate:"nonzero,oneOf=APPLICATION;SERVICE;SERVICE_BROKER"`
 	OfferingId string                           `json:"offeringId" validate:"nonzero"`
 	Bindings   []catalogModels.InstanceBindings `json:"bindings"`
 	Metadata   []catalogModels.Metadata         `json:"metadata" validate:"nonzero"`

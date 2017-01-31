@@ -19,12 +19,12 @@ package uaa_connector
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	commonHTTP "github.com/trustedanalytics/tap-go-common/http"
 )
 
 type LoginResponse struct {
@@ -67,22 +67,32 @@ type UaaConnector struct {
 }
 
 func NewUaaBasicAuth(clientId, clientSecret string) (*UaaConnector, error) {
-	client, _, err := brokerHttp.GetHttpClient()
+	client, _, err := commonHTTP.GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
 	return &UaaConnector{clientId, clientSecret, client}, nil
 }
 
+func (u *UaaConnector) prepareUserManagementLoginURLEncodedPayload(username, password string) string {
+	payload := url.Values{}
+	payload.Set("grant_type", "password")
+	payload.Set("response_type", "token")
+	payload.Set("client_id", u.ClientId)
+	payload.Set("client_secret", u.ClientSecret)
+	payload.Set("username", username)
+	payload.Set("password", password)
+	return payload.Encode()
+}
+
 func (u *UaaConnector) Login(username, password string) (*LoginResponse, int, error) {
 	loginResp := LoginResponse{}
 
-	url := os.Getenv("SSO_TOKEN_URI")
-	reqBody := fmt.Sprintf("grant_type=password&response_type=token&client_id=%s&client_secret=%s&username=%s&password=%s",
-		u.ClientId, u.ClientSecret, username, password)
+	uaaURL := os.Getenv("SSO_TOKEN_URI")
+	reqBody := u.prepareUserManagementLoginURLEncodedPayload(username, password)
 
-	auth := brokerHttp.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
-	status, resp, err := brokerHttp.RestUrlEncodedPOST(url, reqBody, brokerHttp.GetBasicAuthHeader(&auth), u.Client)
+	auth := commonHTTP.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
+	status, resp, err := commonHTTP.RestUrlEncodedPOST(uaaURL, reqBody, commonHTTP.GetBasicAuthHeader(&auth), u.Client)
 	if err != nil {
 		return nil, status, err
 	} else if status != http.StatusOK {
@@ -97,14 +107,20 @@ func (u *UaaConnector) Login(username, password string) (*LoginResponse, int, er
 	return &loginResp, http.StatusOK, nil
 }
 
+func (u *UaaConnector) prepareUserManagementTokenURLEncodedPayload(token string) string {
+	payload := url.Values{}
+	payload.Set("token", token)
+	return payload.Encode()
+}
+
 func (u *UaaConnector) ValidateOauth2Token(token string) (*TapJWTToken, error) {
 	jwtToken := TapJWTToken{}
 
-	url := os.Getenv("SSO_CHECK_TOKEN_URI")
-	reqBody := fmt.Sprintf("token=%s", token)
+	uaaURL := os.Getenv("SSO_CHECK_TOKEN_URI")
+	reqBody := u.prepareUserManagementTokenURLEncodedPayload(token)
 
-	auth := brokerHttp.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
-	status, resp, err := brokerHttp.RestUrlEncodedPOST(url, reqBody, brokerHttp.GetBasicAuthHeader(&auth), u.Client)
+	auth := commonHTTP.BasicAuth{User: u.ClientId, Password: u.ClientSecret}
+	status, resp, err := commonHTTP.RestUrlEncodedPOST(uaaURL, reqBody, commonHTTP.GetBasicAuthHeader(&auth), u.Client)
 	if err != nil {
 		return nil, err
 	}

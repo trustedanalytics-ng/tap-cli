@@ -35,6 +35,11 @@ type InstanceBindingsResource struct {
 	InstanceBindingsEntity `json:"entity"`
 }
 
+type DstInstanceBind struct {
+	AppGUID       string
+	DstInstanceId string
+}
+
 type InstanceBindingRequest struct {
 	ApplicationId string `json:"application_id"`
 	ServiceId     string `json:"service_id"`

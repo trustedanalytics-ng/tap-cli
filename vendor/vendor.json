@@ -81,10 +81,10 @@
 			"revisionTime": "2016-03-29T19:32:22Z"
 		},
 		{
-			"checksumSHA1": "CGem+i522h2C4N9v6lWCvPh1iJ8=",
+			"checksumSHA1": "OVgJ6FE5Q8T9kdnfStR9R4MOYDo=",
 			"path": "github.com/trustedanalytics/tap-api-service/client",
-			"revision": "0b7b160b93ed2c78d8b163d21c76bed4d3599dfc",
-			"revisionTime": "2017-01-30T12:56:40Z"
+			"revision": "5008eabf5cb53ac56c456783a7ba5f9ca3aa02a0",
+			"revisionTime": "2017-02-07T11:27:39Z"
 		},
 		{
 			"checksumSHA1": "lv/b7OnBMHhQlgg8wHKdxXqEwqk=",

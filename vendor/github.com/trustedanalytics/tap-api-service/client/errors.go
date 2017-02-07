@@ -19,4 +19,5 @@ import "errors"
 
 var (
 	ErrNotTapEnvironment = errors.New("Cannot reach API. Not a TAP environment?")
+	ErrDomainNotFound = errors.New("Domain not found.")
 )

@@ -104,7 +104,11 @@ func (c *TapApiServiceApiBasicAuthConnector) Introduce() error {
 		return err
 	}
 
-	if resp.StatusCode == http.StatusNotFound || resp.Header.Get("X-Platform") != "TAP" {
+	if resp.StatusCode == http.StatusNotFound {
+		return ErrDomainNotFound
+	}
+
+	if resp.Header.Get("X-Platform") != "TAP" {
 		return ErrNotTapEnvironment
 	}
 

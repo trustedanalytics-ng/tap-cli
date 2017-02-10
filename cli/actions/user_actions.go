@@ -19,8 +19,8 @@ package actions
 import (
 	"fmt"
 
-	userManagement "github.com/trustedanalytics/tap-api-service/user-management-connector"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
+	userManagement "github.com/trustedanalytics-ng/tap-api-service/user-management-connector"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
 )
 
 func (a *ActionsConfig) ChangeCurrentUserPassword(currentPassword, newPassword string) error {

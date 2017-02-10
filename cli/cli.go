@@ -21,7 +21,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/trustedanalytics/tap-cli/cli/commands"
+	"github.com/trustedanalytics-ng/tap-cli/cli/commands"
 )
 
 func Run() error {

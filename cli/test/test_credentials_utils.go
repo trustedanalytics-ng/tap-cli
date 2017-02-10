@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/api"
 )
 
 const testCredentialsPath = "/tmp/testTapCredentials.json"

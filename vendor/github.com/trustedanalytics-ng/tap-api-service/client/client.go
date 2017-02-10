@@ -20,12 +20,12 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"github.com/trustedanalytics/tap-api-service/models"
-	userManagement "github.com/trustedanalytics/tap-api-service/user-management-connector"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
-	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	userManagement "github.com/trustedanalytics-ng/tap-api-service/user-management-connector"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	containerBrokerModels "github.com/trustedanalytics-ng/tap-container-broker/models"
+	brokerHttp "github.com/trustedanalytics-ng/tap-go-common/http"
+	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 const apiVer = "v3"

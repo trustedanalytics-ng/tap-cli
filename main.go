@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/trustedanalytics/tap-cli/cli"
+	"github.com/trustedanalytics-ng/tap-cli/cli"
 )
 
 func main() {

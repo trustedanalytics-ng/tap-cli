@@ -22,9 +22,9 @@ import (
 
 	"github.com/urfave/cli"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/cli/actions"
-	"github.com/trustedanalytics/tap-cli/cli/converter"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/cli/actions"
+	"github.com/trustedanalytics-ng/tap-cli/cli/converter"
 )
 
 type bindingFunction func(srcInstance, dstInstance actions.BindableInstance) error

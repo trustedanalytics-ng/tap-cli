@@ -16,12 +16,13 @@
 package models
 
 import (
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	templateRepositoryModels "github.com/trustedanalytics/tap-template-repository/model"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
 )
 
-type ServiceDeploy struct {
-	BrokerName string                               `json:"broker_name"`
-	Template   templateRepositoryModels.RawTemplate `json:"template" validate:"nonzero"`
-	Services   []catalogModels.Service              `json:"services" validate:"nonzero"`
+type Manifest struct {
+	Name      string                   `json:"name"`
+	ImageType catalogModels.ImageType  `json:"type"`
+	Instances int                      `json:"instances"`
+	Bindings  []string                 `json:"bindings"`
+	Metadata  []catalogModels.Metadata `json:"metadata"`
 }

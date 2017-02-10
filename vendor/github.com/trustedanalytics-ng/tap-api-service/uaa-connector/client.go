@@ -24,7 +24,7 @@ import (
 	"os"
 	"strconv"
 
-	commonHTTP "github.com/trustedanalytics/tap-go-common/http"
+	commonHTTP "github.com/trustedanalytics-ng/tap-go-common/http"
 )
 
 type LoginResponse struct {

@@ -23,8 +23,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/urfave/cli"
 
-	"github.com/trustedanalytics/tap-api-service/client"
-	"github.com/trustedanalytics/tap-cli/cli/test"
+	"github.com/trustedanalytics-ng/tap-api-service/client"
+	"github.com/trustedanalytics-ng/tap-cli/cli/test"
 )
 
 func init() {

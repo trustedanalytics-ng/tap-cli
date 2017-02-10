@@ -24,11 +24,11 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/trustedanalytics/tap-api-service/client"
-	"github.com/trustedanalytics/tap-cli/api"
-	"github.com/trustedanalytics/tap-cli/cli/actions"
-	commonHttp "github.com/trustedanalytics/tap-go-common/http"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics-ng/tap-api-service/client"
+	"github.com/trustedanalytics-ng/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/cli/actions"
+	commonHttp "github.com/trustedanalytics-ng/tap-go-common/http"
+	"github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 const DefaultLogLevel = logger.LevelCritical

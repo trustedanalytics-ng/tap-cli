@@ -22,7 +22,7 @@ import (
 
 	"strconv"
 
-	"github.com/trustedanalytics/tap-cli/cli/test"
+	"github.com/trustedanalytics-ng/tap-cli/cli/test"
 )
 
 func TestThatPrintTable_handlesEmptyList(t *testing.T) {

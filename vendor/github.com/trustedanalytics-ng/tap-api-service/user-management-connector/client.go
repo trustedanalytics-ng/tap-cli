@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"strings"
 
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
-	"github.com/trustedanalytics/tap-go-common/util"
+	brokerHttp "github.com/trustedanalytics-ng/tap-go-common/http"
+	"github.com/trustedanalytics-ng/tap-go-common/util"
 )
 
 var defaultOrg string = util.GetEnvValueOrDefault("DEFAULT_ORG", "00000000-0000-0000-0000-000000000000")

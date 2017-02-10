@@ -17,7 +17,7 @@
 package api
 
 import (
-	"github.com/trustedanalytics/tap-api-service/client"
+	"github.com/trustedanalytics-ng/tap-api-service/client"
 )
 
 type Config struct {

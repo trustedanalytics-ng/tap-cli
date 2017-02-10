@@ -24,10 +24,10 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"github.com/trustedanalytics/tap-api-service/models"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	containerBrokerModels "github.com/trustedanalytics-ng/tap-container-broker/models"
+	brokerHttp "github.com/trustedanalytics-ng/tap-go-common/http"
 )
 
 func (c *TapApiServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {

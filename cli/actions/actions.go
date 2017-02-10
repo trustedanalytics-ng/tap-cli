@@ -22,8 +22,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/trustedanalytics/tap-cli/api"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
+	"github.com/trustedanalytics-ng/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
 )
 
 const successMessage = "OK"

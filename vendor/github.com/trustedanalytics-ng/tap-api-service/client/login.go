@@ -21,8 +21,8 @@ import (
 
 	"errors"
 
-	uaa "github.com/trustedanalytics/tap-api-service/uaa-connector"
-	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
+	uaa "github.com/trustedanalytics-ng/tap-api-service/uaa-connector"
+	brokerHttp "github.com/trustedanalytics-ng/tap-go-common/http"
 )
 
 type TapApiServiceLoginApi interface {

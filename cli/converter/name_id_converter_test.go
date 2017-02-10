@@ -22,9 +22,9 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/trustedanalytics/tap-api-service/models"
-	"github.com/trustedanalytics/tap-cli/api"
-	"github.com/trustedanalytics/tap-cli/cli/test"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/cli/test"
 )
 
 func getFakeServices() []models.Offering {

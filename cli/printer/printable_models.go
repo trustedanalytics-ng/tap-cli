@@ -21,10 +21,10 @@ import (
 	"strings"
 	"time"
 
-	apiServiceModels "github.com/trustedanalytics/tap-api-service/models"
-	userManagement "github.com/trustedanalytics/tap-api-service/user-management-connector"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
+	apiServiceModels "github.com/trustedanalytics-ng/tap-api-service/models"
+	userManagement "github.com/trustedanalytics-ng/tap-api-service/user-management-connector"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
 )
 
 const timeFormatter = "Jan 02 15:04"

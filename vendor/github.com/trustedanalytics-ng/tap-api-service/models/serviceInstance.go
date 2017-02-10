@@ -18,7 +18,7 @@ package models
 import (
 	"strings"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
 )
 
 type ServiceInstance struct {

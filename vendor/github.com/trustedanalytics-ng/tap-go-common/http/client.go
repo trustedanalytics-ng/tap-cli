@@ -19,14 +19,14 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
-	"net/http"
 	"net"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 const MaxIdleConnectionPerHost int = 20
@@ -144,7 +144,7 @@ func prepareTransportWithProxy(tlsConfig *tls.Config, maxIdleConnectionPerHost i
 		Proxy:               http.ProxyFromEnvironment,
 		TLSClientConfig:     tlsConfig,
 		MaxIdleConnsPerHost: maxIdleConnectionPerHost,
-		Dial: (&net.Dialer{ 
+		Dial: (&net.Dialer{
 			Timeout: ConnectionTimeout,
 		}).Dial,
 	}

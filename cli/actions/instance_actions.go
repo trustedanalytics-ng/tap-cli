@@ -19,9 +19,9 @@ package actions
 import (
 	"fmt"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/cli/converter"
-	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/cli/converter"
+	containerBrokerModels "github.com/trustedanalytics-ng/tap-container-broker/models"
 )
 
 type stateChangingFunction func(string) (containerBrokerModels.MessageResponse, error)

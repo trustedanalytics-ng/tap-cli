@@ -26,8 +26,8 @@ import (
 	"github.com/smartystreets/assertions"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/trustedanalytics/tap-api-service/models"
-	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
 )
 
 const sampleOfferingName = "sampleOffering"

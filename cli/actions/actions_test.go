@@ -27,14 +27,14 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/golang/mock/gomock"
-	"github.com/trustedanalytics/tap-api-service/models"
-	"github.com/trustedanalytics/tap-api-service/uaa-connector"
-	"github.com/trustedanalytics/tap-api-service/user-management-connector"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
-	"github.com/trustedanalytics/tap-cli/cli/converter"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
-	"github.com/trustedanalytics/tap-cli/cli/test"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	"github.com/trustedanalytics-ng/tap-api-service/uaa-connector"
+	"github.com/trustedanalytics-ng/tap-api-service/user-management-connector"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/cli/converter"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
+	"github.com/trustedanalytics-ng/tap-cli/cli/test"
 )
 
 var url string = "fake_url"

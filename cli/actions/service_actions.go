@@ -19,11 +19,11 @@ package actions
 import (
 	"fmt"
 
-	apiServiceModels "github.com/trustedanalytics/tap-api-service/models"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/cli/converter"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
-	containerBrokerModels "github.com/trustedanalytics/tap-container-broker/models"
+	apiServiceModels "github.com/trustedanalytics-ng/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/cli/converter"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
+	containerBrokerModels "github.com/trustedanalytics-ng/tap-container-broker/models"
 )
 
 func (a *ActionsConfig) CreateServiceInstance(serviceName, planName, customName string, envs map[string]string) error {

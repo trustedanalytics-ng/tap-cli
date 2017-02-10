@@ -19,7 +19,7 @@ package commands
 import (
 	"github.com/urfave/cli"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
 )
 
 func serviceCommand() TapCommand {

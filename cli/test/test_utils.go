@@ -25,9 +25,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/trustedanalytics/tap-api-service/models"
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-api-service/models"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
 )
 
 func SetApiAndLoginServiceMocks(t *testing.T) (api.Config, *gomock.Controller) {

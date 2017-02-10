@@ -22,9 +22,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	apiServiceModels "github.com/trustedanalytics/tap-api-service/models"
-	"github.com/trustedanalytics/tap-cli/cli/converter"
-	"github.com/trustedanalytics/tap-cli/cli/printer"
+	apiServiceModels "github.com/trustedanalytics-ng/tap-api-service/models"
+	"github.com/trustedanalytics-ng/tap-cli/cli/converter"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
 )
 
 func (a *ActionsConfig) CreateOffering(jsonFilename string) error {

@@ -19,7 +19,7 @@ package actions
 import (
 	"fmt"
 
-	"github.com/trustedanalytics/tap-cli/cli/printer"
+	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
 )
 
 func (a *ActionsConfig) SendInvitation(email string) error {

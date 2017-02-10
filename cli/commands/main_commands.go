@@ -21,9 +21,9 @@ import (
 
 	"fmt"
 	"github.com/howeyc/gopass"
-	"github.com/trustedanalytics/tap-api-service/client"
-	"github.com/trustedanalytics/tap-cli/api"
-	"github.com/trustedanalytics/tap-cli/cli/actions"
+	"github.com/trustedanalytics-ng/tap-api-service/client"
+	"github.com/trustedanalytics-ng/tap-cli/api"
+	"github.com/trustedanalytics-ng/tap-cli/cli/actions"
 	"github.com/urfave/cli"
 )
 

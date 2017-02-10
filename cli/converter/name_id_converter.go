@@ -20,8 +20,8 @@ import (
 	"errors"
 	"fmt"
 
-	catalogModels "github.com/trustedanalytics/tap-catalog/models"
-	"github.com/trustedanalytics/tap-cli/api"
+	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
+	"github.com/trustedanalytics-ng/tap-cli/api"
 )
 
 func FetchServiceAndPlanID(apiConfig api.Config, serviceName, planName string) (string, string, error) {

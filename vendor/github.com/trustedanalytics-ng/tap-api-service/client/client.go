@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"net/http"
+	"time"
 
 	"github.com/trustedanalytics-ng/tap-api-service/models"
 	userManagement "github.com/trustedanalytics-ng/tap-api-service/user-management-connector"
@@ -28,7 +29,11 @@ import (
 	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
-const apiVer = "v3"
+const (
+	apiVer                        = "v3"
+	DefaultPushApplicationTimeout = 0
+	defaultGetLogsTimeout         = 1 * time.Minute
+)
 
 var logger, _ = commonLogger.InitLogger("client")
 
@@ -44,7 +49,7 @@ type TapApiServiceApi interface {
 	UnbindServiceFromServiceInstance(srcServiceId, dstApplicationId string) (int, error)
 	UnbindApplicationFromServiceInstance(applicationId, serviceId string) (int, error)
 
-	CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error)
+	CreateApplicationInstance(blob multipart.File, manifest models.Manifest, timeout time.Duration) (catalogModels.Application, error)
 	CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]catalogModels.Service, error)
 	CreateServiceInstance(instance models.ServiceInstanceRequest) (containerBrokerModels.MessageResponse, error)
 
@@ -84,6 +89,13 @@ type TapApiServiceApi interface {
 	DeleteUser(email string) error
 }
 
+type TapApiServiceApiOAuth2Connector struct {
+	Address   string
+	TokenType string
+	Token     string
+	Client    *http.Client
+}
+
 func SetLoggerLevel(level string) error {
 	return commonLogger.SetLoggerLevel(logger, level)
 }
@@ -111,11 +123,15 @@ func getAddressCommon(addr string, format string, args ...interface{}) string {
 	return fmt.Sprintf("%s/api/%s", addr, apiVer) + fmt.Sprintf(format, args...)
 }
 
-type TapApiServiceApiOAuth2Connector struct {
-	Address   string
-	TokenType string
-	Token     string
-	Client    *http.Client
+func wrapWithTemporaryTimeout(client *http.Client, tempTimeout time.Duration, callbackAfterSettingTimeout func()) {
+	oldTimeout := client.Timeout
+	setClientTimeout(client, tempTimeout)
+	defer setClientTimeout(client, oldTimeout)
+	callbackAfterSettingTimeout()
+}
+
+func setClientTimeout(client *http.Client, timeout time.Duration) {
+	client.Timeout = timeout
 }
 
 func (c *TapApiServiceApiOAuth2Connector) getAddress(endpointFormat string, args ...interface{}) string {
@@ -179,15 +195,23 @@ func (c *TapApiServiceApiOAuth2Connector) GetOffering(offeringId string) (models
 
 func (c *TapApiServiceApiOAuth2Connector) GetApplicationLogs(applicationId string) (map[string]string, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/logs", applicationId)
+
 	result := make(map[string]string)
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	var err error
+	wrapWithTemporaryTimeout(connector.Client, defaultGetLogsTimeout, func() {
+		_, err = brokerHttp.GetModel(connector, http.StatusOK, &result)
+	})
 	return result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) GetServiceLogs(serviceId string) (map[string]string, error) {
 	connector := c.getApiOAuth2Connector("/services/%s/logs", serviceId)
+
 	result := make(map[string]string)
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, &result)
+	var err error
+	wrapWithTemporaryTimeout(connector.Client, defaultGetLogsTimeout, func() {
+		_, err = brokerHttp.GetModel(connector, http.StatusOK, &result)
+	})
 	return result, err
 }
 

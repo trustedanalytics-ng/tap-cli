@@ -25,6 +25,7 @@ import (
 	models1 "github.com/trustedanalytics-ng/tap-catalog/models"
 	models0 "github.com/trustedanalytics-ng/tap-container-broker/models"
 	multipart "mime/multipart"
+	time "time"
 )
 
 // Mock of TapApiServiceApi interface
@@ -147,15 +148,15 @@ func (_mr *_MockTapApiServiceApiRecorder) UnbindApplicationFromServiceInstance(a
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindApplicationFromServiceInstance", arg0, arg1)
 }
 
-func (_m *MockTapApiServiceApi) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (models1.Application, error) {
-	ret := _m.ctrl.Call(_m, "CreateApplicationInstance", blob, manifest)
+func (_m *MockTapApiServiceApi) CreateApplicationInstance(blob multipart.File, manifest models.Manifest, timeout time.Duration) (models1.Application, error) {
+	ret := _m.ctrl.Call(_m, "CreateApplicationInstance", blob, manifest, timeout)
 	ret0, _ := ret[0].(models1.Application)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockTapApiServiceApiRecorder) CreateApplicationInstance(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateApplicationInstance", arg0, arg1)
+func (_mr *_MockTapApiServiceApiRecorder) CreateApplicationInstance(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateApplicationInstance", arg0, arg1, arg2)
 }
 
 func (_m *MockTapApiServiceApi) CreateOffer(serviceWithTemplate models.ServiceDeploy) ([]models1.Service, error) {

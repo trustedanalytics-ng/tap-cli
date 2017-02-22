@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	apiServiceModels "github.com/trustedanalytics-ng/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
@@ -29,7 +30,7 @@ import (
 	"github.com/trustedanalytics-ng/tap-cli/cli/printer"
 )
 
-func (a *ActionsConfig) PushApplication(blobPath string) error {
+func (a *ActionsConfig) PushApplication(blobPath string, pushTimeout time.Duration) error {
 	blob, err := os.Open(blobPath)
 	if err != nil {
 		return err
@@ -52,7 +53,7 @@ func (a *ActionsConfig) PushApplication(blobPath string) error {
 		return err
 	}
 
-	app, err := a.ApiService.CreateApplicationInstance(blob, manifest)
+	app, err := a.ApiService.CreateApplicationInstance(blob, manifest, pushTimeout)
 	if err != nil {
 		return err
 	}
@@ -66,7 +67,7 @@ func printApplication(app catalogModels.Application) {
 	printer.PrintTable(printableApplications)
 }
 
-func (a *ActionsConfig) CompressCwdAndPushAsApplication() error {
+func (a *ActionsConfig) CompressCwdAndPushAsApplication(pushTimeout time.Duration) error {
 	folder, err := os.Getwd()
 	if err != nil {
 		return err
@@ -75,7 +76,7 @@ func (a *ActionsConfig) CompressCwdAndPushAsApplication() error {
 	if err != nil {
 		return err
 	}
-	err = a.PushApplication(archivePath)
+	err = a.PushApplication(archivePath, pushTimeout)
 	err2 := os.Remove(archivePath)
 	if err != nil {
 		return err

@@ -18,63 +18,73 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"time"
 
 	"github.com/trustedanalytics-ng/tap-api-service/models"
 	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
 	containerBrokerModels "github.com/trustedanalytics-ng/tap-container-broker/models"
-	brokerHttp "github.com/trustedanalytics-ng/tap-go-common/http"
+	commonHTTP "github.com/trustedanalytics-ng/tap-go-common/http"
 )
 
-func (c *TapApiServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest) (catalogModels.Application, error) {
+func (c *TapApiServiceApiOAuth2Connector) CreateApplicationInstance(blob multipart.File, manifest models.Manifest, timeout time.Duration) (catalogModels.Application, error) {
 	connector := c.getApiOAuth2Connector("/applications")
 	result := catalogModels.Application{}
 
 	contentType, bodyBuf, err := c.prepareApplicationCreationForm(blob, manifest)
 	if err != nil {
-		logger.Error("ERROR: Preparing application creation form failed", err)
+		logger.Error("Preparing application creation form failed: ", err)
 		return result, err
 	}
 
-	req, _ := http.NewRequest("POST", connector.Url, bodyBuf)
-	req.Header.Add("Authorization", brokerHttp.GetOAuth2Header(connector.OAuth2))
-	brokerHttp.SetContentType(req, contentType)
+	req, err := http.NewRequest(http.MethodPost, connector.Url, bodyBuf)
+	if err != nil {
+		logger.Error("Preparing HTTP request failed: ", err)
+		return result, err
+	}
+	req.Header.Add("Authorization", commonHTTP.GetOAuth2Header(connector.OAuth2))
+	commonHTTP.SetContentType(req, contentType)
 
 	logger.Infof("Doing: POST %v", connector.Url)
-	resp, err := connector.Client.Do(req)
+
+	var resp *http.Response
+	wrapWithTemporaryTimeout(connector.Client, timeout, func() {
+		resp, err = connector.Client.Do(req)
+	})
 	if err != nil {
-		logger.Error("ERROR: Make http request POST", err)
+		logger.Error("Make http request POST: ", err)
 		return result, err
+	}
+
+	expectedStatusCode := http.StatusAccepted
+	if resp.StatusCode != expectedStatusCode {
+		return result, fmt.Errorf("wrong response code! expected: %v , got: %v", expectedStatusCode, resp.StatusCode)
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error("ERROR: Make http request POST", err)
+		logger.Error("Reading HTTP response body failed: ", err)
 		return result, err
 	}
 
-	if resp.StatusCode != http.StatusAccepted {
-		return result, errors.New("Wrong response code! - data:" + string(data))
-	}
-
-	json.Unmarshal(data, &result)
-	return result, nil
+	err = json.Unmarshal(data, &result)
+	return result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteApplicationInstance(instanceId string) error {
 	connector := c.getApiOAuth2Connector("/applications/%s", instanceId)
-	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+	_, err := commonHTTP.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) ListApplicationInstances() ([]models.ApplicationInstance, error) {
 	connector := c.getApiOAuth2Connector("/applications")
 	result := &[]models.ApplicationInstance{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	_, err := commonHTTP.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }
 
@@ -84,28 +94,28 @@ func (c *TapApiServiceApiOAuth2Connector) ScaleApplicationInstance(instanceId st
 		Replicas: replication,
 	}
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, body, http.StatusAccepted, result)
+	_, err := commonHTTP.PutModel(connector, body, http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/start", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
+	_, err := commonHTTP.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) StopApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/stop", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
+	_, err := commonHTTP.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) RestartApplicationInstance(instanceId string) (containerBrokerModels.MessageResponse, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s/restart", instanceId)
 	result := &containerBrokerModels.MessageResponse{}
-	_, err := brokerHttp.PutModel(connector, "", http.StatusAccepted, result)
+	_, err := commonHTTP.PutModel(connector, "", http.StatusAccepted, result)
 	return *result, err
 }
 
@@ -166,13 +176,13 @@ func (c *TapApiServiceApiOAuth2Connector) createManifestFormFile(manifest models
 
 func (c *TapApiServiceApiOAuth2Connector) DeleteApplication(instanceId string) error {
 	connector := c.getApiOAuth2Connector("/applications/%s", instanceId)
-	_, err := brokerHttp.DeleteModel(connector, http.StatusNoContent)
+	_, err := commonHTTP.DeleteModel(connector, http.StatusNoContent)
 	return err
 }
 
 func (c *TapApiServiceApiOAuth2Connector) GetApplicationInstance(applicationId string) (models.ApplicationInstance, error) {
 	connector := c.getApiOAuth2Connector("/applications/%s", applicationId)
 	result := &models.ApplicationInstance{}
-	_, err := brokerHttp.GetModel(connector, http.StatusOK, result)
+	_, err := commonHTTP.GetModel(connector, http.StatusOK, result)
 	return *result, err
 }

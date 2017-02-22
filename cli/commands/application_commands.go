@@ -19,9 +19,11 @@ package commands
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/urfave/cli"
 
+	apiServiceClient "github.com/trustedanalytics-ng/tap-api-service/client"
 	catalogModels "github.com/trustedanalytics-ng/tap-catalog/models"
 )
 
@@ -57,6 +59,14 @@ func applicationCommand() TapCommand {
 		Destination: &confirmed,
 	}
 
+	var timeout uint
+	var timeoutFlag = cli.UintFlag{
+		Name:        "timeout",
+		Usage:       "maximum time (in minutes) for pushing blob to platform (0 = no timeout)",
+		Value:       uint(apiServiceClient.DefaultPushApplicationTimeout),
+		Destination: &timeout,
+	}
+
 	var listApplicationsCommand = TapCommand{
 		Name:  "list",
 		Usage: "list applications",
@@ -78,15 +88,18 @@ func applicationCommand() TapCommand {
 		Name: "push",
 		Usage: "create application from compressed current directory (by default) or from indicated tar archive,\n" +
 			"\tmanifest should be in current working directory",
-		OptionalFlags: []cli.Flag{archivePathFlag},
+		OptionalFlags: []cli.Flag{archivePathFlag, timeoutFlag},
 		MainAction: func(c *cli.Context) error {
 			if _, err := os.Stat(manifestFileName); os.IsNotExist(err) {
 				return fmt.Errorf(manifestFileName + " does not exist: create one with metadata about your application")
 			}
+
+			clientOperationTimeout := time.Duration(timeout) * time.Minute
+
 			if "" == archivePath {
-				return newOAuth2Service().CompressCwdAndPushAsApplication()
+				return newOAuth2Service().CompressCwdAndPushAsApplication(clientOperationTimeout)
 			}
-			return newOAuth2Service().PushApplication(archivePath)
+			return newOAuth2Service().PushApplication(archivePath, clientOperationTimeout)
 		},
 	}
 
